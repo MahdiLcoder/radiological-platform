@@ -2,6 +2,9 @@ from pathlib import Path
 import os
 import mongoengine
 from dotenv import load_dotenv
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 load_dotenv()
 
@@ -84,7 +87,11 @@ TEMPLATES = [
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True  # Restrict in production
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 ROOT_URLCONF = 'config.urls'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+cloudinary.config(
+    cloud_name='pfe',
+    api_key=os.getenv('COUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
+)
