@@ -45,17 +45,14 @@ class ImageDetailView(APIView):
             return [IsAuthenticated(), IsAdmin()]
         return [IsAuthenticated()]
 
-    def get_object(self, pk):
+    def get(self, request, pk):
         try:
-            return RadiologyImage.objects.get(id=pk)
+            image = RadiologyImage.objects.get(id=pk)
         except RadiologyImage.DoesNotExist:
             raise Http404
-
-    def get(self, request, pk):
-        image = self.get_object(pk)
         serializer = RadiologyImageSerializer(image)
-        return Response(serializer.data)
-
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
     def delete(self, request, pk):
         image = self.get_object(pk)
         image.delete()
