@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from .models import RadiologyImage, MODALITY_CHOICES
 import cloudinary.uploader
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class RadiologyImageSerializer(serializers.Serializer):
@@ -24,16 +27,20 @@ class RadiologyImageSerializer(serializers.Serializer):
         image_file = validated_data.pop('image')
         patient_id = validated_data['patient_id']
 
-        upload_result = cloudinary.uploader.upload(
-            image_file,
-            folder=f"radiology_images/{patient_id}",
-            resource_type='image'
-        )
-        image_url = upload_result["secure_url"]
-        image_doc = RadiologyImage(
-            **validated_data,
-            file_path=image_url,
-            uploaded_by=self.context["request"].user.id
-        )
-        image_doc.save()
-        return image_doc
+        try:
+            upload_result = cloudinary.uploader.upload(
+                image_file,
+                folder=f"radiology_images/{patient_id}",
+                resource_type='image'
+            )
+            image_url = upload_result["secure_url"]
+            image_doc = RadiologyImage(
+                **validated_data,
+                file_path=image_url,
+                uploaded_by=self.context["request"].user.id
+            )
+            image_doc.save()
+            return image_doc
+        except Exception as e:
+            logger.error(f"Error in ImageDetailView: {e}", exc_info=True)
+            raise APIException("Something went wrong")

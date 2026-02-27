@@ -2,10 +2,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import Http404
+from rest_framework.exceptions import NotFound
 from .serializers import RadiologyImageSerializer
 from .models import RadiologyImage
 from accounts.permissions import IsRadiologist, IsAdmin, IsDoctor
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ImageUploadView(APIView):
@@ -28,9 +31,13 @@ class ImageListView(APIView):
     permission_classes = [IsAuthenticated, (IsRadiologist | IsAdmin)]
 
     def get(self, request):
-        images = RadiologyImage.objects.all()
-        serializer = RadiologyImageSerializer(images, many=True)
-        return Response(serializer.data)
+        try:
+            images = RadiologyImage.objects.all()
+            serializer = RadiologyImageSerializer(images, many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            logger.error(f"Error in ImageListView: {e}", exc_info=True)
+            raise APIException("Something went wrong")
 
 
 class ImageDetailView(APIView):
@@ -47,13 +54,22 @@ class ImageDetailView(APIView):
 
     def get(self, request, pk):
         try:
-            image = RadiologyImage.objects.get(id=pk)
-        except RadiologyImage.DoesNotExist:
-            raise Http404
-        serializer = RadiologyImageSerializer(image)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            image = RadiologyImage.objects(id=pk).first()
+            if not image:
+                raise NotFound("Image not found!")
+            serializer = RadiologyImageSerializer(image)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error(f"Error in ImageDetailView: {e}", exc_info=True)
+            raise APIException("Something went wrong")
         
     def delete(self, request, pk):
-        image = self.get_object(pk)
-        image.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        try:
+            image = RadiologyImage.objects(id=pk).first()
+            if not image:
+                raise NotFound("Image not found!")
+            image.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            logger.error(f"Error in ImageDetailView: {e}", exc_info=True)
+            raise APIException("Something went wrong")
