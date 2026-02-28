@@ -1,7 +1,7 @@
 import mongoengine as me
 import datetime
 
-MODALITY_CHOICES = ["X-Ray", "CT", "MRI", "Ultrasound"]
+MODALITY_CHOICES = ["X-Ray", "CT", "MRI"]
 
 class RadiologyImage(me.Document):
     patient_name = me.StringField(required=True)

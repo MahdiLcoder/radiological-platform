@@ -34,7 +34,7 @@ class ImageListView(APIView):
         try:
             images = RadiologyImage.objects.all()
             serializer = RadiologyImageSerializer(images, many=True)
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error(f"Error in ImageListView: {e}", exc_info=True)
             raise APIException("Something went wrong")
