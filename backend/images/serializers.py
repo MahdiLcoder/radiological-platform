@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import APIException
 from .models import RadiologyImage, MODALITY_CHOICES
 import cloudinary.uploader
 import logging
