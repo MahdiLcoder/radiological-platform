@@ -59,6 +59,8 @@ class ImageDetailView(APIView):
                 raise NotFound("Image not found!")
             serializer = RadiologyImageSerializer(image)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        except NotFound:
+            raise
         except Exception as e:
             logger.error(f"Error in ImageDetailView: {e}", exc_info=True)
             raise APIException("Something went wrong")
@@ -70,6 +72,8 @@ class ImageDetailView(APIView):
                 raise NotFound("Image not found!")
             image.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+        except NotFound:
+            raise
         except Exception as e:
             logger.error(f"Error in ImageDetailView: {e}", exc_info=True)
             raise APIException("Something went wrong")

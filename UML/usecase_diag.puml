@@ -1,0 +1,102 @@
+@startuml UseCase_AI_Radiology
+skinparam shadowing true
+
+left to right direction
+
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 12
+
+skinparam actor {
+    BorderColor #4B5563
+    FontColor #111827
+    FontSize 12
+}
+
+skinparam usecase {
+    BackgroundColor #F9FAFB
+    BorderColor #4B5563
+    FontColor #111827
+    FontSize 12
+    RoundCorner 12
+}
+
+skinparam ArrowColor #4B5563
+skinparam ArrowFontSize 10
+skinparam ArrowFontColor #374151
+
+' ── Human Actors (left) ──
+actor "Radiologist"         as RAD
+actor "Doctor"              as DOC
+actor "Admin"               as ADM
+
+
+rectangle "Automated Radiological Image Analysis Platform" {
+
+    ' ── Shared (all actors) ──
+    usecase "Authentication & Authorization" as UC_AUTH
+
+    ' ── Radiologist ──
+    usecase "Upload Medical Image"        as UC1
+    usecase "Validate Image Format"       as UC1a
+    usecase "Run AI Inference"            as UC2
+    usecase "View AI Predictions"         as UC3
+    usecase "Validate AI Result"          as UC4
+    usecase "Modify AI Finding"           as UC4a
+    usecase "Add Clinical Notes"          as UC4b
+    usecase "Generate PDF Report"         as UC5
+    usecase "Preview Report"              as UC5a
+
+    ' ── Doctor ──
+    usecase "Browse Reports"              as UC6
+    usecase "Search / Filter Reports"     as UC6a
+    usecase "View Report Details"         as UC7
+    usecase "Download PDF Report"         as UC8
+
+    ' ── Admin ──
+    usecase "Manage Users (CRUD)"         as UC9
+    usecase "Assign Role to User"         as UC10
+    usecase "Monitor System Activity"     as UC11
+    usecase "View Audit Logs"             as UC11a
+
+    ' ── include / extend ──
+    UC1  ..>  UC1a    : <<include>>
+    UC1  ..>  UC2     : <<include>>
+    UC4  ..>  UC4a    : <<extend>>
+    UC4  ..>  UC4b    : <<extend>>
+    UC5  ..>  UC5a    : <<extend>>
+    UC6  ..>  UC6a    : <<extend>>
+    UC11 ..>  UC11a   : <<include>>
+
+    ' ── Auth <<include>> (every use case requires authentication) ──
+    UC1  ..>  UC_AUTH : <<include>>
+    UC3  ..>  UC_AUTH : <<include>>
+    UC4  ..>  UC_AUTH : <<include>>
+    UC5  ..>  UC_AUTH : <<include>>
+    UC6  ..>  UC_AUTH : <<include>>
+    UC7  ..>  UC_AUTH : <<include>>
+    UC8  ..>  UC_AUTH : <<include>>
+    UC9  ..>  UC_AUTH : <<include>>
+    UC10 ..>  UC_AUTH : <<include>>
+    UC11 ..>  UC_AUTH : <<include>>
+}
+
+
+
+' ── Radiologist ──
+RAD -- UC1
+RAD -- UC3
+RAD -- UC4
+RAD -- UC5
+
+
+' ── Doctor ──
+DOC -- UC6
+DOC -- UC7
+DOC -- UC8
+
+' ── Admin ──
+ADM -- UC9
+ADM -- UC10
+ADM -- UC11
+
+@enduml

@@ -42,5 +42,5 @@ class RadiologyImageSerializer(serializers.Serializer):
             image_doc.save()
             return image_doc
         except Exception as e:
-            logger.error(f"Error in ImageDetailView: {e}", exc_info=True)
+            logger.error(f"Error in RadiologyImageSerializer.create: {e}", exc_info=True)
             raise APIException("Something went wrong")
