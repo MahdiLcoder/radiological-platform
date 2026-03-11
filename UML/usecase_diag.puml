@@ -33,7 +33,7 @@ actor "Admin"               as ADM
 rectangle "Automated Radiological Image Analysis Platform" {
 
     ' ── Shared (all actors) ──
-    usecase "Authentication & Authorization" as UC_AUTH
+    usecase "Authentication" as UC_AUTH
 
     ' ── Radiologist ──
     usecase "Upload Medical Image"        as UC1
