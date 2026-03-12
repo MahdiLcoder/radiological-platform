@@ -7,13 +7,15 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+from accounts.serializers import MongoUserSerializer
+
 class RadiologyImageSerializer(serializers.Serializer):
     id = serializers.CharField(read_only=True)
     patient_name = serializers.CharField()
     patient_id = serializers.CharField()
     modality = serializers.ChoiceField(choices=MODALITY_CHOICES)
     file_path = serializers.CharField(read_only=True)
-    uploaded_by = serializers.DictField(read_only=True)
+    uploaded_by = MongoUserSerializer(read_only=True)
     uploaded_at = serializers.DateTimeField(read_only=True)
     status = serializers.ChoiceField(choices=['pending', 'analyzed', 'validated'], read_only=True)
 

@@ -19,3 +19,11 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'role', 'first_name', 'last_name']
+
+class MongoUserSerializer(serializers.Serializer):
+    id = serializers.IntegerField(source='django_id')
+    username = serializers.CharField()
+    email = serializers.EmailField()
+    role = serializers.CharField()
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()

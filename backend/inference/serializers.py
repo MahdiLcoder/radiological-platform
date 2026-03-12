@@ -5,12 +5,14 @@ from rest_framework.exceptions import APIException
 from .models import InferenceResult
 
 
+from accounts.serializers import MongoUserSerializer
+
 class InferenceResultSerializer(serializers.Serializer):
     id          = serializers.CharField(read_only=True)
     image_id    = serializers.CharField()
     model_name  = serializers.CharField()
     predictions = serializers.DictField()
-    analyzed_by = serializers.DictField(read_only=True)
+    analyzed_by = MongoUserSerializer(read_only=True)
 
     def create(self, validated_data):
         image_id = ObjectId(validated_data['image_id'])
