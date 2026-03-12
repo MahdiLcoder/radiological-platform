@@ -3,9 +3,6 @@ from bson import ObjectId
 from rest_framework import serializers
 from rest_framework.exceptions import APIException
 from .models import InferenceResult
-import logging
-
-logger = logging.getLogger(__name__)
 
 
 class InferenceResultSerializer(serializers.Serializer):
@@ -18,20 +15,16 @@ class InferenceResultSerializer(serializers.Serializer):
     analyzed_at = serializers.DateTimeField(read_only=True)
 
     def create(self, validated_data):
-        try:
-            image_id = ObjectId(validated_data['image_id'])
+        image_id = ObjectId(validated_data['image_id'])
 
-            result = InferenceResult.objects(image_id=image_id).first()
-            if result is None:
-                result = InferenceResult(image_id=image_id)
+        result = InferenceResult.objects(image_id=image_id).first()
+        if result is None:
+            result = InferenceResult(image_id=image_id)
 
-            result.model_name  = validated_data['model_name']
-            result.predictions = validated_data['predictions']
-            result.top_finding = validated_data['top_finding']
-            result.confidence  = validated_data['confidence']
-            result.analyzed_at = datetime.datetime.utcnow()
-            result.save()
-            return result
-        except Exception as e:
-            logger.error(f"Error saving InferenceResult: {e}", exc_info=True)
-            raise APIException("Failed to save inference result.")
+        result.model_name  = validated_data['model_name']
+        result.predictions = validated_data['predictions']
+        result.top_finding = validated_data['top_finding']
+        result.confidence  = validated_data['confidence']
+        result.analyzed_at = datetime.datetime.utcnow()
+        result.save()
+        return result

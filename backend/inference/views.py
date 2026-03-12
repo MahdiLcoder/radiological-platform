@@ -22,10 +22,26 @@ from .serializers import InferenceResultSerializer
 
 logger = logging.getLogger(__name__)
 
-MODEL_PATH = os.path.join(os.path.dirname(__file__), 'models', 'brain_tumor_densenet121.keras')
-MODEL = keras.models.load_model(MODEL_PATH)
+MODELS_DIR = os.path.join(os.path.dirname(__file__), 'models')
 
-CLASS_LABELS = ["glioma", "meningioma", "notumor", "pituitary"]
+# Load models
+MODELS = {
+    "MRI": keras.models.load_model(os.path.join(MODELS_DIR, 'brain_tumor_densenet121.keras')),
+    "X-Ray": keras.models.load_model(os.path.join(MODELS_DIR, 'covid19_densenet121.keras')),
+    "CT": keras.models.load_model(os.path.join(MODELS_DIR, 'lung_cancer_densenet121.keras'))
+}
+
+MODEL_NAMES = {
+    "MRI": "brain_tumor_densenet121",
+    "X-Ray": "covid19_densenet121",
+    "CT": "lung_cancer_densenet121"
+}
+
+CLASS_LABELS = {
+    "MRI": ["glioma", "meningioma", "notumor", "pituitary"],
+    "X-Ray": ["COVID", "Lung_Opacity", "Normal", "Viral Pneumonia"],
+    "CT": ["Bengin cases", "Malignant cases", "Normal cases"]
+}
 
 
 def prepare_image(url):
@@ -46,27 +62,32 @@ class RunInferenceView(APIView):
             if not image:
                 raise NotFound("Image not found.")
 
-            if image.modality != "MRI":
+            modality = image.modality
+            if modality not in MODELS:
                 return Response(
-                    {"detail": f"No model available for modality: {image.modality}"},
+                    {"detail": f"No model available for modality: {modality}"},
                     status=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 )
 
+            model = MODELS[modality]
+            labels = CLASS_LABELS[modality]
+            model_name = MODEL_NAMES[modality]
+
             img_array   = prepare_image(image.file_path)
-            predictions = MODEL.predict(img_array, verbose=0)[0]
+            predictions = model.predict(img_array, verbose=0)[0]
 
             top_index      = int(np.argmax(predictions))
-            top_label      = CLASS_LABELS[top_index]
+            top_label      = labels[top_index]
             top_confidence = float(predictions[top_index])
 
             predictions_dict = {
-                CLASS_LABELS[i]: float(predictions[i])
-                for i in range(len(CLASS_LABELS))
+                labels[i]: float(predictions[i])
+                for i in range(len(labels))
             }
 
             serializer = InferenceResultSerializer(data={
                 "image_id":    str(image_id),
-                "model_name":  "brain_tumor_densenet121",
+                "model_name":  model_name,
                 "predictions": predictions_dict,
                 "top_finding": top_label,
                 "confidence":  top_confidence,
