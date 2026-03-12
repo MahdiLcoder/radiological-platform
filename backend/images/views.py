@@ -12,9 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class ImageUploadView(APIView):
-    """
-    POST /api/images/upload/ -> Radiologist only
-    """
+    
     permission_classes = [IsAuthenticated, IsRadiologist]
 
     def post(self, request):
@@ -25,9 +23,7 @@ class ImageUploadView(APIView):
 
 
 class ImageListView(APIView):
-    """
-    GET /api/images/ -> Radiologist or Admin
-    """
+
     permission_classes = [IsAuthenticated, (IsRadiologist | IsAdmin)]
 
     def get(self, request):
@@ -41,10 +37,7 @@ class ImageListView(APIView):
 
 
 class ImageDetailView(APIView):
-    """
-    GET    /api/images/<id>/ -> Radiologist, Doctor, or Admin (covered by IsDoctor)
-    DELETE /api/images/<id>/ -> Admin only
-    """
+
     def get_permissions(self):
         if self.request.method == 'GET':
             return [IsAuthenticated(), IsDoctor()]

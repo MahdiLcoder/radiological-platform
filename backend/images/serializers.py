@@ -13,7 +13,7 @@ class RadiologyImageSerializer(serializers.Serializer):
     patient_id = serializers.CharField()
     modality = serializers.ChoiceField(choices=MODALITY_CHOICES)
     file_path = serializers.CharField(read_only=True)
-    uploaded_by = serializers.IntegerField(read_only=True)
+    uploaded_by = serializers.DictField(read_only=True)
     uploaded_at = serializers.DateTimeField(read_only=True)
     status = serializers.ChoiceField(choices=['pending', 'analyzed', 'validated'], read_only=True)
 
@@ -35,10 +35,14 @@ class RadiologyImageSerializer(serializers.Serializer):
                 resource_type='image'
             )
             image_url = upload_result["secure_url"]
+
+            from accounts.models import MongoUser
+            mongo_user = MongoUser.objects(django_id=self.context["request"].user.id).first()
+
             image_doc = RadiologyImage(
                 **validated_data,
                 file_path=image_url,
-                uploaded_by=self.context["request"].user.id
+                uploaded_by=mongo_user
             )
             image_doc.save()
             return image_doc

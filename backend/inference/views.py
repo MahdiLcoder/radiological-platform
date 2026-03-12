@@ -57,7 +57,6 @@ class RunInferenceView(APIView):
 
             model = get_model(modality)
             labels = CLASS_LABELS[modality]
-            # Removing the .keras extension to keep the model name clean as before
             model_name = MODEL_FILES[modality].replace('.keras', '')
 
             img_array   = prepare_image(image.file_path)
@@ -72,6 +71,9 @@ class RunInferenceView(APIView):
                 for i in range(len(labels))
             }
 
+            from accounts.models import MongoUser
+            mongo_user = MongoUser.objects(django_id=request.user.id).first()
+
             serializer = InferenceResultSerializer(data={
                 "image_id":    str(image_id),
                 "model_name":  model_name,
@@ -80,7 +82,8 @@ class RunInferenceView(APIView):
                 "confidence":  top_confidence,
             })
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            
+            inference = serializer.save(analyzed_by=mongo_user)
 
             image.status = "analyzed"
             image.save()

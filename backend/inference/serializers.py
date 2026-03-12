@@ -10,9 +10,7 @@ class InferenceResultSerializer(serializers.Serializer):
     image_id    = serializers.CharField()
     model_name  = serializers.CharField()
     predictions = serializers.DictField()
-    top_finding = serializers.CharField()
-    confidence  = serializers.FloatField()
-    analyzed_at = serializers.DateTimeField(read_only=True)
+    analyzed_by = serializers.DictField(read_only=True)
 
     def create(self, validated_data):
         image_id = ObjectId(validated_data['image_id'])
@@ -26,5 +24,9 @@ class InferenceResultSerializer(serializers.Serializer):
         result.top_finding = validated_data['top_finding']
         result.confidence  = validated_data['confidence']
         result.analyzed_at = datetime.datetime.utcnow()
+        
+        if 'analyzed_by' in validated_data:
+             result.analyzed_by = validated_data['analyzed_by']
+
         result.save()
         return result
