@@ -5,7 +5,6 @@ import logging
 import requests
 import numpy as np
 from PIL import Image
-from tensorflow import keras
 from tensorflow.keras.applications.densenet import preprocess_input
 from bson import ObjectId
 
@@ -22,20 +21,7 @@ from .serializers import InferenceResultSerializer
 
 logger = logging.getLogger(__name__)
 
-MODELS_DIR = os.path.join(os.path.dirname(__file__), 'models')
-
-# Load models
-MODELS = {
-    "MRI": keras.models.load_model(os.path.join(MODELS_DIR, 'brain_tumor_densenet121.keras')),
-    "X-Ray": keras.models.load_model(os.path.join(MODELS_DIR, 'covid19_densenet121.keras')),
-    "CT": keras.models.load_model(os.path.join(MODELS_DIR, 'lung_cancer_densenet121.keras'))
-}
-
-MODEL_NAMES = {
-    "MRI": "brain_tumor_densenet121",
-    "X-Ray": "covid19_densenet121",
-    "CT": "lung_cancer_densenet121"
-}
+from .model_loader import get_model, MODEL_FILES
 
 CLASS_LABELS = {
     "MRI": ["glioma", "meningioma", "notumor", "pituitary"],
@@ -63,15 +49,16 @@ class RunInferenceView(APIView):
                 raise NotFound("Image not found.")
 
             modality = image.modality
-            if modality not in MODELS:
+            if modality not in MODEL_FILES:
                 return Response(
                     {"detail": f"No model available for modality: {modality}"},
                     status=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 )
 
-            model = MODELS[modality]
+            model = get_model(modality)
             labels = CLASS_LABELS[modality]
-            model_name = MODEL_NAMES[modality]
+            # Removing the .keras extension to keep the model name clean as before
+            model_name = MODEL_FILES[modality].replace('.keras', '')
 
             img_array   = prepare_image(image.file_path)
             predictions = model.predict(img_array, verbose=0)[0]
