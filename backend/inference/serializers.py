@@ -3,6 +3,8 @@ from bson import ObjectId
 from rest_framework import serializers
 from rest_framework.exceptions import APIException
 from .models import AiPredictions
+from accounts.models import MongoUser
+
 
 
 class AiPredictionsSerializer(serializers.Serializer):
@@ -18,7 +20,6 @@ class AiPredictionsSerializer(serializers.Serializer):
     def create(self, validated_data):
         image_id = ObjectId(validated_data['image_id'])
 
-        from accounts.models import MongoUser
         mongo_user = MongoUser.objects(django_id=self.context["request"].user.id).first()
 
         result = AiPredictions.objects(image_id=image_id).first()
