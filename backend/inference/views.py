@@ -93,7 +93,7 @@ class RunAiPredictionView(APIView):
         except NotFound:
             raise
         except Exception as e:
-            logger.error(f"Error in RunInferenceView: {e}", exc_info=True)
+            logger.error(f"Error in RunAiPredictionView: {e}", exc_info=True)
             raise APIException("Something went wrong.")
 
 
