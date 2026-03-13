@@ -174,3 +174,4 @@ dist/
 .DS_Store
 Thumbs.db
 venv/
+.env
