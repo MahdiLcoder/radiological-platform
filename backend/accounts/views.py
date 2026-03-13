@@ -7,6 +7,11 @@ from rest_framework.views import APIView
 from .permissions import IsAdmin
 from .serializers import RegisterSerializer, UserSerializer
 
+from images.models import RadiologyImage
+from inference.models import InferenceResult
+from diagnosis.models import Diagnosis
+from reports.models import Report
+
 User = get_user_model()
 
 
@@ -124,11 +129,7 @@ class SystemStatsView(APIView):
         )
         by_role = {item['role']: item['count'] for item in role_counts}
 
-        # Import app models lazily to avoid circular imports
-        from images.models import RadiologyImage
-        from inference.models import InferenceResult
-        from diagnosis.models import Diagnosis
-        from reports.models import Report
+      
 
         stats = {
             "users": {

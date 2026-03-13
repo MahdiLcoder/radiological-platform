@@ -9,6 +9,8 @@ from rest_framework.exceptions import NotFound, APIException
 from accounts.permissions import IsRadiologist, IsDoctor, IsAdmin
 from .models import Report
 from .serializers import ReportSerializer
+from diagnosis.models import Diagnosis
+
 
 logger = logging.getLogger(__name__)
 
@@ -20,18 +22,14 @@ class GenerateReportView(APIView):
         serializer = ReportSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
 
-        # Check if report already existed before saving
-        from diagnosis.models import Diagnosis
         diag_id = serializer.validated_data.get('diagnosis_id')
         diagnosis = Diagnosis.objects(id=diag_id).first()
         already_exists = Report.objects(diagnosis=diagnosis).first() if diagnosis else None
 
         report = serializer.save()
 
-        # ✅ Fix 3: 200 if already existed, 201 if newly created
         response_status = status.HTTP_200_OK if already_exists else status.HTTP_201_CREATED
 
-        # ✅ Fix 4: pass context to serializer
         return Response(
             ReportSerializer(report, context={'request': request}).data,
             status=response_status
@@ -44,7 +42,6 @@ class ReportListView(APIView):
     def get(self, request):
         try:
             reports = Report.objects.all()
-            # ✅ Fix 4: pass context
             serializer = ReportSerializer(reports, many=True, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -60,7 +57,6 @@ class ReportDetailView(APIView):
             report = Report.objects(id=pk).first()
             if not report:
                 raise NotFound("Report not found")
-            # ✅ Fix 4: pass context
             serializer = ReportSerializer(report, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         except NotFound:
