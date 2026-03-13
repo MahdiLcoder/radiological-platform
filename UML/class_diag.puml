@@ -69,7 +69,7 @@ class RadiologyImage {
     + updateStatus(status: Enum) : void
 }
 
-class InferenceResult {
+class AiPredictions {
     + id           : ObjectId
     + image_id     : ObjectId
     + model_name   : String
@@ -109,9 +109,9 @@ class Report {
 
 ' ── Relationships ──
 User           "1" -- "0..*" RadiologyImage   : uploads >
-RadiologyImage "1" -- "0..1" InferenceResult  : produces >
+RadiologyImage "1" -- "0..1" AiPredictions  : produces >
 RadiologyImage "1" -- "0..1" Diagnosis        : has >
-InferenceResult "1" -- "1"   Diagnosis        : used in >
+AiPredictions "1" -- "1"   Diagnosis        : used in >
 Diagnosis      "1" -- "0..1" Report           : generates >
 User           "1" -- "0..*" Diagnosis        : validates >
 User           "1" -- "0..*" Report           : generates >

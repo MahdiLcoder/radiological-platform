@@ -8,7 +8,7 @@ from .permissions import IsAdmin
 from .serializers import RegisterSerializer, UserSerializer
 
 from images.models import RadiologyImage
-from inference.models import InferenceResult
+from inference.models import AiPredictions
 from diagnosis.models import Diagnosis
 from reports.models import Report
 
@@ -146,7 +146,7 @@ class SystemStatsView(APIView):
                 "total": RadiologyImage.objects.count(),
             },
             "inferences": {
-                "total": InferenceResult.objects.count(),
+                "total": AiPredictions.objects.count(),
             },
             "diagnoses": {
                 "total": Diagnosis.objects.count(),
