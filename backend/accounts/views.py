@@ -27,7 +27,7 @@ class MeView(generics.RetrieveAPIView):
 
 class UserListView(generics.ListAPIView):
 
-    serializer_class = AdminUserSerializer
+    serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated, IsAdmin]
 
     def get_queryset(self):
