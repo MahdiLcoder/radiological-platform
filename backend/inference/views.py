@@ -16,8 +16,8 @@ from rest_framework.exceptions import NotFound, APIException
 
 from accounts.permissions import IsRadiologist, IsDoctor
 from images.models import RadiologyImage
-from .models import InferenceResult
-from .serializers import InferenceResultSerializer
+from .models import AiPredictions
+from .serializers import AiPredictionsSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +74,7 @@ class RunInferenceView(APIView):
             from accounts.models import MongoUser
             mongo_user = MongoUser.objects(django_id=request.user.id).first()
 
-            serializer = InferenceResultSerializer(data={
+            serializer = AiPredictionsSerializer(data={
                 "image_id":    str(image_id),
                 "model_name":  model_name,
                 "predictions": predictions_dict,
@@ -97,19 +97,19 @@ class RunInferenceView(APIView):
             raise APIException("Something went wrong.")
 
 
-class InferenceResultView(APIView):
+class AiPredictionsView(APIView):
     permission_classes = [IsAuthenticated, IsDoctor]
 
     def get(self, request, image_id):
         try:
-            result = InferenceResult.objects(image_id=ObjectId(image_id)).first()
+            result = AiPredictions.objects(image_id=ObjectId(image_id)).first()
             if not result:
                 raise NotFound("No inference result found for this image.")
 
-            return Response(InferenceResultSerializer(result).data, status=status.HTTP_200_OK)
+            return Response(AiPredictionsSerializer(result).data, status=status.HTTP_200_OK)
 
         except NotFound:
             raise
         except Exception as e:
-            logger.error(f"Error in InferenceResultView: {e}", exc_info=True)
+            logger.error(f"Error in AiPredictionsView: {e}", exc_info=True)
             raise APIException("Something went wrong.")

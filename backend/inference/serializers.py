@@ -2,12 +2,12 @@ import datetime
 from bson import ObjectId
 from rest_framework import serializers
 from rest_framework.exceptions import APIException
-from .models import InferenceResult
+from .models import AiPredictions
 
 
 from accounts.serializers import MongoUserSerializer
 
-class InferenceResultSerializer(serializers.Serializer):
+class AiPredictionsSerializer(serializers.Serializer):
     id          = serializers.CharField(read_only=True)
     image_id    = serializers.CharField()
     model_name  = serializers.CharField()
@@ -17,9 +17,9 @@ class InferenceResultSerializer(serializers.Serializer):
     def create(self, validated_data):
         image_id = ObjectId(validated_data['image_id'])
 
-        result = InferenceResult.objects(image_id=image_id).first()
+        result = AiPredictions.objects(image_id=image_id).first()
         if result is None:
-            result = InferenceResult(image_id=image_id)
+            result = AiPredictions(image_id=image_id)
 
         result.model_name  = validated_data['model_name']
         result.predictions = validated_data['predictions']
