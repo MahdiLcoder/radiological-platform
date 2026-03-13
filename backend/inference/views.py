@@ -39,7 +39,7 @@ def prepare_image(url):
     return arr
 
 
-class RunInferenceView(APIView):
+class RunAiPredictionView(APIView):
     permission_classes = [IsAuthenticated, IsRadiologist]
 
     def post(self, request, image_id):

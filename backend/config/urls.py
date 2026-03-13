@@ -6,4 +6,5 @@ urlpatterns = [
     path('api/auth/', include('accounts.urls')),
     path('api/images/', include('images.urls')),
     path('api/inference/', include('inference.urls')),
+    path('api/diagnosis/', include('diagnosis.urls')),
 ]
