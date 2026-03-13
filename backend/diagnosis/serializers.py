@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from rest_framework.exceptions import APIException
 from .models import Diagnosis
+from images.models import RadiologyImage
+from inference.models import AiPredictions
+from accounts.models import MongoUser
 
 
 class DiagnosisSerializer(serializers.Serializer):
@@ -16,9 +19,7 @@ class DiagnosisSerializer(serializers.Serializer):
     validated_at   = serializers.DateTimeField(read_only=True)
 
     def create(self, validated_data):
-        from images.models import RadiologyImage
-        from inference.models import AiPredictions
-        from accounts.models import MongoUser
+        
 
         img_id = validated_data.pop('image')
         img = RadiologyImage.objects(id=img_id).first()
