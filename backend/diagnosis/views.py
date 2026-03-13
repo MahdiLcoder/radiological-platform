@@ -1,3 +1,4 @@
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,11 +9,15 @@ from bson import ObjectId
 
 from .models import Diagnosis
 from .serializers import DiagnosisSerializer
+from accounts.models import MongoUser
+from images.models import RadiologyImage
+
+
 
 
 class DiagnosisCreateView(APIView):
 
-    permission_classes = [IsRadiologist]
+    permission_classes = [IsAuthenticated, IsRadiologist]
 
     def post(self, request):
 
@@ -20,7 +25,6 @@ class DiagnosisCreateView(APIView):
 
         if serializer.is_valid():
 
-            from accounts.models import MongoUser
 
             mongo_user = MongoUser.objects(
                 django_id=request.user.id
@@ -50,9 +54,9 @@ class DiagnosisRetrieveUpdateView(APIView):
     def get_permissions(self):
 
         if self.request.method == "GET":
-            return [IsDoctor()]
+            return [IsAuthenticated(), IsDoctor()]
 
-        return [IsRadiologist()]
+        return [IsAuthenticated(), IsRadiologist()]
 
     def get(self, request, pk):
 
@@ -62,7 +66,6 @@ class DiagnosisRetrieveUpdateView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        from images.models import RadiologyImage
 
         img = RadiologyImage.objects(id=pk).first()
 
