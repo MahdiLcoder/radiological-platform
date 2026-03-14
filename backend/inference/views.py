@@ -17,7 +17,6 @@ from rest_framework.exceptions import NotFound, APIException
 from accounts.permissions import IsRadiologist, IsDoctor
 from images.models import RadiologyImage
 from .models import AiPredictions
-from accounts.models import MongoUser
 from .serializers import AiPredictionsSerializer
 
 logger = logging.getLogger(__name__)
@@ -72,18 +71,16 @@ class RunAiPredictionView(APIView):
                 for i in range(len(labels))
             }
 
-            mongo_user = MongoUser.objects(django_id=request.user.id).first()
-
             serializer = AiPredictionsSerializer(data={
                 "image_id":    str(image_id),
                 "model_name":  model_name,
                 "predictions": predictions_dict,
                 "top_finding": top_label,
                 "confidence":  top_confidence,
-            })
+            }, context={"request": request})
             serializer.is_valid(raise_exception=True)
             
-            pred = serializer.save(analyzed_by=mongo_user)
+            pred = serializer.save()
 
             image.status = "analyzed"
             image.save()

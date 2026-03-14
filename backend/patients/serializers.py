@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import Patient
-from accounts.models import MongoUser
 
 
 class PatientSerializer(serializers.Serializer):
@@ -14,20 +13,29 @@ class PatientSerializer(serializers.Serializer):
     phone = serializers.CharField(required=False, allow_blank=True)
     email = serializers.EmailField(required=False, allow_blank=True)
 
-    primary_doctor = serializers.CharField(read_only=True)
+    primary_doctor = serializers.SerializerMethodField()
+    primary_doctor_id = serializers.IntegerField(read_only=True)
     created_at = serializers.DateTimeField(read_only=True)
     updated_at = serializers.DateTimeField(read_only=True)
 
     def create(self, validated_data):
         request = self.context.get('request')
         if request and request.user:
-            mongo_user = MongoUser.objects(django_id=request.user.id).first()
-            if mongo_user:
-                validated_data['primary_doctor'] = mongo_user
+            validated_data['primary_doctor_id'] = request.user.id
 
         patient = Patient(**validated_data)
         patient.save()
         return patient
+
+    def get_primary_doctor(self, obj):
+        user = obj.primary_doctor
+        if not user:
+            return None
+        return {
+            "id": user.id,
+            "email": user.email,
+            "username": user.username,
+        }
 
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():

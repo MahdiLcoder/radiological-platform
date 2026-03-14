@@ -1,15 +1,14 @@
 import datetime
 from bson import ObjectId
 from rest_framework import serializers
-from rest_framework.exceptions import APIException
 from .models import AiPredictions
-from accounts.models import MongoUser
+from images.models import RadiologyImage
 
 
 
 class AiPredictionsSerializer(serializers.Serializer):
     id          = serializers.CharField(read_only=True)
-    image   = serializers.CharField()
+    image_id   = serializers.CharField(write_only=True)
     model_name  = serializers.CharField()
     predictions = serializers.DictField()
     analyzed_by = serializers.CharField(read_only=True)
@@ -20,18 +19,20 @@ class AiPredictionsSerializer(serializers.Serializer):
     def create(self, validated_data):
         image_id = ObjectId(validated_data['image_id'])
 
-        mongo_user = MongoUser.objects(django_id=self.context["request"].user.id).first()
+        image = RadiologyImage.objects(id=image_id).first()
+        if not image:
+            raise serializers.ValidationError({"image_id": "Image not found"})
 
-        result = AiPredictions.objects(image_id=image_id).first()
+        result = AiPredictions.objects(image=image).first()
         if result is None:
-            result = AiPredictions(image_id=image_id)
+            result = AiPredictions(image=image)
 
         result.model_name  = validated_data['model_name']
         result.predictions = validated_data['predictions']
         result.top_finding = validated_data.get('top_finding')
         result.confidence  = validated_data.get('confidence')
         result.analyzed_at = datetime.datetime.utcnow()
-        result.analyzed_by = mongo_user
+        result.analyzed_by_id = self.context["request"].user.id
 
         result.save()
         return result
@@ -50,9 +51,10 @@ class AiPredictionsSerializer(serializers.Serializer):
             "top_finding": instance.top_finding,
             "confidence": instance.confidence,
             "analyzed_by": {
-                "id": str(instance.analyzed_by.id),
+                "id": instance.analyzed_by.id,
                 "email": instance.analyzed_by.email,
                 "username": instance.analyzed_by.username,
             } if instance.analyzed_by else None,
+            "analyzed_by_id": instance.analyzed_by_id,
             "analyzed_at": instance.analyzed_at.isoformat() if instance.analyzed_at else None,
         }

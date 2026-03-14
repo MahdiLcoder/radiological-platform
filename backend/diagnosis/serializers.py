@@ -3,7 +3,6 @@ from rest_framework.exceptions import APIException
 from .models import Diagnosis
 from images.models import RadiologyImage
 from inference.models import AiPredictions
-from accounts.models import MongoUser
 
 
 class DiagnosisSerializer(serializers.Serializer):
@@ -11,7 +10,7 @@ class DiagnosisSerializer(serializers.Serializer):
     id             = serializers.CharField(read_only=True)
     image          = serializers.CharField(required=True)
     ai_prediction  = serializers.CharField(required=False, allow_null=True)
-    radiologist    = serializers.CharField(read_only=True)
+    radiologist_id    = serializers.IntegerField(read_only=True)
 
     action         = serializers.ChoiceField(choices=['accepted', 'modified', 'rejected'])
     final_finding  = serializers.CharField(required=False, allow_blank=True)
@@ -33,14 +32,10 @@ class DiagnosisSerializer(serializers.Serializer):
             if not ai_pred:
                 raise serializers.ValidationError({"ai_prediction": "AI Prediction not found"})
 
-        mongo_user = MongoUser.objects(django_id=self.context["request"].user.id).first()
-        if not mongo_user:
-            raise serializers.ValidationError({"radiologist": "Radiologist not found"})
-
         diagnosis = Diagnosis(
             image=img,
             ai_prediction=ai_pred,
-            radiologist=mongo_user,
+            radiologist_id=self.context["request"].user.id,
             action=validated_data.get("action"),
             final_finding=validated_data.get("final_finding", ""),
             clinical_notes=validated_data.get("clinical_notes", "")
@@ -78,10 +73,11 @@ class DiagnosisSerializer(serializers.Serializer):
                 "confidence": instance.ai_prediction.confidence,
             } if instance.ai_prediction else None,
             "radiologist": {
-                "id": str(instance.radiologist.id),
+                "id": instance.radiologist.id,
                 "email": instance.radiologist.email,
                 "username": instance.radiologist.username,
             } if instance.radiologist else None,
+            "radiologist_id": instance.radiologist_id,
             "action": instance.action,
             "final_finding": instance.final_finding,
             "clinical_notes": instance.clinical_notes,

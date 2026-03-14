@@ -37,9 +37,7 @@ class RadiologyImageSerializer(serializers.Serializer):
             )
             image_url = upload_result["secure_url"]
 
-            from accounts.models import MongoUser
             from patients.models import Patient
-            mongo_user = MongoUser.objects(django_id=self.context["request"].user.id).first()
 
             # Find patient record
             patient = Patient.objects(patient_id=patient_id).first()
@@ -49,7 +47,7 @@ class RadiologyImageSerializer(serializers.Serializer):
             image_doc = RadiologyImage(
                 modality=validated_data['modality'],
                 file_path=image_url,
-                uploaded_by=mongo_user,
+                uploaded_by_id=self.context["request"].user.id,
                 patient=patient
             )
             image_doc.save()
@@ -67,10 +65,11 @@ class RadiologyImageSerializer(serializers.Serializer):
             "modality": instance.modality,
             "file_path": instance.file_path,
             "uploaded_by": {
-                "id": str(instance.uploaded_by.id),
+                "id": instance.uploaded_by.id,
                 "email": instance.uploaded_by.email,
                 "username": instance.uploaded_by.username,
             } if instance.uploaded_by else None,
+            "uploaded_by_id": instance.uploaded_by_id,
             "uploaded_at": instance.uploaded_at.isoformat() if instance.uploaded_at else None,
             "status": instance.status
         }

@@ -9,7 +9,6 @@ from bson import ObjectId
 
 from .models import Diagnosis
 from .serializers import DiagnosisSerializer
-from accounts.models import MongoUser
 from images.models import RadiologyImage
 
 
@@ -21,22 +20,10 @@ class DiagnosisCreateView(APIView):
 
     def post(self, request):
 
-        serializer = DiagnosisSerializer(data=request.data)
+        serializer = DiagnosisSerializer(data=request.data, context={"request": request})
 
         if serializer.is_valid():
-
-
-            mongo_user = MongoUser.objects(
-                django_id=request.user.id
-            ).first()
-
-            if not mongo_user:
-                return Response(
-                    {"error": "MongoUser sync error"},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
-            serializer.save(radiologist_id=mongo_user)
+            serializer.save()
 
             return Response(
                 serializer.data,
@@ -103,7 +90,8 @@ class DiagnosisRetrieveUpdateView(APIView):
         serializer = DiagnosisSerializer(
             diagnosis,
             data=request.data,
-            partial=True
+            partial=True,
+            context={"request": request}
         )
 
         if serializer.is_valid():

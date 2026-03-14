@@ -7,7 +7,6 @@ from rest_framework.exceptions import NotFound, APIException
 from accounts.permissions import IsDoctor, IsAdmin
 from .models import Patient
 from .serializers import PatientSerializer
-from accounts.models import MongoUser
 
 from images.models import RadiologyImage
 from diagnosis.models import Diagnosis
@@ -20,15 +19,11 @@ class PatientListCreateView(APIView):
     def get(self, request):
         """List patients managed by the current doctor"""
         try:
-            mongo_user = MongoUser.objects(django_id=request.user.id).first()
-            if not mongo_user:
-                return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-
             # Doctors can see patients they manage, admins can see all
             if request.user.role == 'admin':
                 patients = Patient.objects.all()
             else:
-                patients = Patient.objects(primary_doctor=mongo_user)
+                patients = Patient.objects(primary_doctor_id=request.user.id)
 
             serializer = PatientSerializer(patients, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -58,8 +53,7 @@ class PatientDetailView(APIView):
                 return None
 
             # Check permissions
-            mongo_user = MongoUser.objects(django_id=self.request.user.id).first()
-            if self.request.user.role == 'admin' or patient.primary_doctor == mongo_user:
+            if self.request.user.role == 'admin' or patient.primary_doctor_id == self.request.user.id:
                 return patient
             return None
         except:
