@@ -35,7 +35,7 @@ class PDFService:
         # 2. Patient Information
         elements.append(Paragraph("Patient Information", styles['SectionHeader']))
         patient_name       = report.image.patient.full_name  if report.image and report.image.patient else "N/A"
-        patient_identifier = report.image.patient.patient_id if report.image and report.image.patient else "N/A"
+        patient_identifier = str(report.image.patient.id) if report.image and report.image.patient else "N/A"
         uploaded_at        = report.image.uploaded_at.strftime('%Y-%m-%d') if report.image and report.image.uploaded_at else "N/A"
 
         patient_data = [

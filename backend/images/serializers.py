@@ -9,8 +9,7 @@ logger = logging.getLogger(__name__)
 
 class RadiologyImageSerializer(serializers.Serializer):
     id = serializers.CharField(read_only=True)
-    patient_id = serializers.CharField(write_only=True)
-    patient = serializers.CharField(read_only=True)  # Patient reference ID
+    patient = serializers.CharField(write_only=True)  # Patient reference ObjectId
     modality = serializers.ChoiceField(choices=MODALITY_CHOICES)
     file_path = serializers.CharField(read_only=True)
     uploaded_by = serializers.CharField(read_only=True)
@@ -27,7 +26,7 @@ class RadiologyImageSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         image_file = validated_data.pop('image')
-        patient_id = validated_data['patient_id']
+        patient_id = validated_data.pop('patient')
 
         try:
             upload_result = cloudinary.uploader.upload(
@@ -40,9 +39,9 @@ class RadiologyImageSerializer(serializers.Serializer):
             from patients.models import Patient
 
             # Find patient record
-            patient = Patient.objects(patient_id=patient_id).first()
+            patient = Patient.objects(id=patient_id).first()
             if not patient:
-                raise serializers.ValidationError({"patient_id": "Patient not found"})
+                raise serializers.ValidationError({"patient": "Patient not found"})
 
             image_doc = RadiologyImage(
                 modality=validated_data['modality'],
@@ -61,7 +60,6 @@ class RadiologyImageSerializer(serializers.Serializer):
             "id": str(instance.id),
             "patient": str(instance.patient.id) if instance.patient else None,
             "patient_name": instance.patient.full_name if instance.patient else None,
-            "patient_id": instance.patient.patient_id if instance.patient else None,
             "modality": instance.modality,
             "file_path": instance.file_path,
             "uploaded_by": {

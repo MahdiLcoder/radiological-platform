@@ -23,7 +23,7 @@ class PatientListCreateView(APIView):
             if request.user.role == 'admin':
                 patients = Patient.objects.all()
             else:
-                patients = Patient.objects(primary_doctor_id=request.user.id)
+                patients = Patient.objects(doctor_id=request.user.id)
 
             serializer = PatientSerializer(patients, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -53,7 +53,7 @@ class PatientDetailView(APIView):
                 return None
 
             # Check permissions
-            if self.request.user.role == 'admin' or patient.primary_doctor_id == self.request.user.id:
+            if self.request.user.role == 'admin' or patient.doctor_id == self.request.user.id:
                 return patient
             return None
         except:

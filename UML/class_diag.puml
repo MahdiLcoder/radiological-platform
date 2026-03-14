@@ -57,7 +57,7 @@ class User {
 class RadiologyImage {
     + id           : ObjectId
     + patient_name : String
-    + patient_id   : String
+    + patient      : ObjectId
     + modality     : Enum
     + file_path    : String
     + uploaded_by  : Integer

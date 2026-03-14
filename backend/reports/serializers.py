@@ -54,11 +54,11 @@ class ReportSerializer(serializers.Serializer):
         return {
             "id": str(instance.id),
             "image": {
-                "id": str(instance.image.id),
-                "patient_name": instance.image.patient.full_name if instance.image and instance.image.patient else None,
-                "patient_id": instance.image.patient.patient_id if instance.image and instance.image.patient else None,
-                "modality": instance.image.modality,
-            } if instance.image else None,
+            "id": str(instance.image.id),
+            "patient_name": instance.image.patient.full_name if instance.image and instance.image.patient else None,
+            "patient": str(instance.image.patient.id) if instance.image and instance.image.patient else None,
+            "modality": instance.image.modality,
+        } if instance.image else None,
             "diagnosis": {
                 "id": str(instance.diagnosis.id),
                 "action": instance.diagnosis.action,

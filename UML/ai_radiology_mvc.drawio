@@ -85,7 +85,7 @@
                 <mxCell id="RadiologyImage" value="RadiologyImage" style="swimlane;startSize=30;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=12;" parent="1" vertex="1">
                     <mxGeometry x="1260" y="70" width="320" height="230" as="geometry"/>
                 </mxCell>
-                <mxCell id="RadiologyImage-attrs" value="+ id : ObjectId&#10;+ patient_name : String&#10;+ patient_id : String&#10;+ modality : ImageType&#10;+ file_path : String&#10;+ uploaded_by : Integer&#10;+ uploaded_at : DateTime&#10;+ status : ImageStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;fontFamily=Courier New;" parent="1" vertex="1">
+                <mxCell id="RadiologyImage-attrs" value="+ id : ObjectId&#10;+ patient_name : String&#10;+ patient : String&#10;+ modality : ImageType&#10;+ file_path : String&#10;+ uploaded_by : Integer&#10;+ uploaded_at : DateTime&#10;+ status : ImageStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;fontFamily=Courier New;" parent="1" vertex="1">
                     <mxGeometry x="1260" y="100" width="320" height="200" as="geometry"/>
                 </mxCell>
                 <mxCell id="AiPredictions" value="AiPredictions" style="swimlane;startSize=30;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=12;" parent="1" vertex="1">

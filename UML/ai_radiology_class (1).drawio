@@ -19,7 +19,7 @@
                 <mxCell id="RadiologyImage" value="RadiologyImage" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;" parent="1" vertex="1">
                     <mxGeometry x="500" y="80" width="340" height="300" as="geometry"/>
                 </mxCell>
-                <mxCell id="RadiologyImage-attrs" value="+ id : ObjectId&#10;+ patient_name : String&#10;+ patient_id : String&#10;+ modality : ImageType&#10;+ file_path : String&#10;+ uploaded_by : Integer&#10;+ uploaded_at : DateTime&#10;+ status : ImageStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;fontFamily=Courier New;" parent="RadiologyImage" vertex="1">
+                <mxCell id="RadiologyImage-attrs" value="+ id : ObjectId&#10;+ patient_name : String&#10;+ patient : String&#10;+ modality : ImageType&#10;+ file_path : String&#10;+ uploaded_by : Integer&#10;+ uploaded_at : DateTime&#10;+ status : ImageStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;fontSize=11;fontFamily=Courier New;" parent="RadiologyImage" vertex="1">
                     <mxGeometry y="30" width="340" height="170" as="geometry"/>
                 </mxCell>
                 <mxCell id="RadiologyImage-div" value="" style="line;strokeColor=#6c8ebf;" parent="RadiologyImage" vertex="1">
