@@ -99,7 +99,7 @@ class AiPredictionsView(APIView):
 
     def get(self, request, image_id):
         try:
-            result = AiPredictions.objects(image_id=ObjectId(image_id)).first()
+            result = AiPredictions.objects(image=ObjectId(image_id)).first()
             if not result:
                 raise NotFound("No inference result found for this image.")
 

@@ -1,11 +1,14 @@
 import io
-import datetime
+import logging
 import requests
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image as ReportLabImage
 from reportlab.lib.units import inch
+
+
+logger = logging.getLogger(__name__)
 
 
 class PDFService:
@@ -31,19 +34,21 @@ class PDFService:
 
         # 2. Patient Information
         elements.append(Paragraph("Patient Information", styles['SectionHeader']))
-        patient_name = report.image.patient.full_name if report.image and report.image.patient else "N/A"
+        patient_name       = report.image.patient.full_name  if report.image and report.image.patient else "N/A"
         patient_identifier = report.image.patient.patient_id if report.image and report.image.patient else "N/A"
+        uploaded_at        = report.image.uploaded_at.strftime('%Y-%m-%d') if report.image and report.image.uploaded_at else "N/A"
+
         patient_data = [
-            ["Patient Name:", patient_name, "Patient ID:", patient_identifier],
-            ["Modality:", report.image.modality, "Uploaded At:", report.image.uploaded_at.strftime('%Y-%m-%d')]
+            ["Patient Name:", patient_name,          "Patient ID:",  patient_identifier],
+            ["Modality:",     report.image.modality, "Uploaded At:", uploaded_at],
         ]
         t_patient = Table(patient_data, colWidths=[1.2*inch, 2*inch, 1.2*inch, 2*inch])
         t_patient.setStyle(TableStyle([
-            ('FONTNAME', (0,0), (-1,-1), 'Helvetica'),
-            ('FONTNAME', (0,0), (0,-1), 'Helvetica-Bold'),
-            ('FONTNAME', (2,0), (2,-1), 'Helvetica-Bold'),
-            ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
-            ('PADDING', (0,0), (-1,-1), 6),
+            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+            ('FONTNAME', (0, 0), (0,  -1), 'Helvetica-Bold'),
+            ('FONTNAME', (2, 0), (2,  -1), 'Helvetica-Bold'),
+            ('GRID',     (0, 0), (-1, -1), 0.5, colors.grey),
+            ('PADDING',  (0, 0), (-1, -1), 6),
         ]))
         elements.append(t_patient)
         elements.append(Spacer(1, 0.25 * inch))
@@ -52,20 +57,20 @@ class PDFService:
         elements.append(Paragraph("AI Analysis Results", styles['SectionHeader']))
         ai_data = [["Analysis Status", "Not Available"]]
 
-        if report.diagnosis.ai_prediction:
+        if report.diagnosis and report.diagnosis.ai_prediction:
             ai = report.diagnosis.ai_prediction
             ai_data = [
-                ["Top Finding:", ai.top_finding],
-                ["Confidence:", f"{ai.confidence * 100:.1f}%"]
+                ["Top Finding:", ai.top_finding or "N/A"],
+                ["Confidence:",  f"{ai.confidence * 100:.1f}%" if ai.confidence is not None else "N/A"],
             ]
-            for cls_name, prob in ai.predictions.items():
+            for cls_name, prob in (ai.predictions or {}).items():
                 ai_data.append([f"Class: {cls_name}", f"{prob * 100:.1f}%"])
 
         t_ai = Table(ai_data, colWidths=[2*inch, 4.4*inch])
         t_ai.setStyle(TableStyle([
-            ('FONTNAME', (0,0), (0,-1), 'Helvetica-Bold'),
-            ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
-            ('PADDING', (0,0), (-1,-1), 6),
+            ('FONTNAME', (0, 0), (0,  -1), 'Helvetica-Bold'),
+            ('GRID',     (0, 0), (-1, -1), 0.5, colors.grey),
+            ('PADDING',  (0, 0), (-1, -1), 6),
         ]))
         elements.append(t_ai)
         elements.append(Spacer(1, 0.25 * inch))
@@ -73,16 +78,16 @@ class PDFService:
         # 4. Radiologist Validation
         elements.append(Paragraph("Radiologist Validation", styles['SectionHeader']))
         val_data = [
-            ["Final Finding:", report.diagnosis.final_finding or "N/A"],
-            ["Action Taken:", report.diagnosis.action.capitalize() if report.diagnosis.action else "N/A"],
-            ["Clinical Notes:", report.diagnosis.clinical_notes or "None provided"]
+            ["Final Finding:",  report.diagnosis.final_finding or "N/A"],
+            ["Action Taken:",   report.diagnosis.action.capitalize() if report.diagnosis.action else "N/A"],
+            ["Clinical Notes:", report.diagnosis.clinical_notes or "None provided"],
         ]
         t_val = Table(val_data, colWidths=[2*inch, 4.4*inch])
         t_val.setStyle(TableStyle([
-            ('FONTNAME', (0,0), (0,-1), 'Helvetica-Bold'),
-            ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
-            ('PADDING', (0,0), (-1,-1), 6),
-            ('VALIGN', (0,0), (-1,-1), 'TOP'),
+            ('FONTNAME', (0, 0), (0,  -1), 'Helvetica-Bold'),
+            ('GRID',     (0, 0), (-1, -1), 0.5, colors.grey),
+            ('PADDING',  (0, 0), (-1, -1), 6),
+            ('VALIGN',   (0, 0), (-1, -1), 'TOP'),
         ]))
         elements.append(t_val)
         elements.append(Spacer(1, 0.25 * inch))
@@ -90,27 +95,25 @@ class PDFService:
         # 5. Embedded X-ray image
         elements.append(Paragraph("Medical Image", styles['SectionHeader']))
         try:
-            # ✅ Fix 2: added timeout
             img_response = requests.get(report.image.file_path, timeout=10)
             if img_response.status_code == 200:
                 img_data = io.BytesIO(img_response.content)
-                img = ReportLabImage(img_data)
 
-                max_width  = 4 * inch
-                max_height = 3 * inch
-                aspect = img.imageWidth / float(img.imageHeight)
+                # ✅ Pass width/height directly to constructor — single read, forced full size
+                img = ReportLabImage(img_data, width=6 * inch, height=6 * inch)
 
-                if aspect > (max_width / max_height):
-                    img.drawWidth  = max_width
-                    img.drawHeight = max_width / aspect
-                else:
-                    img.drawHeight = max_height
-                    img.drawWidth  = max_height * aspect
-
-                elements.append(img)
+                img_table = Table([[img]], colWidths=[6.5 * inch])
+                img_table.setStyle(TableStyle([
+                    ('ALIGN',   (0, 0), (-1, -1), 'CENTER'),
+                    ('VALIGN',  (0, 0), (-1, -1), 'MIDDLE'),
+                    ('PADDING', (0, 0), (-1, -1), 0),
+                ]))
+                elements.append(img_table)
             else:
-                elements.append(Paragraph(f"Image could not be loaded. Source: {report.image.file_path}", styles['Normal']))
-        except Exception:
+                logger.warning(f"Could not fetch image for report {report.id}: HTTP {img_response.status_code}")
+                elements.append(Paragraph(f"Image could not be loaded (HTTP {img_response.status_code}).", styles['Normal']))
+        except Exception as e:
+            logger.warning(f"Exception while loading image for report {report.id}: {e}")
             elements.append(Paragraph("Image could not be loaded.", styles['Normal']))
 
         elements.append(Spacer(1, 0.5 * inch))
@@ -118,14 +121,14 @@ class PDFService:
         # 6. Signature & Timestamp
         elements.append(Spacer(1, 0.5 * inch))
         sig_data = [
-            ["Radiologist ID:", str(report.diagnosis.radiologist.id) if report.diagnosis.radiologist else "N/A"],
-            ["Validated At:", report.diagnosis.validated_at.strftime('%Y-%m-%d %H:%M:%S') if report.diagnosis.validated_at else "N/A"]
+            ["Radiologist ID:", str(report.diagnosis.radiologist.id) if report.diagnosis and report.diagnosis.radiologist else "N/A"],
+            ["Validated At:",   report.diagnosis.validated_at.strftime('%Y-%m-%d %H:%M:%S') if report.diagnosis and report.diagnosis.validated_at else "N/A"],
         ]
         t_sig = Table(sig_data, colWidths=[2*inch, 4.4*inch])
         t_sig.setStyle(TableStyle([
-            ('FONTNAME', (0,0), (0,-1), 'Helvetica-Bold'),
-            ('LINEABOVE', (0,0), (-1,0), 1, colors.black),
-            ('PADDING', (0,0), (-1,-1), 6),
+            ('FONTNAME',  (0, 0), (0,  -1), 'Helvetica-Bold'),
+            ('LINEABOVE', (0, 0), (-1,  0), 1, colors.black),
+            ('PADDING',   (0, 0), (-1, -1), 6),
         ]))
         elements.append(t_sig)
 

@@ -62,7 +62,7 @@ class DiagnosisRetrieveUpdateView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        diagnoses = Diagnosis.objects(image_id=img)
+        diagnoses = Diagnosis.objects(image=img)
 
         serializer = DiagnosisSerializer(diagnoses, many=True)
 

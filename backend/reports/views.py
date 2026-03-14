@@ -1,5 +1,4 @@
 import logging
-import requests
 from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.views import APIView
@@ -24,12 +23,12 @@ class GenerateReportView(APIView):
 
         diag_id = serializer.validated_data.get('diagnosis_id')
         diagnosis = Diagnosis.objects(id=diag_id).first()
-        already_exists = Report.objects(diagnosis=diagnosis).first() if diagnosis else None
+        existing = Report.objects(diagnosis=diagnosis).first() if diagnosis else None
+        already_exists = existing and existing.pdf_data
 
         report = serializer.save()
 
         response_status = status.HTTP_200_OK if already_exists else status.HTTP_201_CREATED
-
         return Response(
             ReportSerializer(report, context={'request': request}).data,
             status=response_status
@@ -62,7 +61,7 @@ class ReportDetailView(APIView):
         except NotFound:
             raise
         except Exception as e:
-            logger.error(f"Error fetching report: {e}", exc_info=True)
+            logger.error(f"Error fetching report {pk}: {e}", exc_info=True)
             raise APIException("Failed to fetch report")
 
 
@@ -75,25 +74,18 @@ class ReportDownloadView(APIView):
             if not report:
                 raise NotFound("Report not found")
 
-            if not report.pdf_path:
+            if not report.pdf_data:
                 return Response(
                     {"error": "PDF not generated for this report"},
                     status=status.HTTP_404_NOT_FOUND
                 )
 
-            pdf_resp = requests.get(report.pdf_path, timeout=10)
-            if pdf_resp.status_code == 200:
-                response = HttpResponse(pdf_resp.content, content_type='application/pdf')
-                response['Content-Disposition'] = f'attachment; filename="report_{pk}.pdf"'
-                return response
-            else:
-                return Response(
-                    {"error": "Failed to download PDF from storage"},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
-                )
+            response = HttpResponse(bytes(report.pdf_data), content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="report_{pk}.pdf"'
+            return response
 
         except NotFound:
             raise
         except Exception as e:
-            logger.error(f"Error downloading report: {e}", exc_info=True)
+            logger.error(f"Error downloading report {pk}: {e}", exc_info=True)
             raise APIException("Failed to download report")

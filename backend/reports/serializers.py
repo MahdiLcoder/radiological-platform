@@ -1,22 +1,23 @@
+import io
+import logging
 from rest_framework import serializers
 from rest_framework.exceptions import NotFound, APIException
 from diagnosis.models import Diagnosis
 from .models import Report
 from .services import PDFService
-import cloudinary.uploader
-import io
+
+
+logger = logging.getLogger(__name__)
 
 
 class ReportSerializer(serializers.Serializer):
     id           = serializers.CharField(read_only=True)
     diagnosis_id = serializers.CharField(write_only=True)
     generated_by = serializers.IntegerField(read_only=True)
-    pdf_path     = serializers.CharField(read_only=True)
     generated_at = serializers.DateTimeField(read_only=True)
 
     def create(self, validated_data):
         diag_id = validated_data.get('diagnosis_id')
-
         request = self.context.get('request')
         user_id = request.user.id if request else None
 
@@ -24,33 +25,29 @@ class ReportSerializer(serializers.Serializer):
         if not diagnosis:
             raise NotFound("Diagnosis not found")
 
+        # Only return existing report if it already has a valid PDF
         existing = Report.objects(diagnosis=diagnosis).first()
-        if existing:
+        if existing and existing.pdf_data:
             return existing
 
-        report = Report(
+        # Reuse broken record or create a new one
+        report = existing or Report(
             image=diagnosis.image,
             diagnosis=diagnosis,
             generated_by=user_id
         )
 
-        pdf_bytes = PDFService.generate_report_pdf(report)
-
-        pdf_file = io.BytesIO(pdf_bytes)
-        pdf_file.name = f"report_{diagnosis.id}.pdf"
+        # Save first so report.id is valid before PDF generation
+        report.save()
 
         try:
-            upload_result = cloudinary.uploader.upload(
-                pdf_file,
-                resource_type="raw",
-                folder="radiology_reports",
-                public_id=f"report_{diagnosis.id}"
-            )
-            report.pdf_path = upload_result.get('secure_url')
-        except Exception:
-            raise APIException("Failed to upload PDF report")
+            pdf_bytes = PDFService.generate_report_pdf(report)
+            report.pdf_data = pdf_bytes
+            report.save()
+        except Exception as e:
+            logger.error(f"PDF generation failed for report {report.id}: {e}", exc_info=True)
+            raise APIException("Failed to generate PDF report")
 
-        report.save()
         return report
 
     def to_representation(self, instance):
@@ -69,6 +66,5 @@ class ReportSerializer(serializers.Serializer):
                 "clinical_notes": instance.diagnosis.clinical_notes,
             } if instance.diagnosis else None,
             "generated_by": instance.generated_by,
-            "pdf_path": instance.pdf_path,
             "generated_at": instance.generated_at.isoformat() if instance.generated_at else None,
         }
