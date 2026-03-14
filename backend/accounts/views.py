@@ -49,7 +49,7 @@ class UserListView(generics.ListAPIView):
         return qs
 
 
-class ChangeRoleView(APIView):
+class UpdateUserView(APIView):
 
     permission_classes = [permissions.IsAuthenticated, IsAdmin]
 
@@ -63,59 +63,40 @@ class ChangeRoleView(APIView):
             )
 
         new_role = request.data.get('role')
-        valid_roles = [r for r, _ in User.role.field.choices]
-        if not new_role or new_role not in valid_roles:
-            return Response(
-                {"detail": f"Invalid role. Choose from: {valid_roles}"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        if new_role is not None:
+            valid_roles = [r for r, _ in User.role.field.choices]
+            if new_role not in valid_roles:
+                return Response(
+                    {"detail": f"Invalid role. Choose from: {valid_roles}"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            user.role = new_role
 
-        user.role = new_role
+        is_active = request.data.get('is_active')
+        if is_active is not None:
+            if isinstance(is_active, str):
+                is_active = is_active.lower() == 'true'
+            if not isinstance(is_active, bool):
+                return Response(
+                    {"detail": "is_active must be a boolean."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if not is_active and user == request.user:
+                return Response(
+                    {"detail": "You cannot deactivate your own account."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            user.is_active = is_active
+
         user.save()
 
         return Response(
             {
-                "detail": f"Role updated to '{user.role}'.",
+                "detail": "User updated successfully.",
                 "user": UserSerializer(user).data,
             },
             status=status.HTTP_200_OK,
         )
-
-
-class DeactivateUserView(APIView):
-
-    permission_classes = [permissions.IsAuthenticated, IsAdmin]
-
-    def post(self, request, pk):
-        try:
-            user = User.objects.get(pk=pk)
-        except User.DoesNotExist:
-            return Response(
-                {"detail": "User not found."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        if user == request.user:
-            return Response(
-                {"detail": "You cannot deactivate your own account."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if not user.is_active:
-            return Response(
-                {"detail": "User is already deactivated."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        user.is_active = False
-        user.save()
-
-        return Response(
-            {"detail": f"User '{user.username}' has been deactivated."},
-            status=status.HTTP_200_OK,
-        )
-
-
 class SystemStatsView(APIView):
 
     permission_classes = [permissions.IsAuthenticated, IsAdmin]
