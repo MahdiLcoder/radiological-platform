@@ -42,8 +42,11 @@ class AiPredictionsSerializer(serializers.Serializer):
             "id": str(instance.id),
             "image": {
             "id": str(instance.image.id),
-            "patient_name": instance.image.patient.full_name if instance.image and instance.image.patient else None,
-            "patient": str(instance.image.patient.id) if instance.image and instance.image.patient else None,
+            "patient": {
+                "id": str(instance.image.patient.id),
+                "first_name": instance.image.patient.first_name,
+                "last_name": instance.image.patient.last_name,
+            } if instance.image and instance.image.patient else None,
             "modality": instance.image.modality,
         } if instance.image else None,
             "model_name": instance.model_name,

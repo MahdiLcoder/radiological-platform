@@ -58,8 +58,11 @@ class RadiologyImageSerializer(serializers.Serializer):
     def to_representation(self, instance):
         return {
             "id": str(instance.id),
-            "patient": str(instance.patient.id) if instance.patient else None,
-            "patient_name": instance.patient.full_name if instance.patient else None,
+            "patient":{
+                "id": str(instance.patient.id),
+                "first_name": instance.patient.first_name,
+                "last_name": instance.patient.last_name,
+            }if instance.patient else None,
             "modality": instance.modality,
             "file_path": instance.file_path,
             "uploaded_by": {
