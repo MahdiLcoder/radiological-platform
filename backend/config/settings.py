@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'inference',
     'diagnosis',
     'reports',
+    'patients',
 ]
 
 MIDDLEWARE = [

@@ -9,8 +9,8 @@ logger = logging.getLogger(__name__)
 
 class RadiologyImageSerializer(serializers.Serializer):
     id = serializers.CharField(read_only=True)
-    patient_name = serializers.CharField()
-    patient_id = serializers.CharField()
+    patient_id = serializers.CharField(write_only=True)
+    patient = serializers.CharField(read_only=True)  # Patient reference ID
     modality = serializers.ChoiceField(choices=MODALITY_CHOICES)
     file_path = serializers.CharField(read_only=True)
     uploaded_by = serializers.CharField(read_only=True)
@@ -38,12 +38,19 @@ class RadiologyImageSerializer(serializers.Serializer):
             image_url = upload_result["secure_url"]
 
             from accounts.models import MongoUser
+            from patients.models import Patient
             mongo_user = MongoUser.objects(django_id=self.context["request"].user.id).first()
 
+            # Find patient record
+            patient = Patient.objects(patient_id=patient_id).first()
+            if not patient:
+                raise serializers.ValidationError({"patient_id": "Patient not found"})
+
             image_doc = RadiologyImage(
-                **validated_data,
+                modality=validated_data['modality'],
                 file_path=image_url,
-                uploaded_by=mongo_user
+                uploaded_by=mongo_user,
+                patient=patient
             )
             image_doc.save()
             return image_doc
@@ -54,8 +61,9 @@ class RadiologyImageSerializer(serializers.Serializer):
     def to_representation(self, instance):
         return {
             "id": str(instance.id),
-            "patient_name": instance.patient_name,
-            "patient_id": instance.patient_id,
+            "patient": str(instance.patient.id) if instance.patient else None,
+            "patient_name": instance.patient.full_name if instance.patient else None,
+            "patient_id": instance.patient.patient_id if instance.patient else None,
             "modality": instance.modality,
             "file_path": instance.file_path,
             "uploaded_by": {
