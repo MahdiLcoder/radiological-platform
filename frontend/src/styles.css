@@ -1,3 +1,11 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary: #2b8cee;
+  --color-background-light: #f6f7f8;
+  --color-background-dark: #101922;
+
+  --font-family-display: "Inter", sans-serif;
+}
