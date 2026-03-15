@@ -58,6 +58,5 @@ class AiPredictionsSerializer(serializers.Serializer):
                 "email": instance.analyzed_by.email,
                 "username": instance.analyzed_by.username,
             } if instance.analyzed_by else None,
-            "analyzed_by_id": instance.analyzed_by_id,
             "analyzed_at": instance.analyzed_at.isoformat() if instance.analyzed_at else None,
         }
