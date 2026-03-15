@@ -36,6 +36,15 @@ export class Auth {
      }))
   }
 
+  getProfile() {
+    const accessToken = localStorage.getItem('access_token');
+    return this.http.get(`${this.apiUrl}/me/`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+  }
+
   logout() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
