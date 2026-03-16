@@ -4,6 +4,8 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from accounts.models import AdminProfile, DoctorProfile, RadiologistProfile, UserRole
+
 from .permissions import IsAdmin
 from .serializers import RegisterSerializer, UserSerializer
 
@@ -55,7 +57,7 @@ class UserDetailView(APIView):
             return User.objects.get(pk=pk)
         except User.DoesNotExist:
             return None
-
+        
     def patch(self, request, pk):
         user = self.get_user(pk)
         if not user:
@@ -71,23 +73,26 @@ class UserDetailView(APIView):
                 )
             user.role = new_role
 
-        is_active = request.data.get('is_active')
-        if is_active is not None:
-            if isinstance(is_active, str):
-                is_active = is_active.lower() == 'true'
-            if not isinstance(is_active, bool):
-                return Response(
-                    {"detail": "is_active must be a boolean."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            if not is_active and user == request.user:
-                return Response(
-                    {"detail": "You cannot deactivate your own account."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            user.is_active = is_active
-
         user.save()
+
+        if user.role == UserRole.ADMIN:
+            allowed = ['department']
+            update_data = {f'set__{k}': v for k, v in request.data.items() if k in allowed}
+            if update_data:
+                AdminProfile.objects(user_id=user.id).update_one(**update_data)
+
+        elif user.role == UserRole.RADIOLOGIST:
+            allowed = ['medical_license_number', 'years_of_experience']
+            update_data = {f'set__{k}': v for k, v in request.data.items() if k in allowed}
+            if update_data:
+                RadiologistProfile.objects(user_id=user.id).update_one(**update_data)
+
+        elif user.role == UserRole.DOCTOR:
+            allowed = ['specialty', 'medical_license_number', 'clinic']
+            update_data = {f'set__{k}': v for k, v in request.data.items() if k in allowed}
+            if update_data:
+                DoctorProfile.objects(user_id=user.id).update_one(**update_data)
+
         return Response(
             {"detail": "User updated successfully.", "user": UserSerializer(user).data},
             status=status.HTTP_200_OK,
