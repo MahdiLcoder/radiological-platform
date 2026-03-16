@@ -5,7 +5,7 @@ from .views import (
     MeView,
     RegisterView,
     SystemStatsView,
-    UpdateUserView,
+    UserDetailView,
     UserListView,
 )
 
@@ -16,7 +16,7 @@ urlpatterns = [
     path('me/', MeView.as_view()),
 
     path('users/', UserListView.as_view()),
-    path('users/<int:pk>/', UpdateUserView.as_view()),
+    path('users/<int:pk>/', UserDetailView.as_view()),
 
     path('stats/', SystemStatsView.as_view()),
 ]

@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.db.models import Count, Q
+from django.db.models import Count
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -29,9 +29,7 @@ class MeView(generics.RetrieveAPIView):
         return self.request.user
 
 
-
 class UserListView(generics.ListAPIView):
-
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated, IsAdmin]
 
@@ -49,18 +47,19 @@ class UserListView(generics.ListAPIView):
         return qs
 
 
-class UpdateUserView(APIView):
-
+class UserDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated, IsAdmin]
 
-    def patch(self, request, pk):
+    def get_user(self, pk):
         try:
-            user = User.objects.get(pk=pk)
+            return User.objects.get(pk=pk)
         except User.DoesNotExist:
-            return Response(
-                {"detail": "User not found."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+            return None
+
+    def patch(self, request, pk):
+        user = self.get_user(pk)
+        if not user:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
         new_role = request.data.get('role')
         if new_role is not None:
@@ -89,28 +88,31 @@ class UpdateUserView(APIView):
             user.is_active = is_active
 
         user.save()
-
         return Response(
-            {
-                "detail": "User updated successfully.",
-                "user": UserSerializer(user).data,
-            },
+            {"detail": "User updated successfully.", "user": UserSerializer(user).data},
             status=status.HTTP_200_OK,
         )
-class SystemStatsView(APIView):
 
+    def delete(self, request, pk):
+        user = self.get_user(pk)
+        if not user:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        if user == request.user:
+            return Response({"detail": "You cannot delete your own account."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.delete()
+        return Response({"detail": "User deleted successfully."}, status=status.HTTP_200_OK)
+
+
+class SystemStatsView(APIView):
     permission_classes = [permissions.IsAuthenticated, IsAdmin]
 
     def get(self, request):
         user_qs = User.objects.all()
 
-        role_counts = (
-            user_qs.values('role')
-            .annotate(count=Count('id'))
-        )
+        role_counts = user_qs.values('role').annotate(count=Count('id'))
         by_role = {item['role']: item['count'] for item in role_counts}
-
-      
 
         stats = {
             "users": {
@@ -123,18 +125,10 @@ class SystemStatsView(APIView):
                     "doctor": by_role.get('doctor', 0),
                 },
             },
-            "images": {
-                "total": RadiologyImage.objects.count(),
-            },
-            "inferences": {
-                "total": AiPredictions.objects.count(),
-            },
-            "diagnoses": {
-                "total": Diagnosis.objects.count(),
-            },
-            "reports": {
-                "total": Report.objects.count(),
-            },
+            "images": {"total": RadiologyImage.objects.count()},
+            "inferences": {"total": AiPredictions.objects.count()},
+            "diagnoses": {"total": Diagnosis.objects.count()},
+            "reports": {"total": Report.objects.count()},
         }
 
         return Response(stats, status=status.HTTP_200_OK)
