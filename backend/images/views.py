@@ -40,7 +40,7 @@ class ImageDetailView(APIView):
 
     def get_permissions(self):
         if self.request.method == 'GET':
-            return [IsAuthenticated(), IsDoctor()]
+            return [IsAuthenticated(), (IsDoctor() | IsAdmin())]
         elif self.request.method == 'DELETE':
             return [IsAuthenticated(), IsAdmin()]
         return [IsAuthenticated()]

@@ -14,7 +14,7 @@ from reports.models import Report
 
 
 class PatientListCreateView(APIView):
-    permission_classes = [IsAuthenticated, IsDoctor]
+    permission_classes = [IsAuthenticated, (IsDoctor | IsAdmin)]
 
     def get(self, request):
         """List patients managed by the current doctor"""
@@ -43,7 +43,7 @@ class PatientListCreateView(APIView):
 
 
 class PatientDetailView(APIView):
-    permission_classes = [IsAuthenticated, IsDoctor]
+    permission_classes = [IsAuthenticated, (IsDoctor | IsAdmin)]
 
     def get_object(self, pk):
         """Get patient by ID with permission check"""

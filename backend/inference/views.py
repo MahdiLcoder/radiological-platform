@@ -14,7 +14,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound, APIException
 
-from accounts.permissions import IsRadiologist, IsDoctor
+from accounts.permissions import IsRadiologist, IsDoctor, IsAdmin
 from images.models import RadiologyImage
 from .models import AiPredictions
 from .serializers import AiPredictionsSerializer
@@ -95,7 +95,7 @@ class RunAiPredictionView(APIView):
 
 
 class AiPredictionsView(APIView):
-    permission_classes = [IsAuthenticated, IsDoctor]
+    permission_classes = [IsAuthenticated, (IsDoctor | IsAdmin)]
 
     def get(self, request, image_id):
         try:

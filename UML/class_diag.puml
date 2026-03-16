@@ -53,6 +53,35 @@ class User {
     + manageProfile(new: String) : void
 }
 
+' ── Role Tables ──
+class Role {
+    + id           : Integer
+    + name         : String
+    + description  : String
+    + created_at   : DateTime
+    --
+    + updateDetails(name: String, desc: String) : void
+}
+
+class UserRole {
+    + id           : Integer
+    + user_id      : Integer
+    + role_id      : Integer
+    + assigned_at  : DateTime
+    + assigned_by  : Integer
+    --
+    + assign(user: User, role: Role) : void
+    + revoke() : void
+}
+
+' ── User Specializations ──
+class Admin {
+    + user_id     : Integer
+    + department  : String
+}
+
+Admin -|> User
+
 ' ── MongoDB Documents ──
 class RadiologyImage {
     + id           : ObjectId
@@ -108,6 +137,9 @@ class Report {
 }
 
 ' ── Relationships ──
+User           "1" -- "0..*" UserRole         : holds >
+Role           "1" -- "0..*" UserRole         : is linked via >
+Admin          "1" -- "0..*" UserRole         : assigns >
 User           "1" -- "0..*" RadiologyImage   : uploads >
 RadiologyImage "1" -- "0..1" AiPredictions  : produces >
 RadiologyImage "1" -- "0..1" Diagnosis        : has >

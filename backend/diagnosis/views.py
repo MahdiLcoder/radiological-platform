@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from accounts.permissions import IsRadiologist, IsDoctor
+from accounts.permissions import IsRadiologist, IsDoctor, IsAdmin
 
 from bson import ObjectId
 
@@ -41,7 +41,7 @@ class DiagnosisRetrieveUpdateView(APIView):
     def get_permissions(self):
 
         if self.request.method == "GET":
-            return [IsAuthenticated(), IsDoctor()]
+            return [IsAuthenticated(), (IsDoctor() | IsAdmin())]
 
         return [IsAuthenticated(), IsRadiologist()]
 
