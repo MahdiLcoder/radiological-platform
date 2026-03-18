@@ -5,7 +5,7 @@ import { tap } from 'rxjs/internal/operators/tap';
 @Injectable({
   providedIn: 'root',
 })
-export class Auth {
+export class AuthService {
   private apiUrl: string = 'http://localhost:8000/api/auth';
 
   constructor(private http: HttpClient) { }

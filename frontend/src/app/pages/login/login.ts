@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Auth } from '../services/auth';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/authService';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +16,7 @@ export class Login {
   error = '';
   loading = false;
 
-  constructor(private authService: Auth, private router: Router){}
+  constructor(private authService: AuthService, private router: Router){}
   
   onLogin(): void {
     this.error = '';
