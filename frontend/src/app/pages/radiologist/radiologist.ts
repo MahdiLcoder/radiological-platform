@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { WelcomeSection } from '../../components/welcome-section/welcome-section';
 import { StatsSummary, StatItem } from '../../components/stats-summary/stats-summary';
+import { WorklistTable, WorklistItem } from '../../components/worklist-table/worklist-table';
 
 @Component({
   selector: 'app-radiologist',
-  imports: [WelcomeSection, StatsSummary],
+  imports: [WelcomeSection, StatsSummary, WorklistTable],
   templateUrl: './radiologist.html',
   styleUrl: './radiologist.css',
 })
@@ -39,6 +40,43 @@ export class Radiologist {
       icon: 'emergency',
       iconColorClass: 'text-red-600 dark:text-red-500',
       iconBgClass: 'bg-red-100 dark:bg-red-500/10'
+    }
+  ];
+
+  tableColumns: string[] = ['Patient Details', 'Modality', 'Upload Date', 'AI Status', 'Actions'];
+
+  worklistData: WorklistItem[] = [
+    {
+      id: '1',
+      patient: { initials: 'JD', name: 'John Doe', id: 'PX-102-45A' },
+      modality: 'X-Ray',
+      uploadDate: { time: '10:30 AM', date: 'Oct 12, 2023' },
+      aiStatus: 'Pending',
+      action: { type: 'analyze', text: 'Analyze Study' }
+    },
+    {
+      id: '2',
+      patient: { initials: 'JS', name: 'Jane Smith', id: 'PX-105-99B' },
+      modality: 'CT Scan',
+      uploadDate: { time: '09:15 AM', date: 'Oct 12, 2023' },
+      aiStatus: 'Analyzed',
+      action: { type: 'view', text: 'View Results' }
+    },
+    {
+      id: '3',
+      patient: { initials: 'RB', name: 'Robert Brown', id: 'PX-108-22F', isEmergency: true },
+      modality: 'MRI',
+      uploadDate: { time: '08:00 AM', date: 'Oct 12, 2023' },
+      aiStatus: 'Validated',
+      action: { type: 'critical', text: 'Critical Review' }
+    },
+    {
+      id: '4',
+      patient: { initials: 'AM', name: 'Alice Miller', id: 'PX-112-88C' },
+      modality: 'CT Scan',
+      uploadDate: { time: '07:45 AM', date: 'Oct 12, 2023' },
+      aiStatus: 'Analyzed',
+      action: { type: 'view', text: 'View Results' }
     }
   ];
 }
