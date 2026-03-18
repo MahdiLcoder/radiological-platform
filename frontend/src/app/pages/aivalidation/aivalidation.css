@@ -1,0 +1,45 @@
+.confidence-gauge {
+  background: conic-gradient(var(--color-primary) 0% 94%, #e2e8f0 94% 100%);
+  transition: all 0.5s ease-out;
+}
+
+.confidence-gauge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 25px -5px rgba(54, 169, 226, 0.2);
+}
+
+/* Re-use animations from upload.css if needed, or define here for isolation */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-in-from-left {
+  from { transform: translateX(-1rem); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slide-in-from-right {
+  from { transform: translateX(1rem); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: fade-in;
+}
+
+.slide-in-from-left-4 {
+  animation-name: slide-in-from-left;
+}
+
+.slide-in-from-right-4 {
+  animation-name: slide-in-from-right;
+}
+
+.duration-500 {
+  animation-duration: 500ms;
+}

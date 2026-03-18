@@ -1,0 +1,166 @@
+<main class="flex flex-1 overflow-hidden h-full -m-6 min-h-[calc(100vh-80px)]">
+  <!-- Left Pane: Medical Image Viewer (STAYS DARK) -->
+  <div class="flex-1 relative bg-black flex items-center justify-center group overflow-hidden">
+    <div
+      class="absolute inset-0 opacity-80"
+      data-alt="High resolution medical chest X-ray scan"
+      style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA7tA4mw64Gpu10RoEfBStdnuvTSsKVXQbpWjNR1x-Wuu0ABsbVghoasSdcRJ-fEZTk-Hp_fNHdOvGSY4cRI0ISgxqZGioBbek4IFL1a7iAuvEXteEfpNH0XklRxnkXKLnYFlhBOTJ-RtXTyb5qCnea3yCDfcQn1-ajANfSQW6Q-pkkC0wWRgekCWD7edA7qhYIYox_ewCvL0AeKFjmbvnfYcTj2oULTZY4E9dtxt-HQ-EXcv3OEkNA_VFAUWxF-vEvUICvo6wiqF8'); background-size: contain; background-repeat: no-repeat; background-position: center;"
+    ></div>
+
+    <!-- Floating Image Tools -->
+    <div
+      class="absolute top-6 left-6 flex flex-col gap-2 bg-white/95 backdrop-blur-md p-2 rounded-xl border border-slate-200 shadow-2xl animate-in fade-in slide-in-from-left-4 duration-500"
+    >
+      <button class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all" title="Zoom In">
+        <span class="material-symbols-outlined">zoom_in</span>
+      </button>
+      <button
+        class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all"
+        title="Zoom Out"
+      >
+        <span class="material-symbols-outlined">zoom_out</span>
+      </button>
+      <div class="h-px bg-slate-200 mx-2"></div>
+      <button class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all" title="Pan">
+        <span class="material-symbols-outlined">pan_tool</span>
+      </button>
+      <button
+        class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all"
+        title="Contrast"
+      >
+        <span class="material-symbols-outlined">contrast</span>
+      </button>
+      <button
+        class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all"
+        title="Invert Colors"
+      >
+        <span class="material-symbols-outlined">invert_colors</span>
+      </button>
+      <div class="h-px bg-slate-200 mx-2"></div>
+      <button class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all" title="Reset View">
+        <span class="material-symbols-outlined">restart_alt</span>
+      </button>
+    </div>
+
+    <!-- Image Metadata Overlay -->
+    <div
+      class="absolute bottom-6 left-6 text-white/70 text-[11px] font-mono space-y-1 bg-black/60 backdrop-blur-sm p-3 rounded-lg border border-white/10"
+    >
+      <p>PATIENT: #2944-CX-82</p>
+      <p>DOB: 12-MAY-1978</p>
+      <p>ACQ: PA VIEW | 85kVp</p>
+    </div>
+  </div>
+
+  <!-- Right Pane: AI Insights -->
+  <aside
+    class="w-[450px] bg-white border-l border-slate-200 flex flex-col overflow-y-auto animate-in fade-in slide-in-from-right-4 duration-500"
+  >
+    <div class="p-6 border-b border-slate-200">
+      <div class="flex justify-between items-start mb-2">
+        <div>
+          <h1 class="text-xl font-bold text-slate-900">AI Analysis Insights</h1>
+          <div class="flex items-center gap-2 mt-1">
+            <span
+              class="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded tracking-wider"
+              >MIMIC-CXR</span
+            >
+            <span class="text-slate-500 text-xs">Model v2.4.1 (Deep-Vision-X)</span>
+          </div>
+        </div>
+        <span class="material-symbols-outlined text-primary">psychology</span>
+      </div>
+    </div>
+
+    <div class="p-6 space-y-6 flex-1">
+      <!-- Alert Card -->
+      <div class="bg-red-50 border border-red-100 p-4 rounded-xl">
+        <div class="flex items-start gap-3">
+          <div class="p-2 bg-red-100 rounded-lg text-red-600">
+            <span class="material-symbols-outlined">warning</span>
+          </div>
+          <div>
+            <p class="text-red-700 text-xs font-bold uppercase tracking-wide">
+              Target Anomaly Detected
+            </p>
+            <h3 class="text-slate-900 font-bold text-lg mt-0.5">Pneumonia</h3>
+            <p class="text-slate-600 text-sm mt-1 leading-relaxed">
+              Patchy opacity noted in the lower left lobe. Consistent with consolidative process.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confidence Score & Gauge -->
+      <div class="grid grid-cols-2 gap-4">
+        <div
+          class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col items-center justify-center text-center"
+        >
+          <div
+            class="relative size-20 rounded-full confidence-gauge flex items-center justify-center shadow-sm"
+          >
+            <div class="size-16 bg-white rounded-full flex items-center justify-center">
+              <span class="text-xl font-bold text-primary">94%</span>
+            </div>
+          </div>
+          <p class="text-slate-500 text-[10px] font-bold mt-3 uppercase tracking-wider">
+            Confidence Score
+          </p>
+        </div>
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-center">
+          <div class="flex items-center gap-2 text-slate-900 mb-1">
+            <span class="material-symbols-outlined text-sm text-primary">history_edu</span>
+            <span class="text-sm font-semibold">Prior Comparison</span>
+          </div>
+          <p class="text-slate-500 text-xs leading-normal">
+            Comparison to 24-JAN-2023 shows increased density in the region.
+          </p>
+        </div>
+      </div>
+
+      <!-- Findings Area -->
+      <div class="space-y-4">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2"
+            >Final Diagnosis</label
+          >
+          <select
+            class="w-full bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-primary focus:border-primary px-3 py-2 text-slate-900"
+          >
+            <option>Likely Bacterial Pneumonia</option>
+            <option>Viral Interstitial Pneumonia</option>
+            <option>Atelectasis</option>
+            <option>Normal Finding (False Positive)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2"
+            >Clinical Notes</label
+          >
+          <textarea
+            class="w-full h-40 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-primary focus:border-primary p-3 text-slate-900 resize-none leading-relaxed"
+            placeholder="Enter additional observations or corrections here..."
+          >
+Presence of air bronchograms confirms consolidation in the left lower lobe. No evidence of pleural effusion or cardiomegaly. Recommend follow-up in 48 hours post-antibiotic initiation.</textarea
+          >
+        </div>
+      </div>
+
+      <!-- Validation Actions -->
+      <div class="pt-4 flex gap-3">
+        <button
+          class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+        >
+          <span class="material-symbols-outlined">check_circle</span>
+          Confirm AI Findings
+        </button>
+        <button
+          class="px-4 py-3 border border-slate-200 text-slate-400 hover:bg-slate-50 rounded-lg transition-colors"
+          title="Flag for second review"
+        >
+          <span class="material-symbols-outlined">flag</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+</main>

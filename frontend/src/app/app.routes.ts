@@ -22,6 +22,11 @@ export const routes: Routes = [
         path: 'admin',
         loadComponent: () => import('./pages/admin/admin').then((m) => m.Admin),
       },
+      {
+        path: 'aivalidation',
+        loadComponent: () => import('./pages/aivalidation/aivalidation').then((m) => m.Aivalidation),
+      },
+      
       // { path: 'patients', loadComponent: () => import('./pages/patients/patients').then(m => m.Patients) },
       // { path: 'analytics', loadComponent: () => import('./pages/analytics/analytics').then(m => m.Analytics) }
     ],
