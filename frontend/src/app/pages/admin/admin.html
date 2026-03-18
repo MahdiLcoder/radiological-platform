@@ -1,0 +1,301 @@
+<div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+  <!-- Title Section -->
+  <div class="flex items-center justify-between">
+    <div class="flex flex-col gap-1">
+      <h2 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+        User Management
+      </h2>
+      <p class="text-slate-500 dark:text-slate-400">
+        Monitor platform activity and manage professional access credentials.
+      </p>
+    </div>
+    <button
+      class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/20"
+    >
+      <span class="material-symbols-outlined text-[22px]">person_add</span>
+      <span>Invite New User</span>
+    </button>
+  </div>
+
+  <!-- Stats Overview -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div
+      class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-2"
+    >
+      <div class="flex items-center justify-between">
+        <span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Total Users</span>
+        <span
+          class="text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-1 rounded text-xs font-bold"
+          >+12.5%</span
+        >
+      </div>
+      <p class="text-3xl font-bold text-slate-900 dark:text-white">12,482</p>
+      <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+        <div class="bg-primary h-full w-[75%] rounded-full"></div>
+      </div>
+    </div>
+    <div
+      class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-2"
+    >
+      <div class="flex items-center justify-between">
+        <span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Active Now</span>
+        <span
+          class="text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-1 rounded text-xs font-bold"
+          >+4.2%</span
+        >
+      </div>
+      <p class="text-3xl font-bold text-slate-900 dark:text-white">842</p>
+      <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+        <div class="bg-primary h-full w-[40%] rounded-full"></div>
+      </div>
+    </div>
+    <div
+      class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-2"
+    >
+      <div class="flex items-center justify-between">
+        <span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Pending Invites</span>
+        <span
+          class="text-orange-500 bg-orange-50 dark:bg-orange-500/10 px-2 py-1 rounded text-xs font-bold"
+          >-2.1%</span
+        >
+      </div>
+      <p class="text-3xl font-bold text-slate-900 dark:text-white">156</p>
+      <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+        <div class="bg-orange-400 h-full w-[25%] rounded-full"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table Section -->
+  <div
+    class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden"
+  >
+    <div
+      class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50"
+    >
+      <h3 class="font-bold text-slate-900 dark:text-white">Registered Professionals</h3>
+      <div class="flex gap-2">
+        <button
+          class="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-slate-500 transition-colors"
+        >
+          <span class="material-symbols-outlined text-[20px]">filter_list</span>
+        </button>
+        <button
+          class="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-slate-500 transition-colors"
+        >
+          <span class="material-symbols-outlined text-[20px]">download</span>
+        </button>
+      </div>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr
+            class="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider border-b border-slate-100 dark:border-slate-800"
+          >
+            <th class="px-6 py-4">Name</th>
+            <th class="px-6 py-4">Email</th>
+            <th class="px-6 py-4">Role</th>
+            <th class="px-6 py-4">Status</th>
+            <th class="px-6 py-4">Date Added</th>
+            <th class="px-6 py-4 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+          <!-- Dr. Sarah Chen -->
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <img
+                  class="size-9 rounded-full object-cover"
+                  data-alt="Female doctor avatar"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiwMA-q17QfY0sQEuGjIRCGzQ0FFV_EvK9bs0sCgBoM2Q36QXO8n7EvySkSY7hGEpBtyz3EU9HWKU-fMLo4OllCwU_JMpXZwPzpJLSG_61HoHXb-bFf8iFBQyYu_DSA1iVI-7NPCbqp_8sJNLnrYD7_lZ1yp1sELpaYQZ25R3dlkib8mc3RABdEpuNbzEnnwz60CVrSuceT6SXbetxJb35-6OAsyIFkTlFRqoMUjb8csjK2NJfYAIBYGUAEJTVOyJ-I-5TLPxqWA0"
+                />
+                <span class="font-semibold text-slate-900 dark:text-white">Dr. Sarah Chen</span>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">s.chen@hospital.org</td>
+            <td class="px-6 py-4">
+              <span
+                class="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold border border-slate-200 dark:border-slate-700"
+                >Radiologist</span
+              >
+            </td>
+            <td class="px-6 py-4">
+              <div
+                class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-sm font-semibold"
+              >
+                <span class="size-2 rounded-full bg-emerald-500"></span>
+                Active
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">Oct 12, 2023</td>
+            <td class="px-6 py-4 text-right space-x-3">
+              <button class="text-primary hover:text-primary/80 font-bold text-xs">Edit Role</button>
+              <button class="text-slate-400 hover:text-red-500 font-bold text-xs transition-colors">
+                Deactivate
+              </button>
+            </td>
+          </tr>
+          <!-- James Wilson -->
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <img
+                  class="size-9 rounded-full object-cover"
+                  data-alt="Male professional headshot"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-KJfIe7aeuLlZZ8bIKBn1xAm0gO2-qwb0Bs3L9W_3IhKkJny4D54zNWTX0IURwgdrpsPJvqZyFZPVQ4dDFneJNJZ-aGr4IVL-m-XQ_mT2MtGPAo0M08RsyLbRgsdKc3d7AzhJQpVZLxel87098O7XGNAvW7i599ed5LMxDWxbJQHt9MyWDsjq27tk2Z2-ek0ZPvVa53wtkiY_hEg-ykMCMxQYO77eCXFeFxTQxeYk9IqwdF87hVRhhVIkEALV_rchpFsTcDdIN9E"
+                />
+                <span class="font-semibold text-slate-900 dark:text-white">James Wilson</span>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">j.wilson@medai.com</td>
+            <td class="px-6 py-4">
+              <span
+                class="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold border border-primary/20"
+                >Admin</span
+              >
+            </td>
+            <td class="px-6 py-4">
+              <div
+                class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-sm font-semibold"
+              >
+                <span class="size-2 rounded-full bg-emerald-500"></span>
+                Active
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">Sep 05, 2023</td>
+            <td class="px-6 py-4 text-right space-x-3">
+              <button class="text-primary hover:text-primary/80 font-bold text-xs">Edit Role</button>
+              <button class="text-slate-400 hover:text-red-500 font-bold text-xs transition-colors">
+                Deactivate
+              </button>
+            </td>
+          </tr>
+          <!-- Dr. Elena Rodriguez -->
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <img
+                  class="size-9 rounded-full object-cover"
+                  data-alt="Female doctor smiling"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHYmupCDTkGHZo6aOqpAMJ9FvP0rDi5rfUor5l5JsL7v4LDGpcZ_GLzn0QqYR4BY_F6zf_ouHKI_I_h1hUtR9wibT1Ibw1a4Uyrb65ARhS-pPcZDE80cnpzJtn35AFT8ck742bjIwNQZauhSV6TisdLDRUbggCN4p4qCNoLjbDucCUuTgMhk3j48jlmEzAyGJKQGU4JDWo2QYXKd_qPStP_H5ocqhOQJ4c1dbVeGCJplEoE4daaXR2HJzKNElQ_NfF4uj02OROrTY"
+                />
+                <span class="font-semibold text-slate-900 dark:text-white"
+                  >Dr. Elena Rodriguez</span
+                >
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">e.rod@clinic.io</td>
+            <td class="px-6 py-4">
+              <span
+                class="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold border border-slate-200 dark:border-slate-700"
+                >Doctor</span
+              >
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-1.5 text-slate-400 text-sm font-semibold">
+                <span class="size-2 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                Inactive
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">Nov 01, 2023</td>
+            <td class="px-6 py-4 text-right space-x-3">
+              <button class="text-primary hover:text-primary/80 font-bold text-xs">Edit Role</button>
+              <button class="text-red-500 hover:text-red-600 font-bold text-xs transition-colors">
+                Reactivate
+              </button>
+            </td>
+          </tr>
+          <!-- Marcus Thorne -->
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <img
+                  class="size-9 rounded-full object-cover"
+                  data-alt="Male doctor profile"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdwthUxbDGE4kzQom3bwtTrl21nIYS-90dkAA7dU_Had5SeHtSU9f11s0PxScMJXL2wmXyElQ6P6eNFWWlApdy7Imxtawn62swZNyYYyN3ZGRZ10abLP2285LsOy6oE3aiRmOsA8zJNuxYZ6Xk9nSpm6xur0RPExDnDGOIjkmMClBLGgFvLXtZFSyElThGBCMtz8sIpjolSmL00FBsVc55nU5WIBS57hPAnQ2L-kngU4aSHHeZBl9qJ_9ReOJHUHnK7XiEEnG0bQQ"
+                />
+                <span class="font-semibold text-slate-900 dark:text-white">Marcus Thorne</span>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">m.thorne@imaging.net</td>
+            <td class="px-6 py-4">
+              <span
+                class="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold border border-slate-200 dark:border-slate-700"
+                >Radiologist</span
+              >
+            </td>
+            <td class="px-6 py-4">
+              <div
+                class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-sm font-semibold"
+              >
+                <span class="size-2 rounded-full bg-emerald-500"></span>
+                Active
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">Jan 15, 2024</td>
+            <td class="px-6 py-4 text-right space-x-3">
+              <button class="text-primary hover:text-primary/80 font-bold text-xs">Edit Role</button>
+              <button class="text-slate-400 hover:text-red-500 font-bold text-xs transition-colors">
+                Deactivate
+              </button>
+            </td>
+          </tr>
+          <!-- Dr. Amit Puri -->
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <img
+                  class="size-9 rounded-full object-cover"
+                  data-alt="Senior male doctor avatar"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8ei9mbjHQDDoECjuQ5YTk6v7Zjb2OMoykEJTBWGEgDmFzwkq5d8b1uO9XAzVRkj_vaaZ8ywz5Vf4bJyHeZLW52F1cieZrMtkJDFW5vCPPfABgJRtSZosYcnekZYHySFpEcFPv_Lpmih02MGWaZtr-tFFQCxk5BL_2wRv5Xi5F6RxSCYQYZRxZodOrun8QAgiFiPgk7khvY80SZslWRtRrLdNLR7XLB4e7Mu9x2EoQkvm8oK8yzOYK6eKZD6zilNH33Hb2UxxmVJI"
+                />
+                <span class="font-semibold text-slate-900 dark:text-white">Dr. Amit Puri</span>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">a.puri@university.edu</td>
+            <td class="px-6 py-4">
+              <span
+                class="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold border border-slate-200 dark:border-slate-700"
+                >Doctor</span
+              >
+            </td>
+            <td class="px-6 py-4">
+              <div
+                class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-sm font-semibold"
+              >
+                <span class="size-2 rounded-full bg-emerald-500"></span>
+                Active
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">Dec 20, 2023</td>
+            <td class="px-6 py-4 text-right space-x-3">
+              <button class="text-primary hover:text-primary/80 font-bold text-xs">Edit Role</button>
+              <button class="text-slate-400 hover:text-red-500 font-bold text-xs transition-colors">
+                Deactivate
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div
+      class="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between"
+    >
+      <span class="text-sm text-slate-500">Showing 5 of 12,482 professionals</span>
+      <div class="flex gap-2">
+        <button
+          class="px-3 py-1 text-sm border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+        >
+          Previous
+        </button>
+        <button
+          class="px-3 py-1 text-sm border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
