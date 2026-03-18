@@ -2,10 +2,10 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-analytics',
+  selector: 'app-all-finding',
   standalone: true,
   imports: [RouterLink],
-  templateUrl: './analytics.html',
-  styleUrl: './analytics.css',
+  templateUrl: './all-finding.html',
+  styleUrl: './all-finding.css',
 })
-export class Analytics {}
+export class AllFinding {}
