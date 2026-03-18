@@ -1,170 +1,79 @@
-<div class="login-host">
-  <!-- Card -->
-  <div
-    class="w-full max-w-[1100px] grid grid-cols-1 lg:grid-cols-2 rounded-xl overflow-hidden shadow-2xl border border-slate-800"
-    style="background: rgba(15, 23, 42, 0.5)"
-  >
-    <!-- LEFT PANEL — bg-slate-900 = #0f172a -->
-    <div
-      class="relative hidden lg:flex flex-col justify-between p-12 overflow-hidden"
-      style="background-color: #0f172a"
-    >
-      <div
-        class="absolute inset-0 opacity-40 bg-center bg-cover"
-        style="
-          background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuChlkdsTkf-fMm-s0z7-y9VIXDIujS36hqUzwhgV44yxVUTqyABwg8RyNOGDRDBMaw823GeAWmSmg7Mwv1lMLWLHXLjsmpRBwS_7HxwgVBvJgcnG6TmN6iKPIOoLwiICDDtbvsayZa2pJcHo06aPxEc46C0Xh3ZNsPq07q-lFsNJwz-l8cJ4Ao-IlNxMUsT5SvMeb6SSga2tnazZQOcbtNT2880e1j3V1DL30cbKY-z2MB_RU2xHL4DzFefasEuXbDu7IwPug4BsUI');
-        "
-      ></div>
-      <div
-        class="absolute inset-0"
-        style="background: linear-gradient(to top, #0f172a, rgba(15, 23, 42, 0.4), transparent)"
-      ></div>
-
+<div class="login-host bg-background-light text-charcoal min-h-screen flex flex-col items-center justify-center p-4 medical-gradient">
+  <div class="w-full max-w-[1100px] grid grid-cols-1 lg:grid-cols-2 bg-white rounded-xl overflow-hidden shadow-xl border border-slate-200">
+    <!-- Left Side: Illustration & Branding -->
+    <div class="relative hidden lg:flex flex-col justify-between p-12 bg-slate-50 overflow-hidden border-r border-slate-100">
+      <div class="absolute inset-0 opacity-10 bg-center bg-cover mix-blend-multiply" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuChlkdsTkf-fMm-s0z7-y9VIXDIujS36hqUzwhgV44yxVUTqyABwg8RyNOGDRDBMaw823GeAWmSmg7Mwv1lMLWLHXLjsmpRBwS_7HxwgVBvJgcnG6TmN6iKPIOoLwiICDDtbvsayZa2pJcHo06aPxEc46C0Xh3ZNsPq07q-lFsNJwz-l8cJ4Ao-IlNxMUsT5SvMeb6SSga2tnazZQOcbtNT2880e1j3V1DL30cbKY-z2MB_RU2xHL4DzFefasEuXbDu7IwPug4BsUI');">
+      </div>
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-50 via-transparent to-transparent"></div>
       <div class="relative z-10">
         <div class="flex items-center gap-2 mb-8">
-          <span class="material-symbols-outlined text-4xl" style="color: #2b8cee">radiology</span>
-          <span class="text-2xl font-black tracking-tight text-white uppercase">
-            Visiomed <span class="text-sm align-top" style="color: #2b8cee">AI</span>
-          </span>
+          <span class="material-symbols-outlined text-primary text-4xl">radiology</span>
+          <span class="text-2xl font-black tracking-tight text-charcoal uppercase">Visiomed <span class="text-primary text-sm align-top">AI</span></span>
         </div>
-        <h1 class="text-4xl font-black text-white leading-tight mb-4">
-          Precision Diagnostics at Scale
-        </h1>
-        <!-- text-slate-300 = #cbd5e1 -->
-        <p class="text-lg max-w-md" style="color: #cbd5e1">
-          Access our advanced radiological analysis suite. Secure, HIPAA-compliant, and powered by
-          industry-leading AI models.
-        </p>
+        <h1 class="text-4xl font-black text-charcoal leading-tight mb-4">Precision Diagnostics at Scale</h1>
+        <p class="text-slate-600 text-lg max-w-md">Access our advanced radiological analysis suite. Secure, HIPAA-compliant, and powered by industry-leading AI models.</p>
       </div>
-
       <div class="relative z-10 flex gap-6 items-center">
         <div class="flex -space-x-3">
-          <img
-            class="h-10 w-10 rounded-full border-2"
-            style="border-color: #0f172a"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_pwx1DZHnVC8OmXPUlMMe9Wf4vpfsophdJkGPCvIzR2L_uvJaMrh_06herkrH1UlXAJj83iiMHMxxoVberlNESWoy_BaU52YmdOLYjRaBTePHPCWroR-npBXIBbMQuKoKYWnQKDq0au2o9Yim2nTd4-jxf2R3z7IpAWrOmupVv10Je1r3dnO3oG_QoieVhXzXLuROiOMvTCiME_JcMxoyI1BOQPXvmFPwVwgAqHmkr_jgliWIcPhi2wa6EB5g4z69seD0eEQwufQ"
-            alt="Doctor"
-          />
-          <img
-            class="h-10 w-10 rounded-full border-2"
-            style="border-color: #0f172a"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9CDN6gteR56obI079rZFr9Xl7ofpYN-nZkCbyweB-y2SxkVwGot01M-cUMQBwR-W2BAGmxJ9evt4bPdOIWUEHX2g5dqhs2YvaVNHpAwZb9Kyq2yVBQjn9TWrZ36TPjtwzG0YzzMIZsUbaGBMO-CFQYGO9fjJYNCs-f0kidWhqkE5dR-NgKQPDzrNiJOtRJNqwMXGFS8R5wctnSId8viNuoesplx11CtcYJ9X9fqpTIRkndOOleCrh2ss9GgYyFnRg7_RDp94ADwE"
-            alt="Radiologist"
-          />
-          <div
-            class="h-10 w-10 rounded-full border-2 flex items-center justify-center text-xs font-bold text-white"
-            style="border-color: #0f172a; background-color: #2b8cee"
-          >
-            +5k
-          </div>
+          <img class="h-10 w-10 rounded-full border-2 border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_pwx1DZHnVC8OmXPUlMMe9Wf4vpfsophdJkGPCvIzR2L_uvJaMrh_06herkrH1UlXAJj83iiMHMxxoVberlNESWoy_BaU52YmdOLYjRaBTePHPCWroR-npBXIBbMQuKoKYWnQKDq0au2o9Yim2nTd4-jxf2R3z7IpAWrOmupVv10Je1r3dnO3oG_QoieVhXzXLuROiOMvTCiME_JcMxoyI1BOQPXvmFPwVwgAqHmkr_jgliWIcPhi2wa6EB5g4z69seD0eEQwufQ" alt="Doctor" />
+          <img class="h-10 w-10 rounded-full border-2 border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9CDN6gteR56obI079rZFr9Xl7ofpYN-nZkCbyweB-y2SxkVwGot01M-cUMQBwR-W2BAGmxJ9evt4bPdOIWUEHX2g5dqhs2YvaVNHpAwZb9Kyq2yVBQjn9TWrZ36TPjtwzG0YzzMIZsUbaGBMO-CFQYGO9fjJYNCs-f0kidWhqkE5dR-NgKQPDzrNiJOtRJNqwMXGFS8R5wctnSId8viNuoesplx11CtcYJ9X9fqpTIRkndOOleCrh2ss9GgYyFnRg7_RDp94ADwE" alt="Radiologist" />
+          <div class="h-10 w-10 rounded-full border-2 border-white bg-primary flex items-center justify-center text-xs font-bold text-white">+5k</div>
         </div>
-        <!-- text-slate-400 = #94a3b8 -->
-        <p class="text-sm" style="color: #94a3b8">Trusted by over 5,000 clinicians worldwide.</p>
+        <p class="text-sm text-slate-500 font-medium">Trusted by over 5,000 clinicians worldwide.</p>
       </div>
     </div>
 
-    <!-- RIGHT PANEL — no bg in original, inherits card slate-900/50 -->
+    <!-- Right Side: Login Form -->
     <div class="flex flex-col justify-center p-8 lg:p-16">
-      <!-- Mobile logo -->
       <div class="lg:hidden flex items-center gap-2 mb-10">
-        <span class="material-symbols-outlined text-3xl" style="color: #2b8cee">radiology</span>
-        <span class="text-xl font-black tracking-tight text-white">Visiomed</span>
+        <span class="material-symbols-outlined text-primary text-3xl">radiology</span>
+        <span class="text-xl font-black tracking-tight text-charcoal">Visiomed</span>
       </div>
-
       <div class="mb-10">
-        <!-- text-white in dark -->
-        <h2 class="text-3xl font-black text-white mb-2">Welcome Back</h2>
-        <!-- text-slate-400 = #94a3b8 -->
-        <p style="color: #94a3b8">Sign in to your clinical workstation portal.</p>
+        <h2 class="text-3xl font-black text-charcoal mb-2">Welcome Back</h2>
+        <p class="text-slate-500">Sign in to your clinical workstation portal.</p>
       </div>
-
       <form (ngSubmit)="onLogin()" class="space-y-6">
-        <!-- Email -->
         <div>
-          <!-- text-slate-300 = #cbd5e1 -->
-          <label class="block text-sm font-semibold mb-2" style="color: #cbd5e1">userName</label>
+          <label class="block text-sm font-semibold text-slate-700 mb-2">userName</label>
           <div class="relative">
-            <!-- text-slate-400 = #94a3b8 -->
-            <span
-              class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-xl pointer-events-none"
-              style="color: #94a3b8"
-              >mail</span
-            >
-            <!-- bg-slate-800 = #1e293b, border-slate-700 = #334155 -->
-            <input
-              placeholder="enter you userName"
-              class="w-full pl-12 pr-4 py-4 rounded-lg outline-none transition-all text-white"
-              style="background-color: #1e293b; border: 1px solid #334155; color: white"
-              onfocus="
-                this.style.borderColor = '#2b8cee';
-                this.style.boxShadow = '0 0 0 2px rgba(43,140,238,0.3)';
-              "
-              onblur="
-                this.style.borderColor = '#334155';
-                this.style.boxShadow = 'none';
-              "
-              [(ngModel)]="userName"
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">mail</span>
+            <input 
+              [(ngModel)]="userName" 
               name="userName"
+              class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-charcoal placeholder-slate-400" 
+              placeholder="enter you userName" 
+              type="text" 
             />
           </div>
         </div>
-
-        <!-- Password -->
         <div>
           <div class="flex justify-between mb-2">
-            <label class="text-sm font-semibold" style="color: #cbd5e1">password</label>
-            <a href="#" class="text-sm font-semibold hover:underline" style="color: #2b8cee"
-              >Forgot password?</a
-            >
+            <label class="text-sm font-semibold text-slate-700">password</label>
+            <a class="text-sm font-semibold text-primary hover:text-primary/80 transition-colors" href="#">Forgot password?</a>
           </div>
           <div class="relative">
-            <span
-              class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-xl pointer-events-none"
-              style="color: #94a3b8"
-              >lock</span
-            >
-            <input
-              [type]="showPassword ? 'text' : 'password'"
-              placeholder="••••••••"
-              class="w-full pl-12 pr-12 py-4 rounded-lg outline-none transition-all text-white"
-              style="background-color: #1e293b; border: 1px solid #334155"
-              onfocus="
-                this.style.borderColor = '#2b8cee';
-                this.style.boxShadow = '0 0 0 2px rgba(43,140,238,0.3)';
-              "
-              onblur="
-                this.style.borderColor = '#334155';
-                this.style.boxShadow = 'none';
-              "
-              [(ngModel)]="password"
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">lock</span>
+            <input 
+              [(ngModel)]="password" 
               name="password"
+              [type]="showPassword ? 'text' : 'password'"
+              class="w-full pl-12 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-charcoal placeholder-slate-400" 
+              placeholder="••••••••" 
             />
-            <button
+            <button 
               type="button"
               (click)="togglePassword()"
-              class="absolute right-4 top-1/2 -translate-y-1/2 transition-colors"
-              style="color: #94a3b8"
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
             >
-              <span class="material-symbols-outlined text-xl">{{
-                showPassword ? 'visibility_off' : 'visibility'
-              }}</span>
+              <span class="material-symbols-outlined text-xl">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>
         </div>
-
-        <!-- Remember me -->
         <div class="flex items-center">
           <label class="flex items-center gap-3 group cursor-pointer">
-            <!-- border-slate-700 = #334155, bg-slate-800 = #1e293b -->
-            <input
-              type="checkbox"
-              class="h-5 w-5 rounded transition-all"
-              style="border: 1px solid #334155; background-color: #1e293b; accent-color: #2b8cee"
-            />
-            <!-- text-slate-400 = #94a3b8 -->
-            <span class="text-sm font-medium transition-colors" style="color: #94a3b8">
-              Remember this workstation for 30 days
-            </span>
+            <input class="h-5 w-5 rounded border-slate-300 bg-white text-primary focus:ring-primary transition-all" type="checkbox"/>
+            <span class="text-sm font-medium text-slate-600 group-hover:text-charcoal transition-colors">Remember this workstation for 30 days</span>
           </label>
         </div>
 
@@ -172,13 +81,9 @@
           <span class="text-sm font-medium text-red-500">{{ error }}</span>
         }
 
-        <!-- Submit -->
-        <button
+        <button 
+          class="w-full py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2" 
           type="submit"
-          class="w-full py-4 text-white font-bold rounded-lg transition-all flex items-center justify-center gap-2"
-          style="background-color: #2b8cee; box-shadow: 0 10px 25px -5px rgba(43, 140, 238, 0.25)"
-          onmouseover="this.style.backgroundColor = 'rgba(43,140,238,0.9)'"
-          onmouseout="this.style.backgroundColor = '#2b8cee'"
           [disabled]="loading"
         >
           @if (!loading) {
@@ -189,37 +94,30 @@
           }
         </button>
       </form>
-
-      <!-- border-slate-800 = #1e293b -->
-      <div class="mt-10 pt-8" style="border-top: 1px solid #1e293b">
-        <p class="text-center text-sm" style="color: #94a3b8">
-          Need an account for your department?
-          <a href="#" class="font-bold hover:underline" style="color: #2b8cee">Contact Sales</a>
+      <div class="mt-10 pt-8 border-t border-slate-100">
+        <p class="text-center text-sm text-slate-500">
+          Need an account for your department? 
+          <a class="text-primary font-bold hover:text-primary/80 transition-colors" href="#">Contact Sales</a>
         </p>
       </div>
     </div>
   </div>
 
-  <!-- Footer -->
   <footer class="mt-8 text-center">
-    <div class="flex items-center justify-center gap-6 mb-4">
-      <!-- text-slate-400 = #94a3b8 -->
-      <div class="flex items-center gap-1 text-xs" style="color: #94a3b8">
+    <div class="flex flex-wrap items-center justify-center gap-6 mb-4">
+      <div class="flex items-center gap-1 text-xs text-slate-500 font-medium">
         <span class="material-symbols-outlined text-sm">verified_user</span>
         <span>HIPAA Compliant</span>
       </div>
-      <div class="flex items-center gap-1 text-xs" style="color: #94a3b8">
+      <div class="flex items-center gap-1 text-xs text-slate-500 font-medium">
         <span class="material-symbols-outlined text-sm">security</span>
         <span>SOC2 Type II</span>
       </div>
-      <div class="flex items-center gap-1 text-xs" style="color: #94a3b8">
+      <div class="flex items-center gap-1 text-xs text-slate-500 font-medium">
         <span class="material-symbols-outlined text-sm">encrypted</span>
         <span>AES-256 Encryption</span>
       </div>
     </div>
-    <!-- text-slate-500 = #64748b -->
-    <p class="text-xs uppercase tracking-widest" style="color: #64748b">
-      © 2024 Visiomed Medical Systems. All Rights Reserved.
-    </p>
+    <p class="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-bold">© 2024 Visiomed Medical Systems. All Rights Reserved.</p>
   </footer>
 </div>

@@ -4,17 +4,13 @@
 
 /* Matches original: bg-background-dark = #101922 + medical-gradient */
 .login-host {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Public Sans', sans-serif;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background-color: #101922;
-  background-image:
-    radial-gradient(circle at top right, rgba(43, 140, 238, 0.15), transparent),
-    radial-gradient(circle at bottom left, rgba(43, 140, 238, 0.05), transparent);
 }
 
 /* Fix Material Symbols rendering as plain text */
