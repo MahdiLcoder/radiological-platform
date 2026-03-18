@@ -1,15 +1,11 @@
 <div class="flex-1 overflow-y-auto p-8 space-y-8">
 <!-- Welcome Section -->
-<div class="flex items-center justify-between">
-<div>
-<h2 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white">Recent Uploads &amp; AI Queue</h2>
-<p class="text-slate-500 dark:text-slate-400 mt-1">Real-time status of clinical imaging and AI diagnostic pipeline.</p>
-</div>
-<button class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-lg font-bold shadow-lg shadow-primary/25 transition-all active:scale-95">
-<span class="material-symbols-outlined">add_circle</span>
-                        Upload New Scan
-                    </button>
-</div>
+<app-welcome-section
+  title="Recent Uploads &amp; AI Queue"
+  subtitle="Real-time status of clinical imaging and AI diagnostic pipeline."
+  buttonText="Upload New Scan"
+  buttonIcon="add_circle"
+></app-welcome-section>
 <!-- Stats Summary -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
