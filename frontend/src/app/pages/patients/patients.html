@@ -1,0 +1,287 @@
+<div class="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+  <!-- Top Actions Bar -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h3 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+        Patient Records
+      </h3>
+      <p class="text-slate-500 dark:text-slate-400 text-sm">
+        Manage and review all registered radiological patient records
+      </p>
+    </div>
+    <button
+      class="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
+    >
+      <span class="material-symbols-outlined text-[20px]">person_add</span>
+      Add New Patient
+    </button>
+  </div>
+
+  <!-- Filter Bar -->
+  <div
+    class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-wrap gap-4 items-center shadow-sm"
+  >
+    <div class="flex-1 min-w-[240px] relative group">
+      <span
+        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-xl"
+        >search</span
+      >
+      <input
+        class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg py-2.5 pl-10 pr-4 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
+        placeholder="Search by name, patient ID or scan ID..."
+        type="text"
+      />
+    </div>
+    <div class="flex gap-2">
+      <button
+        class="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-slate-700 dark:text-slate-300"
+      >
+        <span class="material-symbols-outlined text-[20px]">filter_alt</span>
+        All Patients
+        <span class="material-symbols-outlined text-[18px]">expand_more</span>
+      </button>
+      <button
+        class="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-slate-700 dark:text-slate-300"
+      >
+        <span class="material-symbols-outlined text-[20px]">history</span>
+        Recent Visits
+        <span class="material-symbols-outlined text-[18px]">expand_more</span>
+      </button>
+      <button
+        class="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-slate-700 dark:text-slate-300"
+      >
+        <span class="material-symbols-outlined text-[20px] text-primary">emergency</span>
+        Priority
+        <span class="material-symbols-outlined text-[18px]">expand_more</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Data Table -->
+  <div
+    class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm"
+  >
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead
+          class="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700"
+        >
+          <tr>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              Patient Name
+            </th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              Patient ID
+            </th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">
+              Age
+            </th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">
+              Gender
+            </th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              Last Visit
+            </th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">
+              No. of Scans
+            </th>
+            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+          <!-- Row 1: James Wilson -->
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors group">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <div
+                  class="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs"
+                >
+                  JW
+                </div>
+                <span class="font-semibold text-slate-900 dark:text-slate-100">James Wilson</span>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-mono">
+              RAD-40291
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 text-center">45</td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 text-center">Male</td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Oct 24, 2023</td>
+            <td class="px-6 py-4 text-center">
+              <span
+                class="inline-flex items-center justify-center px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-xs font-bold text-slate-700 dark:text-slate-300"
+                >04</span
+              >
+            </td>
+            <td class="px-6 py-4 text-right">
+              <button class="text-primary hover:text-primary/80 font-bold text-sm">
+                View Scans
+              </button>
+            </td>
+          </tr>
+          <!-- Row 2: Elena Schmidt -->
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors group">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <div
+                  class="size-8 rounded-full bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 font-bold text-xs"
+                >
+                  ES
+                </div>
+                <span class="font-semibold text-slate-900 dark:text-slate-100">Elena Schmidt</span>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-mono">
+              RAD-39210
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 text-center">32</td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 text-center">Female</td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Oct 26, 2023</td>
+            <td class="px-6 py-4 text-center">
+              <span
+                class="inline-flex items-center justify-center px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-xs font-bold text-slate-700 dark:text-slate-300"
+                >02</span
+              >
+            </td>
+            <td class="px-6 py-4 text-right">
+              <button class="text-primary hover:text-primary/80 font-bold text-sm">
+                View Scans
+              </button>
+            </td>
+          </tr>
+          <!-- Row 3: Marcus Aurelius -->
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors group">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <div
+                  class="size-8 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-bold text-xs"
+                >
+                  MA
+                </div>
+                <span class="font-semibold text-slate-900 dark:text-slate-100"
+                  >Marcus Aurelius</span
+                >
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-mono">
+              RAD-41122
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 text-center">67</td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 text-center">Male</td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Nov 01, 2023</td>
+            <td class="px-6 py-4 text-center">
+              <span
+                class="inline-flex items-center justify-center px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-xs font-bold text-slate-700 dark:text-slate-300"
+                >12</span
+              >
+            </td>
+            <td class="px-6 py-4 text-right">
+              <button class="text-primary hover:text-primary/80 font-bold text-sm">
+                View Scans
+              </button>
+            </td>
+          </tr>
+          <!-- Row 4: Sarah Lund -->
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors group">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <div
+                  class="size-8 rounded-full bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 font-bold text-xs"
+                >
+                  SL
+                </div>
+                <span class="font-semibold text-slate-900 dark:text-slate-100">Sarah Lund</span>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-mono">
+              RAD-38856
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 text-center">28</td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 text-center">Female</td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Nov 02, 2023</td>
+            <td class="px-6 py-4 text-center">
+              <span
+                class="inline-flex items-center justify-center px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-xs font-bold text-slate-700 dark:text-slate-300"
+                >01</span
+              >
+            </td>
+            <td class="px-6 py-4 text-right">
+              <button class="text-primary hover:text-primary/80 font-bold text-sm">
+                View Scans
+              </button>
+            </td>
+          </tr>
+          <!-- Row 5: Robert Taylor -->
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors group">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <div
+                  class="size-8 rounded-full bg-sky-50 dark:bg-sky-900/30 flex items-center justify-center text-sky-600 dark:text-sky-400 font-bold text-xs"
+                >
+                  RT
+                </div>
+                <span class="font-semibold text-slate-900 dark:text-slate-100">Robert Taylor</span>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-mono">
+              RAD-42001
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 text-center">54</td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 text-center">Male</td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Nov 03, 2023</td>
+            <td class="px-6 py-4 text-center">
+              <span
+                class="inline-flex items-center justify-center px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-xs font-bold text-slate-700 dark:text-slate-300"
+                >07</span
+              >
+            </td>
+            <td class="px-6 py-4 text-right">
+              <button class="text-primary hover:text-primary/80 font-bold text-sm">
+                View Scans
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div
+      class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between"
+    >
+      <span class="text-sm text-slate-500 dark:text-slate-400">
+        Showing <span class="font-bold text-slate-900 dark:text-white">1 to 5</span> of
+        <span class="font-bold text-slate-900 dark:text-white">128</span> patients
+      </span>
+      <div class="flex gap-1">
+        <button
+          class="size-8 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 text-slate-400 hover:bg-white dark:hover:bg-slate-800 transition-colors"
+        >
+          <span class="material-symbols-outlined text-sm">chevron_left</span>
+        </button>
+        <button
+          class="size-8 flex items-center justify-center rounded border border-primary bg-primary text-white text-sm font-bold shadow-sm shadow-primary/10"
+        >
+          1
+        </button>
+        <button
+          class="size-8 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 text-sm font-bold transition-colors"
+        >
+          2
+        </button>
+        <button
+          class="size-8 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 text-sm font-bold transition-colors"
+        >
+          3
+        </button>
+        <button
+          class="size-8 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 text-slate-400 hover:bg-white dark:hover:bg-slate-800 transition-colors"
+        >
+          <span class="material-symbols-outlined text-sm">chevron_right</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
