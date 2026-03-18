@@ -1,0 +1,12 @@
+<!-- layout/layout.component.html -->
+<div class="app-shell flex h-screen w-full overflow-hidden bg-[var(--color-background-light)] dark:bg-[var(--color-background-dark)]">
+  <app-sidebar class="shrink-0"></app-sidebar>
+
+  <div class="main flex flex-1 flex-col overflow-hidden min-w-0">
+    <app-header class="shrink-0"></app-header>
+
+    <main class="content flex-1 overflow-y-auto overflow-x-hidden p-6 text-slate-900 dark:text-slate-100">
+      <router-outlet></router-outlet> 
+    </main>
+  </div>
+</div>
