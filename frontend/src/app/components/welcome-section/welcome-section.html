@@ -3,12 +3,19 @@
     <h2 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white">{{ title }}</h2>
     <p class="text-slate-500 dark:text-slate-400 mt-1">{{ subtitle }}</p>
   </div>
-  <button
-    class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-lg font-bold shadow-lg shadow-primary/25 transition-all active:scale-95"
-  >
-    @if (buttonIcon) {
-      <span class="material-symbols-outlined">{{ buttonIcon }}</span>
+  
+  <div class="flex items-center gap-4">
+    <ng-content></ng-content>
+    
+    @if (buttonText) {
+      <button
+        class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-lg font-bold shadow-lg shadow-primary/25 transition-all active:scale-95"
+      >
+        @if (buttonIcon) {
+          <span class="material-symbols-outlined">{{ buttonIcon }}</span>
+        }
+        {{ buttonText }}
+      </button>
     }
-    {{ buttonText }}
-  </button>
+  </div>
 </div>

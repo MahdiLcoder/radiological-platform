@@ -1,322 +1,464 @@
-<div class="flex-1 overflow-y-auto p-8">
-<!-- Header Section -->
-<div class="mb-8">
-<h1 class="text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight mb-2">Diagnostic Reports</h1>
-<p class="text-slate-600 dark:text-slate-400">Manage and review patient findings from all departments.</p>
-</div>
-<!-- Filters Section -->
-<div class="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl p-4 mb-8 shadow-sm">
-<div class="flex flex-wrap items-end gap-4">
-<div class="flex-1 min-w-[200px]">
-<label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Modality</label>
-<div class="relative">
-<select class="w-full appearance-none bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg py-2 px-3 text-sm focus:ring-primary focus:border-primary">
-<option>All Modalities</option>
-<option>MRI</option>
-<option>CT Scan</option>
-<option>X-Ray</option>
-</select>
-<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
-</div>
-</div>
-<div class="flex-1 min-w-[200px]">
-<label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Date Range</label>
-<div class="relative">
-<select class="w-full appearance-none bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg py-2 px-3 text-sm focus:ring-primary focus:border-primary">
-<option>Last 7 Days</option>
-<option>Last 30 Days</option>
-<option>Custom Range</option>
-</select>
-<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">calendar_today</span>
-</div>
-</div>
-<div class="flex-1 min-w-[200px]">
-<label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Patient ID</label>
-<input class="w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg py-2 px-3 text-sm focus:ring-primary focus:border-primary" placeholder="Ex: PT-9821" type="text"/>
-</div>
-<button class="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-6 rounded-lg transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
-<span class="material-symbols-outlined text-sm">filter_list</span>
-                Apply Filters
+<div class="flex-1 overflow-y-auto w-full">
+  <div class="px-8 pt-8 pb-4">
+    <app-welcome-section
+      title="Diagnostic Reports"
+      subtitle="Manage and review patient findings from all departments."
+    >
+      <div
+        class="flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-1.5 shadow-sm"
+      >
+        <label
+          class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 pl-3"
+          >Modality:</label
+        >
+        <div class="relative w-40">
+          <select
+            class="w-full appearance-none bg-slate-50 dark:bg-slate-800 border-none rounded-md py-2 px-3 text-sm font-bold focus:ring-2 focus:ring-primary focus:outline-none cursor-pointer"
+          >
+            <option>All Modalities</option>
+            <option>MRI</option>
+            <option>CT Scan</option>
+            <option>X-Ray</option>
+          </select>
+          <span
+            class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400"
+            >expand_more</span
+          >
+        </div>
+      </div>
+    </app-welcome-section>
+  </div>
+
+  <div class="px-8 pb-8 space-y-8">
+    <!-- Filters Section -->
+    <app-filters-section 
+      [filters]="reportFilters" 
+      buttonText="Apply Filters" 
+      buttonIcon="filter_list">
+    </app-filters-section>
+    <!-- Reports Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Report Card 1: MRI - Indigo - Critical -->
+      <div
+        class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col"
+      >
+        <div class="p-5 flex-1">
+          <div class="flex justify-between items-start mb-4">
+            <div class="flex flex-wrap gap-2">
+              <span
+                class="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"
+                >MRI</span
+              >
+              <span
+                class="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"
+                >Critical</span
+              >
+            </div>
+            <button class="text-slate-400 hover:text-primary transition-colors">
+              <span class="material-symbols-outlined">download</span>
             </button>
-</div>
-</div>
-<!-- Reports Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-<!-- Report Card 1: MRI - Indigo - Critical -->
-<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col">
-<div class="p-5 flex-1">
-<div class="flex justify-between items-start mb-4">
-<div class="flex flex-wrap gap-2">
-<span class="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">MRI</span>
-<span class="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Critical</span>
-</div>
-<button class="text-slate-400 hover:text-primary transition-colors">
-<span class="material-symbols-outlined">download</span>
-</button>
-</div>
-<div class="mb-4">
-<h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Sarah Jenkins</h3>
-<p class="text-slate-500 dark:text-slate-400 text-sm">ID: PT-11204</p>
-</div>
-<div class="bg-slate-50 dark:bg-slate-800/80 rounded-lg p-4 mb-5 border border-slate-100 dark:border-slate-700/50">
-<p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Final Diagnosis</p>
-<p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">"Evidence of acute ischemic stroke in the right middle cerebral artery territory. Urgent intervention required."</p>
-</div>
-<div class="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800/50">
-<div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined text-sm">person</span>
-<span class="text-xs">Dr. Alan Vance</span>
-</div>
-<div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined text-sm">calendar_today</span>
-<span class="text-xs">Oct 24, 2023</span>
-</div>
-<div class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
-<span class="material-symbols-outlined text-xs">check_circle</span>
-                        Validated &amp; Approved
-                    </div>
-</div>
-</div>
-<button class="w-full bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-bold py-3 text-sm transition-all flex items-center justify-center gap-2">
-<span class="material-symbols-outlined text-lg">picture_as_pdf</span>
-                Download PDF Report
+          </div>
+          <div class="mb-4">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Sarah Jenkins</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm">ID: PT-11204</p>
+          </div>
+          <div
+            class="bg-slate-50 dark:bg-slate-800/80 rounded-lg p-4 mb-5 border border-slate-100 dark:border-slate-700/50"
+          >
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+              Final Diagnosis
+            </p>
+            <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+              "Evidence of acute ischemic stroke in the right middle cerebral artery territory.
+              Urgent intervention required."
+            </p>
+          </div>
+          <div class="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800/50">
+            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+              <span class="material-symbols-outlined text-sm">person</span>
+              <span class="text-xs">Dr. Alan Vance</span>
+            </div>
+            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+              <span class="material-symbols-outlined text-sm">calendar_today</span>
+              <span class="text-xs">Oct 24, 2023</span>
+            </div>
+            <div
+              class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full"
+            >
+              <span class="material-symbols-outlined text-xs">check_circle</span>
+              Validated &amp; Approved
+            </div>
+          </div>
+        </div>
+        <button
+          class="w-full bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-bold py-3 text-sm transition-all flex items-center justify-center gap-2"
+        >
+          <span class="material-symbols-outlined text-lg">picture_as_pdf</span>
+          Download PDF Report
+        </button>
+      </div>
+      <!-- Report Card 2: X-Ray - Purple - Normal -->
+      <div
+        class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col"
+      >
+        <div class="p-5 flex-1">
+          <div class="flex justify-between items-start mb-4">
+            <div class="flex flex-wrap gap-2">
+              <span
+                class="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"
+                >X-Ray</span
+              >
+              <span
+                class="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"
+                >Normal</span
+              >
+            </div>
+            <button class="text-slate-400 hover:text-primary transition-colors">
+              <span class="material-symbols-outlined">download</span>
             </button>
-</div>
-<!-- Report Card 2: X-Ray - Purple - Normal -->
-<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col">
-<div class="p-5 flex-1">
-<div class="flex justify-between items-start mb-4">
-<div class="flex flex-wrap gap-2">
-<span class="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">X-Ray</span>
-<span class="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Normal</span>
-</div>
-<button class="text-slate-400 hover:text-primary transition-colors">
-<span class="material-symbols-outlined">download</span>
-</button>
-</div>
-<div class="mb-4">
-<h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Robert Chen</h3>
-<p class="text-slate-500 dark:text-slate-400 text-sm">ID: PT-09552</p>
-</div>
-<div class="bg-slate-50 dark:bg-slate-800/80 rounded-lg p-4 mb-5 border border-slate-100 dark:border-slate-700/50">
-<p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Final Diagnosis</p>
-<p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">"Bilateral lung fields are clear. Normal cardiomediastinal silhouette. No pneumothorax detected."</p>
-</div>
-<div class="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800/50">
-<div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined text-sm">person</span>
-<span class="text-xs">Dr. Elena Kostic</span>
-</div>
-<div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined text-sm">calendar_today</span>
-<span class="text-xs">Oct 23, 2023</span>
-</div>
-<div class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
-<span class="material-symbols-outlined text-xs">check_circle</span>
-                        Validated &amp; Approved
-                    </div>
-</div>
-</div>
-<button class="w-full bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-bold py-3 text-sm transition-all flex items-center justify-center gap-2">
-<span class="material-symbols-outlined text-lg">picture_as_pdf</span>
-                Download PDF Report
+          </div>
+          <div class="mb-4">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Robert Chen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm">ID: PT-09552</p>
+          </div>
+          <div
+            class="bg-slate-50 dark:bg-slate-800/80 rounded-lg p-4 mb-5 border border-slate-100 dark:border-slate-700/50"
+          >
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+              Final Diagnosis
+            </p>
+            <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+              "Bilateral lung fields are clear. Normal cardiomediastinal silhouette. No pneumothorax
+              detected."
+            </p>
+          </div>
+          <div class="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800/50">
+            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+              <span class="material-symbols-outlined text-sm">person</span>
+              <span class="text-xs">Dr. Elena Kostic</span>
+            </div>
+            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+              <span class="material-symbols-outlined text-sm">calendar_today</span>
+              <span class="text-xs">Oct 23, 2023</span>
+            </div>
+            <div
+              class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full"
+            >
+              <span class="material-symbols-outlined text-xs">check_circle</span>
+              Validated &amp; Approved
+            </div>
+          </div>
+        </div>
+        <button
+          class="w-full bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-bold py-3 text-sm transition-all flex items-center justify-center gap-2"
+        >
+          <span class="material-symbols-outlined text-lg">picture_as_pdf</span>
+          Download PDF Report
+        </button>
+      </div>
+      <!-- Report Card 3: CT - Cyan - Moderate -->
+      <div
+        class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col"
+      >
+        <div class="p-5 flex-1">
+          <div class="flex justify-between items-start mb-4">
+            <div class="flex flex-wrap gap-2">
+              <span
+                class="bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"
+                >CT Scan</span
+              >
+              <span
+                class="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-500 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"
+                >Moderate</span
+              >
+            </div>
+            <button class="text-slate-400 hover:text-primary transition-colors">
+              <span class="material-symbols-outlined">download</span>
             </button>
-</div>
-<!-- Report Card 3: CT - Cyan - Moderate -->
-<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col">
-<div class="p-5 flex-1">
-<div class="flex justify-between items-start mb-4">
-<div class="flex flex-wrap gap-2">
-<span class="bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">CT Scan</span>
-<span class="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-500 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Moderate</span>
-</div>
-<button class="text-slate-400 hover:text-primary transition-colors">
-<span class="material-symbols-outlined">download</span>
-</button>
-</div>
-<div class="mb-4">
-<h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Michael O'Brien</h3>
-<p class="text-slate-500 dark:text-slate-400 text-sm">ID: PT-22391</p>
-</div>
-<div class="bg-slate-50 dark:bg-slate-800/80 rounded-lg p-4 mb-5 border border-slate-100 dark:border-slate-700/50">
-<p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Final Diagnosis</p>
-<p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">"Non-obstructive renal calculi in the lower pole of the right kidney. Follow-up recommended in 6 months."</p>
-</div>
-<div class="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800/50">
-<div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined text-sm">person</span>
-<span class="text-xs">Dr. Alan Vance</span>
-</div>
-<div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined text-sm">calendar_today</span>
-<span class="text-xs">Oct 21, 2023</span>
-</div>
-<div class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
-<span class="material-symbols-outlined text-xs">check_circle</span>
-                        Validated &amp; Approved
-                    </div>
-</div>
-</div>
-<button class="w-full bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-bold py-3 text-sm transition-all flex items-center justify-center gap-2">
-<span class="material-symbols-outlined text-lg">picture_as_pdf</span>
-                Download PDF Report
+          </div>
+          <div class="mb-4">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Michael O'Brien</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm">ID: PT-22391</p>
+          </div>
+          <div
+            class="bg-slate-50 dark:bg-slate-800/80 rounded-lg p-4 mb-5 border border-slate-100 dark:border-slate-700/50"
+          >
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+              Final Diagnosis
+            </p>
+            <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+              "Non-obstructive renal calculi in the lower pole of the right kidney. Follow-up
+              recommended in 6 months."
+            </p>
+          </div>
+          <div class="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800/50">
+            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+              <span class="material-symbols-outlined text-sm">person</span>
+              <span class="text-xs">Dr. Alan Vance</span>
+            </div>
+            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+              <span class="material-symbols-outlined text-sm">calendar_today</span>
+              <span class="text-xs">Oct 21, 2023</span>
+            </div>
+            <div
+              class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full"
+            >
+              <span class="material-symbols-outlined text-xs">check_circle</span>
+              Validated &amp; Approved
+            </div>
+          </div>
+        </div>
+        <button
+          class="w-full bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-bold py-3 text-sm transition-all flex items-center justify-center gap-2"
+        >
+          <span class="material-symbols-outlined text-lg">picture_as_pdf</span>
+          Download PDF Report
+        </button>
+      </div>
+      <!-- Report Card 4: MRI - Indigo - Moderate -->
+      <div
+        class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col"
+      >
+        <div class="p-5 flex-1">
+          <div class="flex justify-between items-start mb-4">
+            <div class="flex flex-wrap gap-2">
+              <span
+                class="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"
+                >MRI</span
+              >
+              <span
+                class="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-500 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"
+                >Moderate</span
+              >
+            </div>
+            <button class="text-slate-400 hover:text-primary transition-colors">
+              <span class="material-symbols-outlined">download</span>
             </button>
-</div>
-<!-- Report Card 4: MRI - Indigo - Moderate -->
-<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col">
-<div class="p-5 flex-1">
-<div class="flex justify-between items-start mb-4">
-<div class="flex flex-wrap gap-2">
-<span class="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">MRI</span>
-<span class="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-500 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Moderate</span>
-</div>
-<button class="text-slate-400 hover:text-primary transition-colors">
-<span class="material-symbols-outlined">download</span>
-</button>
-</div>
-<div class="mb-4">
-<h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Linda Thompson</h3>
-<p class="text-slate-500 dark:text-slate-400 text-sm">ID: PT-04429</p>
-</div>
-<div class="bg-slate-50 dark:bg-slate-800/80 rounded-lg p-4 mb-5 border border-slate-100 dark:border-slate-700/50">
-<p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Final Diagnosis</p>
-<p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">"Disc protrusion at L4-L5 causing moderate narrowing. Correlate with clinical symptoms of sciatica."</p>
-</div>
-<div class="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800/50">
-<div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined text-sm">person</span>
-<span class="text-xs">Dr. Sarah Mills</span>
-</div>
-<div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined text-sm">calendar_today</span>
-<span class="text-xs">Oct 20, 2023</span>
-</div>
-<div class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
-<span class="material-symbols-outlined text-xs">check_circle</span>
-                        Validated &amp; Approved
-                    </div>
-</div>
-</div>
-<button class="w-full bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-bold py-3 text-sm transition-all flex items-center justify-center gap-2">
-<span class="material-symbols-outlined text-lg">picture_as_pdf</span>
-                Download PDF Report
+          </div>
+          <div class="mb-4">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Linda Thompson</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm">ID: PT-04429</p>
+          </div>
+          <div
+            class="bg-slate-50 dark:bg-slate-800/80 rounded-lg p-4 mb-5 border border-slate-100 dark:border-slate-700/50"
+          >
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+              Final Diagnosis
+            </p>
+            <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+              "Disc protrusion at L4-L5 causing moderate narrowing. Correlate with clinical symptoms
+              of sciatica."
+            </p>
+          </div>
+          <div class="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800/50">
+            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+              <span class="material-symbols-outlined text-sm">person</span>
+              <span class="text-xs">Dr. Sarah Mills</span>
+            </div>
+            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+              <span class="material-symbols-outlined text-sm">calendar_today</span>
+              <span class="text-xs">Oct 20, 2023</span>
+            </div>
+            <div
+              class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full"
+            >
+              <span class="material-symbols-outlined text-xs">check_circle</span>
+              Validated &amp; Approved
+            </div>
+          </div>
+        </div>
+        <button
+          class="w-full bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-bold py-3 text-sm transition-all flex items-center justify-center gap-2"
+        >
+          <span class="material-symbols-outlined text-lg">picture_as_pdf</span>
+          Download PDF Report
+        </button>
+      </div>
+      <!-- Report Card 5: CT - Cyan - Critical -->
+      <div
+        class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col"
+      >
+        <div class="p-5 flex-1">
+          <div class="flex justify-between items-start mb-4">
+            <div class="flex flex-wrap gap-2">
+              <span
+                class="bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"
+                >CT Scan</span
+              >
+              <span
+                class="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"
+                >Critical</span
+              >
+            </div>
+            <button class="text-slate-400 hover:text-primary transition-colors">
+              <span class="material-symbols-outlined">download</span>
             </button>
-</div>
-<!-- Report Card 5: CT - Cyan - Critical -->
-<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col">
-<div class="p-5 flex-1">
-<div class="flex justify-between items-start mb-4">
-<div class="flex flex-wrap gap-2">
-<span class="bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">CT Scan</span>
-<span class="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Critical</span>
-</div>
-<button class="text-slate-400 hover:text-primary transition-colors">
-<span class="material-symbols-outlined">download</span>
-</button>
-</div>
-<div class="mb-4">
-<h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">David Miller</h3>
-<p class="text-slate-500 dark:text-slate-400 text-sm">ID: PT-33104</p>
-</div>
-<div class="bg-slate-50 dark:bg-slate-800/80 rounded-lg p-4 mb-5 border border-slate-100 dark:border-slate-700/50">
-<p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Final Diagnosis</p>
-<p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">"Evidence of type A aortic dissection. Immediate cardiothoracic surgery consultation initiated."</p>
-</div>
-<div class="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800/50">
-<div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined text-sm">person</span>
-<span class="text-xs">Dr. Elena Kostic</span>
-</div>
-<div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined text-sm">calendar_today</span>
-<span class="text-xs">Oct 19, 2023</span>
-</div>
-<div class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
-<span class="material-symbols-outlined text-xs">check_circle</span>
-                        Validated &amp; Approved
-                    </div>
-</div>
-</div>
-<button class="w-full bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-bold py-3 text-sm transition-all flex items-center justify-center gap-2">
-<span class="material-symbols-outlined text-lg">picture_as_pdf</span>
-                Download PDF Report
+          </div>
+          <div class="mb-4">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">David Miller</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm">ID: PT-33104</p>
+          </div>
+          <div
+            class="bg-slate-50 dark:bg-slate-800/80 rounded-lg p-4 mb-5 border border-slate-100 dark:border-slate-700/50"
+          >
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+              Final Diagnosis
+            </p>
+            <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+              "Evidence of type A aortic dissection. Immediate cardiothoracic surgery consultation
+              initiated."
+            </p>
+          </div>
+          <div class="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800/50">
+            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+              <span class="material-symbols-outlined text-sm">person</span>
+              <span class="text-xs">Dr. Elena Kostic</span>
+            </div>
+            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+              <span class="material-symbols-outlined text-sm">calendar_today</span>
+              <span class="text-xs">Oct 19, 2023</span>
+            </div>
+            <div
+              class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full"
+            >
+              <span class="material-symbols-outlined text-xs">check_circle</span>
+              Validated &amp; Approved
+            </div>
+          </div>
+        </div>
+        <button
+          class="w-full bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-bold py-3 text-sm transition-all flex items-center justify-center gap-2"
+        >
+          <span class="material-symbols-outlined text-lg">picture_as_pdf</span>
+          Download PDF Report
+        </button>
+      </div>
+      <!-- Report Card 6: X-Ray - Purple - Normal -->
+      <div
+        class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col"
+      >
+        <div class="p-5 flex-1">
+          <div class="flex justify-between items-start mb-4">
+            <div class="flex flex-wrap gap-2">
+              <span
+                class="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"
+                >X-Ray</span
+              >
+              <span
+                class="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"
+                >Normal</span
+              >
+            </div>
+            <button class="text-slate-400 hover:text-primary transition-colors">
+              <span class="material-symbols-outlined">download</span>
             </button>
+          </div>
+          <div class="mb-4">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Amanda Blake</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm">ID: PT-18302</p>
+          </div>
+          <div
+            class="bg-slate-50 dark:bg-slate-800/80 rounded-lg p-4 mb-5 border border-slate-100 dark:border-slate-700/50"
+          >
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+              Final Diagnosis
+            </p>
+            <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+              "Uterus and ovaries appear within normal limits. No pelvic free fluid or suspicious
+              masses identified."
+            </p>
+          </div>
+          <div class="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800/50">
+            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+              <span class="material-symbols-outlined text-sm">person</span>
+              <span class="text-xs">Dr. Sarah Mills</span>
+            </div>
+            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+              <span class="material-symbols-outlined text-sm">calendar_today</span>
+              <span class="text-xs">Oct 18, 2023</span>
+            </div>
+            <div
+              class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full"
+            >
+              <span class="material-symbols-outlined text-xs">check_circle</span>
+              Validated &amp; Approved
+            </div>
+          </div>
+        </div>
+        <button
+          class="w-full bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-bold py-3 text-sm transition-all flex items-center justify-center gap-2"
+        >
+          <span class="material-symbols-outlined text-lg">picture_as_pdf</span>
+          Download PDF Report
+        </button>
+      </div>
+    </div>
+    <!-- Empty State (Hidden by default, shown when no results) -->
+    <div
+      class="hidden flex-col items-center justify-center py-20 px-4 bg-white dark:bg-slate-900/30 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl mt-8"
+    >
+      <div
+        class="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-6"
+      >
+        <span class="material-symbols-outlined text-4xl text-slate-400">file_copy</span>
+      </div>
+      <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+        No reports match filters
+      </h3>
+      <p class="text-slate-500 dark:text-slate-400 text-center max-w-sm">
+        We couldn't find any diagnostic reports matching your current filter criteria. Try adjusting
+        the modality or date range.
+      </p>
+      <button class="mt-6 text-primary font-semibold hover:underline">Clear all filters</button>
+    </div>
+    <!-- Pagination -->
+    <div class="mt-12 flex items-center justify-center gap-2">
+      <button
+        class="p-2 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+      >
+        <span class="material-symbols-outlined">chevron_left</span>
+      </button>
+      <button class="w-10 h-10 rounded-lg bg-primary text-white font-bold">1</button>
+      <button
+        class="w-10 h-10 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+      >
+        2
+      </button>
+      <button
+        class="w-10 h-10 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+      >
+        3
+      </button>
+      <span class="mx-2 text-slate-400">...</span>
+      <button
+        class="w-10 h-10 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+      >
+        12
+      </button>
+      <button
+        class="p-2 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+      >
+        <span class="material-symbols-outlined">chevron_right</span>
+      </button>
+    </div>
+  </div>
+  <footer class="mt-20 border-t border-slate-200 dark:border-slate-800 py-10">
+    <div class="w-full flex flex-col md:flex-row justify-between items-center gap-6">
+      <div class="flex items-center gap-2 text-slate-400">
+        <span class="material-symbols-outlined">verified_user</span>
+        <span class="text-sm">HIPAA Compliant &amp; Secure Portal</span>
+      </div>
+      <p class="text-slate-500 text-sm">
+        © 2023 Medical Center Diagnostic Services. All rights reserved.
+      </p>
+      <div class="flex gap-6">
+        <a class="text-slate-500 hover:text-primary text-sm transition-colors" href="#"
+          >Privacy Policy</a
+        >
+        <a class="text-slate-500 hover:text-primary text-sm transition-colors" href="#"
+          >Help Center</a
+        >
+      </div>
+    </div>
+  </footer>
 </div>
-<!-- Report Card 6: X-Ray - Purple - Normal -->
-<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col">
-<div class="p-5 flex-1">
-<div class="flex justify-between items-start mb-4">
-<div class="flex flex-wrap gap-2">
-<span class="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">X-Ray</span>
-<span class="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Normal</span>
-</div>
-<button class="text-slate-400 hover:text-primary transition-colors">
-<span class="material-symbols-outlined">download</span>
-</button>
-</div>
-<div class="mb-4">
-<h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Amanda Blake</h3>
-<p class="text-slate-500 dark:text-slate-400 text-sm">ID: PT-18302</p>
-</div>
-<div class="bg-slate-50 dark:bg-slate-800/80 rounded-lg p-4 mb-5 border border-slate-100 dark:border-slate-700/50">
-<p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Final Diagnosis</p>
-<p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">"Uterus and ovaries appear within normal limits. No pelvic free fluid or suspicious masses identified."</p>
-</div>
-<div class="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800/50">
-<div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined text-sm">person</span>
-<span class="text-xs">Dr. Sarah Mills</span>
-</div>
-<div class="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined text-sm">calendar_today</span>
-<span class="text-xs">Oct 18, 2023</span>
-</div>
-<div class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
-<span class="material-symbols-outlined text-xs">check_circle</span>
-                        Validated &amp; Approved
-                    </div>
-</div>
-</div>
-<button class="w-full bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-bold py-3 text-sm transition-all flex items-center justify-center gap-2">
-<span class="material-symbols-outlined text-lg">picture_as_pdf</span>
-                Download PDF Report
-            </button>
-</div>
-</div>
-<!-- Empty State (Hidden by default, shown when no results) -->
-<div class="hidden flex-col items-center justify-center py-20 px-4 bg-white dark:bg-slate-900/30 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl mt-8">
-<div class="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-6">
-<span class="material-symbols-outlined text-4xl text-slate-400">file_copy</span>
-</div>
-<h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">No reports match filters</h3>
-<p class="text-slate-500 dark:text-slate-400 text-center max-w-sm">We couldn't find any diagnostic reports matching your current filter criteria. Try adjusting the modality or date range.</p>
-<button class="mt-6 text-primary font-semibold hover:underline">Clear all filters</button>
-</div>
-<!-- Pagination -->
-<div class="mt-12 flex items-center justify-center gap-2">
-<button class="p-2 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-<span class="material-symbols-outlined">chevron_left</span>
-</button>
-<button class="w-10 h-10 rounded-lg bg-primary text-white font-bold">1</button>
-<button class="w-10 h-10 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">2</button>
-<button class="w-10 h-10 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">3</button>
-<span class="mx-2 text-slate-400">...</span>
-<button class="w-10 h-10 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">12</button>
-<button class="p-2 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-<span class="material-symbols-outlined">chevron_right</span>
-</button>
-</div>
-</div>
-<footer class="mt-20 border-t border-slate-200 dark:border-slate-800 py-10">
-<div class="w-full flex flex-col md:flex-row justify-between items-center gap-6">
-<div class="flex items-center gap-2 text-slate-400">
-<span class="material-symbols-outlined">verified_user</span>
-<span class="text-sm">HIPAA Compliant &amp; Secure Portal</span>
-</div>
-<p class="text-slate-500 text-sm">© 2023 Medical Center Diagnostic Services. All rights reserved.</p>
-<div class="flex gap-6">
-<a class="text-slate-500 hover:text-primary text-sm transition-colors" href="#">Privacy Policy</a>
-<a class="text-slate-500 hover:text-primary text-sm transition-colors" href="#">Help Center</a>
-</div>
-</div>
-</footer>
