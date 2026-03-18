@@ -4,8 +4,6 @@
 
 .header-host {
   height: 64px;
-  background-color: #0d1b2a;
-  border-bottom: 1px solid #1e2d3d;
   display: flex;
   align-items: center;
   justify-content: space-between;

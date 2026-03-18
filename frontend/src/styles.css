@@ -5,7 +5,9 @@
 @theme {
   --color-primary: #2b8cee;
   --color-background-light: #f6f7f8;
-  --color-background-dark: #101922;
+  --color-background-dark: #0B0F1A;
+  --color-surface-dark: #0F1525;
+  --color-card-dark: #111D35;
 
   --font-family-display: "Inter", sans-serif;
 }

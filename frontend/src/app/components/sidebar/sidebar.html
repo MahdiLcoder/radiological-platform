@@ -1,12 +1,12 @@
-<aside class="sidebar-host">
+<aside class="sidebar-host bg-white dark:bg-[var(--color-surface-dark)] border-r border-slate-200 dark:border-slate-800">
   <!-- Logo -->
   <div class="p-6 flex items-center gap-3">
-    <div class="bg-[#2b8cee] rounded-lg p-1.5 text-white">
+    <div class="bg-primary rounded-lg p-1.5 text-white">
       <span class="material-symbols-outlined text-2xl">neurology</span>
     </div>
-    <h1 class="text-xl font-bold tracking-tight text-white leading-none">
+    <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100 leading-none">
       RadOS
-      <span class="text-[#2b8cee] text-xs block font-medium uppercase tracking-widest mt-1"
+      <span class="text-primary text-xs block font-medium uppercase tracking-widest mt-1"
         >Intelligence</span
       >
     </h1>
@@ -14,19 +14,19 @@
 
   <!-- Nav Links -->
   <nav class="flex-1 px-4 py-4 space-y-1">
-    <a routerLink="/dashboard/radiologist" class="nav-link active">
+    <a routerLink="/dashboard/radiologist" routerLinkActive="!bg-primary/10 !text-primary" [routerLinkActiveOptions]="{exact: true}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-semibold text-sm transition-colors text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/50">
       <span class="material-symbols-outlined">dashboard</span>
       <span>Dashboard</span>
     </a>
-    <a routerLink="/dashboard/reports" class="nav-link">
+    <a routerLink="/dashboard/reports" routerLinkActive="!bg-primary/10 !text-primary" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-semibold text-sm transition-colors text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/50">
       <span class="material-symbols-outlined"> assignment </span>
       <span>Reports</span>
     </a>
-    <a routerLink="/dashboard/patients" class="nav-link">
+    <a routerLink="/dashboard/patients" routerLinkActive="!bg-primary/10 !text-primary" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-semibold text-sm transition-colors text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/50">
       <span class="material-symbols-outlined">recent_patient</span>
       <span>Patient Records</span>
     </a>
-    <a routerLink="/dashboard/analytics" class="nav-link">
+    <a routerLink="/dashboard/analytics" routerLinkActive="!bg-primary/10 !text-primary" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-semibold text-sm transition-colors text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/50">
       <span class="material-symbols-outlined">analytics</span>
       <span>Analytics</span>
     </a>
