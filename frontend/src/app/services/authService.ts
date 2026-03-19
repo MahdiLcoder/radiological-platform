@@ -37,12 +37,7 @@ export class AuthService {
   }
 
   getProfile() {
-    const accessToken = localStorage.getItem('access_token');
-    return this.http.get(`${this.apiUrl}/me/`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    });
+    return this.http.get(`${this.apiUrl}/me/`);
   }
 
   logout() {
