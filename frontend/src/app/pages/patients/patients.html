@@ -62,25 +62,25 @@
   <div
     class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm"
   >
-    @if (loading) {
+    @if (loading()) {
       <div class="px-6 py-24 text-center">
         <div class="flex flex-col items-center gap-3">
           <div class="size-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
           <p class="text-slate-500 font-bold text-lg">Loading patient records...</p>
         </div>
       </div>
-    } @else if (error) {
+    } @else if (error()) {
       <div class="px-6 py-24 text-center">
         <div class="flex flex-col items-center gap-3">
           <span class="material-symbols-outlined text-red-500 text-5xl">error</span>
-          <p class="text-red-500 font-black text-xl">{{ error }}</p>
+          <p class="text-red-500 font-black text-xl">{{ error() }}</p>
           <button (click)="fetchPatients()" class="mt-4 px-6 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary/90 transition-all">
             Try again
           </button>
         </div>
       </div>
     } @else {
-      @if (patients.length > 0) {
+      @if (patients().length > 0) {
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead
@@ -90,7 +90,7 @@
                 <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   Patient Name
                 </th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">
                   Patient ID
                 </th>
                 <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">
@@ -99,7 +99,7 @@
                 <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">
                   Gender
                 </th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">
                   Created At
                 </th>
                 <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">
@@ -108,8 +108,8 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-              @for (patient of patients; track patient.id) {
-                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors group">
+              @for (patient of patients(); track patient.id) {
+                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors group text-sm">
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
                       <div
@@ -120,20 +120,22 @@
                       <span class="font-semibold text-slate-900 dark:text-slate-100">{{ patient.first_name }} {{ patient.last_name }}</span>
                     </div>
                   </td>
-                  <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-mono">
+                  <td class="px-6 py-4 text-slate-600 dark:text-slate-400 font-mono text-center">
                     {{ (patient.id?.substring(0, 8) || 'N/A') | uppercase }}
                   </td>
-                  <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 text-center">
+                  <td class="px-6 py-4 text-slate-600 dark:text-slate-400 text-center font-medium">
                     {{ calculateAge(patient.date_of_birth) }}
                   </td>
-                  <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 text-center">
-                    {{ patient.gender === 'M' ? 'Male' : (patient.gender === 'F' ? 'Female' : 'Other') }}
+                  <td class="px-6 py-4 text-slate-600 dark:text-slate-400 text-center font-medium">
+                    <span class="px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider {{ patient.gender === 'M' ? 'bg-blue-50 text-blue-600' : (patient.gender === 'F' ? 'bg-pink-50 text-pink-600' : 'bg-slate-50 text-slate-600') }}">
+                      {{ patient.gender === 'M' ? 'Male' : (patient.gender === 'F' ? 'Female' : 'Other') }}
+                    </span>
                   </td>
-                  <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                  <td class="px-6 py-4 text-slate-600 dark:text-slate-400 text-center">
                     {{ patient.created_at | date:'mediumDate' }}
                   </td>
                   <td class="px-6 py-4 text-right">
-                    <button [routerLink]="['/dashboard/patients', patient.id]" class="text-primary hover:text-primary/80 font-bold text-sm">
+                    <button [routerLink]="['/dashboard/patients', patient.id]" class="text-primary hover:text-primary/80 font-bold text-sm bg-primary/5 px-3 py-1.5 rounded-lg transition-all">
                       View Scans
                     </button>
                   </td>
@@ -147,9 +149,9 @@
         <div
           class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between"
         >
-          <span class="text-sm text-slate-500 dark:text-slate-400">
-            Showing <span class="font-bold text-slate-900 dark:text-white">1 to {{ patients.length }}</span> of
-            <span class="font-bold text-slate-900 dark:text-white">{{ patients.length }}</span> patients
+          <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold">
+            Showing <span class="text-slate-900 dark:text-white">1 to {{ patients().length }}</span> of
+            <span class="text-slate-900 dark:text-white">{{ patients().length }}</span> patients
           </span>
           <div class="flex gap-1">
             <button

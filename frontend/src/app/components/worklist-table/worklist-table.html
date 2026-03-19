@@ -17,72 +17,81 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-200">
-        @for (item of data; track item.id) {
-          <tr 
-            class="transition-colors {{ item.patient.isEmergency ? 'bg-red-50/30 hover:bg-red-50/50' : 'hover:bg-slate-50/50' }}"
-          >
-            <td class="px-6 py-5">
-              <div class="flex items-center gap-3">
-                <div
-                  class="h-9 w-9 rounded-full flex items-center justify-center font-bold {{ item.patient.isEmergency ? 'bg-red-100 text-red-500' : 'bg-slate-100 text-slate-400' }}"
+              @for (item of data; track item.id) {
+                <tr 
+                  class="transition-colors {{ item.patient.isEmergency ? 'bg-red-50/30 hover:bg-red-50/50' : 'hover:bg-slate-50/50' }}"
                 >
-                  {{ item.patient.initials }}
-                </div>
-                <div>
-                  <div class="flex items-center gap-2">
-                    <p class="text-sm font-bold text-slate-900 leading-tight">
-                      {{ item.patient.name }}
-                    </p>
-                    @if (item.patient.isEmergency) {
-                      <span class="material-symbols-outlined text-red-500 text-sm">emergency</span>
+                  <td class="px-6 py-5">
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="h-9 w-9 rounded-full flex items-center justify-center font-bold {{ item.patient.isEmergency ? 'bg-red-100 text-red-500' : 'bg-slate-100 text-slate-400' }}"
+                      >
+                        {{ item.patient.initials }}
+                      </div>
+                      <div>
+                        <div class="flex items-center gap-2">
+                          <p class="text-sm font-bold text-slate-900 leading-tight">
+                            {{ item.patient.name }}
+                          </p>
+                          @if (item.patient.isEmergency) {
+                            <span class="material-symbols-outlined text-red-500 text-sm">emergency</span>
+                          }
+                        </div>
+                        <p
+                          class="text-xs text-slate-500 tracking-tighter uppercase mt-0.5"
+                        >
+                          ID: {{ item.patient.id }}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-5">
+                    <span
+                      class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold ring-1 ring-inset uppercase tracking-tighter {{ getModalityClass(item.modality) }}"
+                      >{{ item.modality }}</span
+                    >
+                  </td>
+                  <td class="px-6 py-5">
+                    <div class="flex flex-col">
+                      <p class="text-sm font-medium">{{ item.uploadDate.time }}</p>
+                      <p class="text-[10px] text-slate-400 font-bold uppercase">{{ item.uploadDate.date }}</p>
+                    </div>
+                  </td>
+                  <td class="px-6 py-5">
+                    <span
+                      class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold ring-1 ring-inset {{ getStatusBadgeClass(item.aiStatus) }}"
+                    >
+                      <span class="h-1.5 w-1.5 rounded-full {{ getStatusDotClass(item.aiStatus) }}"></span>
+                      {{ item.aiStatus }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-5 text-right">
+                    @if (item.action.type === 'analyze') {
+                      <button class="text-sm font-bold text-primary hover:underline flex items-center justify-end gap-1 ml-auto">
+                        {{ item.action.text }}
+                        <span class="material-symbols-outlined text-sm">chevron_right</span>
+                      </button>
+                    } @else if (item.action.type === 'view') {
+                      <button class="bg-primary/10 hover:bg-primary/20 text-primary px-3 py-1.5 rounded-lg text-xs font-bold transition-all">
+                        {{ item.action.text }}
+                      </button>
+                    } @else if (item.action.type === 'critical') {
+                      <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-md">
+                        {{ item.action.text }}
+                      </button>
                     }
-                  </div>
-                  <p
-                    class="text-xs text-slate-500 tracking-tighter uppercase mt-0.5"
-                  >
-                    ID: {{ item.patient.id }}
-                  </p>
-                </div>
-              </div>
-            </td>
-            <td class="px-6 py-5">
-              <span
-                class="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold ring-1 ring-inset uppercase tracking-tighter {{ getModalityClass(item.modality) }}"
-                >{{ item.modality }}</span
-              >
-            </td>
-            <td class="px-6 py-5">
-              <div class="flex flex-col">
-                <p class="text-sm font-medium">{{ item.uploadDate.time }}</p>
-                <p class="text-[10px] text-slate-400 font-bold uppercase">{{ item.uploadDate.date }}</p>
-              </div>
-            </td>
-            <td class="px-6 py-5">
-              <span
-                class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold ring-1 ring-inset {{ getStatusBadgeClass(item.aiStatus) }}"
-              >
-                <span class="h-1.5 w-1.5 rounded-full {{ getStatusDotClass(item.aiStatus) }}"></span>
-                {{ item.aiStatus }}
-              </span>
-            </td>
-            <td class="px-6 py-5 text-right">
-              @if (item.action.type === 'analyze') {
-                <button class="text-sm font-bold text-primary hover:underline flex items-center justify-end gap-1 ml-auto">
-                  {{ item.action.text }}
-                  <span class="material-symbols-outlined text-sm">chevron_right</span>
-                </button>
-              } @else if (item.action.type === 'view') {
-                <button class="bg-primary/10 hover:bg-primary/20 text-primary px-3 py-1.5 rounded-lg text-xs font-bold transition-all">
-                  {{ item.action.text }}
-                </button>
-              } @else if (item.action.type === 'critical') {
-                <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-md">
-                  {{ item.action.text }}
-                </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5" class="px-6 py-12 text-center text-slate-500">
+                    <div class="flex flex-col items-center gap-2">
+                      <span class="material-symbols-outlined text-4xl text-slate-300">inbox</span>
+                      <p class="font-medium">No active patient records or scans found in worklist.</p>
+                    </div>
+                  </td>
+                </tr>
               }
-            </td>
-          </tr>
-        }
       </tbody>
     </table>
   </div>
