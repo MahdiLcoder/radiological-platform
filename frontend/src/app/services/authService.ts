@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { tap } from 'rxjs/internal/operators/tap';
+import { tap, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +28,10 @@ export class AuthService {
   }
 
   refresh() {
-    const refreshToken = localStorage.getItem('refresh_token');
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      return throwError(() => new Error('No refresh token available'));
+    }
     return this.http.post(`${this.apiUrl}/refresh/`, {
       refresh: refreshToken
     }).pipe(tap((res: any) => {
@@ -45,7 +48,15 @@ export class AuthService {
     localStorage.removeItem('refresh_token');
   }
 
-  isAuthenticated() {
-    return !!localStorage.getItem('access_token');
+  getAccessToken() {
+    return localStorage.getItem('access_token');
+  }
+
+  getRefreshToken() {
+    return localStorage.getItem('refresh_token');
+  }
+
+  isLoggedIn() {
+    return !!this.getAccessToken();
   }
 }

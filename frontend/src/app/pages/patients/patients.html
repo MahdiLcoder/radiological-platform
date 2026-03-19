@@ -58,132 +58,143 @@
     </div>
   </div>
 
-  <!-- Data Table -->
+  <!-- Data Table / Empty State -->
   <div
     class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm"
   >
-    <div class="overflow-x-auto">
-      <table class="w-full text-left border-collapse">
-        <thead
-          class="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700"
-        >
-          <tr>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Patient Name
-            </th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Patient ID
-            </th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">
-              Age
-            </th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">
-              Gender
-            </th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Created At
-            </th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-          @if (loading) {
-            <tr>
-              <td colspan="6" class="px-6 py-12 text-center">
-                <div class="flex flex-col items-center gap-3">
-                  <div class="size-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-                  <p class="text-slate-500 font-medium">Loading patients...</p>
-                </div>
-              </td>
-            </tr>
-          } @else if (error) {
-            <tr>
-              <td colspan="6" class="px-6 py-12 text-center">
-                <div class="flex flex-col items-center gap-2">
-                  <span class="material-symbols-outlined text-red-500 text-4xl">error</span>
-                  <p class="text-red-500 font-bold">{{ error }}</p>
-                  <button (click)="fetchPatients()" class="mt-2 text-primary hover:underline font-bold">Try again</button>
-                </div>
-              </td>
-            </tr>
-          } @else {
-            @for (patient of patients; track patient.id) {
-              <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors group">
-                <td class="px-6 py-4">
-                  <div class="flex items-center gap-3">
-                    <div
-                      class="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs"
-                    >
-                      {{ getInitials(patient.first_name, patient.last_name) }}
-                    </div>
-                    <span class="font-semibold text-slate-900 dark:text-slate-100">{{ patient.first_name }} {{ patient.last_name }}</span>
-                  </div>
-                </td>
-                <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-mono">
-                  {{ (patient.id?.substring(0, 8) || 'N/A') | uppercase }}
-                </td>
-                <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 text-center">
-                  {{ calculateAge(patient.date_of_birth) }}
-                </td>
-                <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 text-center">
-                  {{ patient.gender === 'M' ? 'Male' : (patient.gender === 'F' ? 'Female' : 'Other') }}
-                </td>
-                <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
-                  {{ patient.created_at | date:'mediumDate' }}
-                </td>
-                <td class="px-6 py-4 text-right">
-                  <button [routerLink]="['/dashboard/patients', patient.id]" class="text-primary hover:text-primary/80 font-bold text-sm">
-                    View Scans
-                  </button>
-                </td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="6" class="px-6 py-12 text-center text-slate-500">
-                  <div class="flex flex-col items-center gap-2">
-                    <span class="material-symbols-outlined text-4xl text-slate-300">person_off</span>
-                    <p class="font-medium">No patient records found.</p>
-                    <button routerLink="/dashboard/create-patient" class="mt-2 text-primary hover:underline font-bold">Register your first patient</button>
-                  </div>
-                </td>
-              </tr>
-            }
-          }
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Pagination -->
-    @if (!loading && !error && patients.length > 0) {
-      <div
-        class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between"
-      >
-        <span class="text-sm text-slate-500 dark:text-slate-400">
-          Showing <span class="font-bold text-slate-900 dark:text-white">1 to {{ patients.length }}</span> of
-          <span class="font-bold text-slate-900 dark:text-white">{{ patients.length }}</span> patients
-        </span>
-        <div class="flex gap-1">
-          <button
-            class="size-8 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 text-slate-400 hover:bg-white dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
-            disabled
-          >
-            <span class="material-symbols-outlined text-sm">chevron_left</span>
-          </button>
-          <button
-            class="size-8 flex items-center justify-center rounded border border-primary bg-primary text-white text-sm font-bold shadow-sm shadow-primary/10"
-          >
-            1
-          </button>
-          <button
-            class="size-8 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 text-slate-400 hover:bg-white dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
-            disabled
-          >
-            <span class="material-symbols-outlined text-sm">chevron_right</span>
+    @if (loading) {
+      <div class="px-6 py-24 text-center">
+        <div class="flex flex-col items-center gap-3">
+          <div class="size-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <p class="text-slate-500 font-bold text-lg">Loading patient records...</p>
+        </div>
+      </div>
+    } @else if (error) {
+      <div class="px-6 py-24 text-center">
+        <div class="flex flex-col items-center gap-3">
+          <span class="material-symbols-outlined text-red-500 text-5xl">error</span>
+          <p class="text-red-500 font-black text-xl">{{ error }}</p>
+          <button (click)="fetchPatients()" class="mt-4 px-6 py-2 bg-primary text-white rounded-lg font-bold hover:bg-primary/90 transition-all">
+            Try again
           </button>
         </div>
       </div>
+    } @else {
+      @if (patients.length > 0) {
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead
+              class="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700"
+            >
+              <tr>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  Patient Name
+                </th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  Patient ID
+                </th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">
+                  Age
+                </th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">
+                  Gender
+                </th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  Created At
+                </th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+              @for (patient of patients; track patient.id) {
+                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors group">
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs"
+                      >
+                        {{ getInitials(patient.first_name, patient.last_name) }}
+                      </div>
+                      <span class="font-semibold text-slate-900 dark:text-slate-100">{{ patient.first_name }} {{ patient.last_name }}</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-mono">
+                    {{ (patient.id?.substring(0, 8) || 'N/A') | uppercase }}
+                  </td>
+                  <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 text-center">
+                    {{ calculateAge(patient.date_of_birth) }}
+                  </td>
+                  <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 text-center">
+                    {{ patient.gender === 'M' ? 'Male' : (patient.gender === 'F' ? 'Female' : 'Other') }}
+                  </td>
+                  <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                    {{ patient.created_at | date:'mediumDate' }}
+                  </td>
+                  <td class="px-6 py-4 text-right">
+                    <button [routerLink]="['/dashboard/patients', patient.id]" class="text-primary hover:text-primary/80 font-bold text-sm">
+                      View Scans
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div
+          class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between"
+        >
+          <span class="text-sm text-slate-500 dark:text-slate-400">
+            Showing <span class="font-bold text-slate-900 dark:text-white">1 to {{ patients.length }}</span> of
+            <span class="font-bold text-slate-900 dark:text-white">{{ patients.length }}</span> patients
+          </span>
+          <div class="flex gap-1">
+            <button
+              class="size-8 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 text-slate-400 hover:bg-white dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
+              disabled
+            >
+              <span class="material-symbols-outlined text-sm">chevron_left</span>
+            </button>
+            <button
+              class="size-8 flex items-center justify-center rounded border border-primary bg-primary text-white text-sm font-bold shadow-sm shadow-primary/10"
+            >
+              1
+            </button>
+            <button
+              class="size-8 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 text-slate-400 hover:bg-white dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
+              disabled
+            >
+              <span class="material-symbols-outlined text-sm">chevron_right</span>
+            </button>
+          </div>
+        </div>
+      } @else {
+        <!-- Enhanced Empty State -->
+        <div class="px-6 py-32 text-center bg-white dark:bg-slate-900 flex flex-col items-center animate-in fade-in zoom-in-95 duration-500">
+          <div class="relative mb-8">
+            <div class="size-24 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center">
+              <span class="material-symbols-outlined text-6xl text-slate-200 dark:text-slate-700">person_off</span>
+            </div>
+            <div class="absolute -bottom-1 -right-1 size-8 rounded-full bg-primary flex items-center justify-center text-white border-4 border-white dark:border-slate-900">
+              <span class="material-symbols-outlined text-base">add</span>
+            </div>
+          </div>
+          <h4 class="text-2xl font-black text-slate-900 dark:text-white mb-2">No Patients Found</h4>
+          <p class="text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-8 font-medium">
+            Your patient record directory is currently empty. Start by registering your first patient to begin diagnostics.
+          </p>
+          <button 
+            routerLink="/dashboard/create-patient" 
+            class="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shadow-xl shadow-primary/25 hover:scale-105 active:scale-95"
+          >
+            <span class="material-symbols-outlined">person_add</span>
+            Register First Patient
+          </button>
+        </div>
+      }
     }
   </div>
 </div>

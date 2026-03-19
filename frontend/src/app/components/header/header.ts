@@ -25,5 +25,7 @@ export class Header {
   profileQuery = injectQuery(() => ({
     queryKey: ['profile'],
     queryFn: () => lastValueFrom(this.authService.getProfile()) as Promise<UserProfile>,
+    enabled: this.authService.isLoggedIn(),
+    retry: false,
   }));
 }
