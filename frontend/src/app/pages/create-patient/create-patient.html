@@ -1,0 +1,195 @@
+<div class="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+  <!-- Header section inside content -->
+  <div class="mb-8">
+    <div class="flex items-center gap-2 mb-2 text-primary">
+      <span class="material-symbols-outlined">person_add</span>
+      <span class="text-sm font-bold uppercase tracking-wider">Patient Registration</span>
+    </div>
+    <h3 class="text-2xl font-black tracking-tight mb-2 text-slate-900">Register New Patient</h3>
+    <p class="text-slate-500">Enter personal and medical details to create a new patient profile.</p>
+  </div>
+
+  <form class="space-y-6">
+    <!-- Personal Information -->
+    <section class="bg-white p-8 rounded-xl border border-slate-200 shadow-sm">
+      <div class="flex items-center gap-2 mb-8">
+        <span class="material-symbols-outlined text-primary">badge</span>
+        <h4 class="text-lg font-bold text-slate-900">Personal Information</h4>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <label class="text-sm font-bold text-slate-700">First Name</label>
+          <input
+            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:bg-white outline-none transition-all placeholder:text-slate-400"
+            placeholder="e.g. John"
+            type="text"
+          />
+        </div>
+        <div class="space-y-2">
+          <label class="text-sm font-bold text-slate-700">Last Name</label>
+          <input
+            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:bg-white outline-none transition-all placeholder:text-slate-400"
+            placeholder="e.g. Doe"
+            type="text"
+          />
+        </div>
+        <div class="space-y-2">
+          <label class="text-sm font-bold text-slate-700">Date of Birth</label>
+          <input
+            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:bg-white outline-none transition-all"
+            type="date"
+          />
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label class="text-sm font-bold text-slate-700">Gender</label>
+            <div class="relative">
+              <select
+                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:bg-white outline-none appearance-none transition-all"
+              >
+                <option value="">Select</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+              <span
+                class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                >expand_more</span
+              >
+            </div>
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-bold text-slate-700">Blood Type</label>
+            <div class="relative">
+              <select
+                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:bg-white outline-none appearance-none transition-all"
+              >
+                <option value="">Select</option>
+                <option value="a+">A+</option>
+                <option value="a-">A-</option>
+                <option value="b+">B+</option>
+                <option value="b-">B-</option>
+                <option value="o+">O+</option>
+                <option value="o-">O-</option>
+                <option value="ab+">AB+</option>
+                <option value="ab-">AB-</option>
+              </select>
+              <span
+                class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                >expand_more</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Information -->
+    <section class="bg-white p-8 rounded-xl border border-slate-200 shadow-sm">
+      <div class="flex items-center gap-2 mb-8">
+        <span class="material-symbols-outlined text-primary">contact_page</span>
+        <h4 class="text-lg font-bold text-slate-900">Contact Details</h4>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <label class="text-sm font-bold text-slate-700">Contact Number</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
+              <span class="material-symbols-outlined text-lg">phone</span>
+            </span>
+            <input
+              class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-12 pr-4 py-3 focus:ring-2 focus:ring-primary focus:bg-white outline-none transition-all placeholder:text-slate-400"
+              placeholder="+1 (555) 000-0000"
+              type="tel"
+            />
+          </div>
+        </div>
+        <div class="space-y-2">
+          <label class="text-sm font-bold text-slate-700">Email Address</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
+              <span class="material-symbols-outlined text-lg">mail</span>
+            </span>
+            <input
+              class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-12 pr-4 py-3 focus:ring-2 focus:ring-primary focus:bg-white outline-none transition-all placeholder:text-slate-400"
+              placeholder="john.doe@example.com"
+              type="email"
+            />
+          </div>
+        </div>
+        <div class="md:col-span-2 space-y-2">
+          <label class="text-sm font-bold text-slate-700">Residential Address</label>
+          <textarea
+            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:bg-white outline-none resize-none transition-all placeholder:text-slate-400"
+            placeholder="Street, City, State, ZIP Code"
+            rows="3"
+          ></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Medical History -->
+    <section class="bg-white p-8 rounded-xl border border-slate-200 shadow-sm">
+      <div class="flex items-center gap-2 mb-8">
+        <span class="material-symbols-outlined text-primary">history_edu</span>
+        <h4 class="text-lg font-bold text-slate-900">Medical History Summary</h4>
+      </div>
+      <div class="space-y-6">
+        <div class="space-y-2">
+          <label class="text-sm font-bold text-slate-700">Chronic Conditions / Allergies</label>
+          <textarea
+            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:bg-white outline-none resize-none transition-all placeholder:text-slate-400"
+            placeholder="List any existing conditions, allergies, or previous surgeries..."
+            rows="4"
+          ></textarea>
+        </div>
+        <div class="flex flex-wrap gap-8 py-2">
+          <label class="flex items-center gap-3 cursor-pointer group">
+            <input
+              class="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary focus:ring-offset-0 bg-white"
+              type="checkbox"
+            />
+            <span class="text-sm font-semibold text-slate-600 group-hover:text-slate-900 transition-colors"
+              >Smoker</span
+            >
+          </label>
+          <label class="flex items-center gap-3 cursor-pointer group">
+            <input
+              class="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary focus:ring-offset-0 bg-white"
+              type="checkbox"
+            />
+            <span class="text-sm font-semibold text-slate-600 group-hover:text-slate-900 transition-colors"
+              >Diabetic</span
+            >
+          </label>
+          <label class="flex items-center gap-3 cursor-pointer group">
+            <input
+              class="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary focus:ring-offset-0 bg-white"
+              type="checkbox"
+            />
+            <span class="text-sm font-semibold text-slate-600 group-hover:text-slate-900 transition-colors"
+              >Hypertension</span
+            >
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Form Actions -->
+    <div class="flex items-center justify-end gap-4 pb-12 pt-4">
+      <button
+        class="px-6 py-3 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-all"
+        routerLink="/dashboard/patients"
+        type="button"
+      >
+        Cancel
+      </button>
+      <button
+        class="px-10 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/25 transition-all active:scale-95"
+        type="submit"
+      >
+        Register Patient
+      </button>
+    </div>
+  </form>
+</div>
