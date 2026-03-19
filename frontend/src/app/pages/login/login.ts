@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/authService';
+import { injectMutation } from '@tanstack/angular-query-experimental';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -10,28 +12,25 @@ import { AuthService } from '../../services/authService';
   styleUrl: './login.css',
 })
 export class Login {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   showPassword = false;
   userName = '';
   password = '';
-  error = '';
-  loading = false;
 
-  constructor(private authService: AuthService, private router: Router){}
-  
+  loginMutation = injectMutation(() => ({
+    mutationFn: (credentials: { userName: string; password: string }) =>
+      lastValueFrom(this.authService.login(credentials.userName, credentials.password)),
+    onSuccess: () => {
+      this.router.navigate(['/dashboard']);
+    },
+  }));
+
   onLogin(): void {
-    this.error = '';
-    this.loading = true;
-    this.authService.login(this.userName, this.password).subscribe({
-      next: () => {
-        this.router.navigate(['/dashboard']);
-      },
-      error: (err) => {
-        this.error = 'Login failed. Please check your credentials.';
-        this.loading = false;
-      }
-    });
+    this.loginMutation.mutate({ userName: this.userName, password: this.password });
   }
- 
+
   togglePassword(): void {
     this.showPassword = !this.showPassword;
   }

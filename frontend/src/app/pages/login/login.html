@@ -77,16 +77,16 @@
           </label>
         </div>
 
-        @if (error) {
-          <span class="text-sm font-medium text-red-500">{{ error }}</span>
+        @if (loginMutation.isError()) {
+          <span class="text-sm font-medium text-red-500">Login failed. Please check your credentials.</span>
         }
 
         <button 
           class="w-full py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2" 
           type="submit"
-          [disabled]="loading"
+          [disabled]="loginMutation.isPending()"
         >
-          @if (!loading) {
+          @if (!loginMutation.isPending()) {
             <span>Access Portal</span>
             <span class="material-symbols-outlined">login</span>
           } @else {
