@@ -9,6 +9,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
 
   const accessToken = localStorage.getItem('access_token');
+  const isRefreshRequest = req.url.includes('/api/auth/refresh/');
+
+  if (isRefreshRequest) {
+    return next(req);
+  }
+
   const authReq = accessToken ? req.clone({
     headers: req.headers.set('Authorization', `Bearer ${accessToken}`)
   }) : req;
