@@ -9,10 +9,12 @@
     <p class="text-slate-500">Enter personal and medical details to create a new patient profile.</p>
   </div>
 
-  <div *ngIf="error" class="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
-    <span class="material-symbols-outlined">error</span>
-    <p class="text-sm font-bold">{{ error }}</p>
-  </div>
+  @if (error) {
+    <div class="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
+      <span class="material-symbols-outlined">error</span>
+      <p class="text-sm font-bold">{{ error }}</p>
+    </div>
+  }
 
   <form [formGroup]="patientForm" (ngSubmit)="onSubmit()" class="space-y-6">
     <!-- Personal Information -->
@@ -210,7 +212,9 @@
         type="submit"
         [disabled]="loading"
       >
-        <span *ngIf="loading" class="size-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+        @if (loading) {
+          <span class="size-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+        }
         {{ loading ? 'Registering...' : 'Register Patient' }}
       </button>
     </div>
