@@ -41,6 +41,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/create-patient/create-patient').then((m) => m.CreatePatient),
       },
       {
+        path: 'patient-detail/:id',
+        loadComponent: () => import('./pages/patient-detail/patient-detail').then((m) => m.PatientDetail),
+      },
+      {
         path: 'all-findings',
         loadComponent: () => import('./pages/all-finding/all-finding').then((m) => m.AllFinding),
       },

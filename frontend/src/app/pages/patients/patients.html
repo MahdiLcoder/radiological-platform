@@ -135,7 +135,7 @@
                     {{ patient.created_at | date:'mediumDate' }}
                   </td>
                   <td class="px-6 py-4 text-right">
-                    <button [routerLink]="['/dashboard/patients', patient.id]" class="text-primary hover:text-primary/80 font-bold text-sm bg-primary/5 px-3 py-1.5 rounded-lg transition-all">
+                    <button [routerLink]="['/dashboard/patient-detail', patient.id]" class="text-primary hover:text-primary/80 font-bold text-sm bg-primary/5 px-3 py-1.5 rounded-lg transition-all">
                       View Scans
                     </button>
                   </td>
