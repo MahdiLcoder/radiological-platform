@@ -43,6 +43,10 @@ export class AuthService {
     return this.http.get(`${this.apiUrl}/me/`);
   }
 
+  updateProfile(id: number | string, profileData: any) {
+    return this.http.patch(`${this.apiUrl}/users/${id}/`, profileData);
+  }
+
   logout() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');

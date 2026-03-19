@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 
 from accounts.models import AdminProfile, DoctorProfile, RadiologistProfile, UserRole
 
-from .permissions import IsAdmin
+from .permissions import IsAdmin, IsRadiologist, IsDoctor
 from .serializers import RegisterSerializer, UserSerializer
 
 from images.models import RadiologyImage
@@ -50,7 +50,7 @@ class UserListView(generics.ListAPIView):
 
 
 class UserDetailView(APIView):
-    permission_classes = [permissions.IsAuthenticated, IsAdmin]
+    permission_classes = [permissions.IsAuthenticated, (IsAdmin | IsRadiologist | IsDoctor)]
 
     def get_user(self, pk):
         try:
@@ -72,6 +72,12 @@ class UserDetailView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             user.role = new_role
+
+        # Update other User fields
+        allowed_user_fields = ['first_name', 'last_name', 'email', 'phone']
+        for field in allowed_user_fields:
+            if field in request.data:
+                setattr(user, field, request.data[field])
 
         user.save()
 

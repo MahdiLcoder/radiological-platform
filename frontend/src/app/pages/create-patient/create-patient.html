@@ -9,10 +9,10 @@
     <p class="text-slate-500">Enter personal and medical details to create a new patient profile.</p>
   </div>
 
-  @if (error) {
+  @if (createPatientMutation.isError()) {
     <div class="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
       <span class="material-symbols-outlined">error</span>
-      <p class="text-sm font-bold">{{ error }}</p>
+      <p class="text-sm font-bold">Failed to register patient. Please check your input.</p>
     </div>
   }
 
@@ -203,19 +203,19 @@
         class="px-6 py-3 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-all"
         routerLink="/dashboard/patients"
         type="button"
-        [disabled]="loading"
+        [disabled]="createPatientMutation.isPending()"
       >
         Cancel
       </button>
       <button
         class="px-10 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/25 transition-all active:scale-95 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
         type="submit"
-        [disabled]="loading"
+        [disabled]="createPatientMutation.isPending()"
       >
-        @if (loading) {
+        @if (createPatientMutation.isPending()) {
           <span class="size-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
         }
-        {{ loading ? 'Registering...' : 'Register Patient' }}
+        {{ createPatientMutation.isPending() ? 'Registering...' : 'Register Patient' }}
       </button>
     </div>
   </form>

@@ -1,7 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { AuthService } from '../../services/authService';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
+import { Router, RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 export interface UserProfile {
   id: number;
@@ -15,12 +17,16 @@ export interface UserProfile {
 
 @Component({
   selector: 'app-header',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, RouterLink],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
 export class Header {
   private authService = inject(AuthService);
+  private router = inject(Router);
+
+  isMenuOpen = signal(false);
 
   profileQuery = injectQuery(() => ({
     queryKey: ['profile'],
@@ -28,4 +34,13 @@ export class Header {
     enabled: this.authService.isLoggedIn(),
     retry: false,
   }));
+
+  toggleMenu() {
+    this.isMenuOpen.update(v => !v);
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/']);
+  }
 }

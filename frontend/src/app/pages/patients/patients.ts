@@ -1,8 +1,9 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { PatientService, Patient } from '../../services/patientService';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { finalize } from 'rxjs/operators';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-patients',
@@ -11,41 +12,16 @@ import { finalize } from 'rxjs/operators';
   templateUrl: './patients.html',
   styleUrl: './patients.css',
 })
-export class Patients implements OnInit {
-  patients = signal<Patient[]>([]);
-  loading = signal<boolean>(true);
-  error = signal<string | null>(null);
+export class Patients {
+  private patientService = inject(PatientService);
 
-  constructor(private patientService: PatientService) {}
-
-  ngOnInit(): void {
-    this.fetchPatients();
-  }
-
-  fetchPatients(): void {
-    this.loading.set(true);
-    this.error.set(null);
-    
-    this.patientService.getAll().pipe(
-      finalize(() => {
-        this.loading.set(false);
-      })
-    ).subscribe({
-      next: (data) => {
-        console.log('Received patients:', data);
-        if (Array.isArray(data)) {
-          this.patients.set(data);
-        } else {
-          console.error('Data is not an array:', data);
-          this.patients.set([]);
-        }
-      },
-      error: (err) => {
-        console.error('Error fetching patients:', err);
-        this.error.set('Failed to load patients. Please check your connection or try again later.');
-      }
-    });
-  }
+  patientsQuery = injectQuery(() => ({
+    queryKey: ['patients'],
+    queryFn: () => lastValueFrom(this.patientService.getAll()).then(data => {
+      console.log('Received patients:', data);
+      return Array.isArray(data) ? data : [];
+    }),
+  }));
 
   getInitials(firstName: string, lastName: string): string {
     if (!firstName || !lastName) return 'P';

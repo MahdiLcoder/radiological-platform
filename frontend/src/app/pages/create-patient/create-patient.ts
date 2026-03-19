@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { PatientService } from '../../services/patientService';
 import { CommonModule } from '@angular/common';
+import { injectMutation } from '@tanstack/angular-query-experimental';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-create-patient',
@@ -12,15 +14,21 @@ import { CommonModule } from '@angular/common';
   styleUrl: './create-patient.css',
 })
 export class CreatePatient implements OnInit {
-  patientForm!: FormGroup;
-  loading: boolean = false;
-  error: string | null = null;
+  private fb = inject(FormBuilder);
+  private patientService = inject(PatientService);
+  private router = inject(Router);
 
-  constructor(
-    private fb: FormBuilder,
-    private patientService: PatientService,
-    private router: Router
-  ) {}
+  patientForm!: FormGroup;
+
+  createPatientMutation = injectMutation(() => ({
+    mutationFn: (patientData: any) => lastValueFrom(this.patientService.create(patientData)),
+    onSuccess: () => {
+      this.router.navigate(['/dashboard/patients']);
+    },
+    onError: (err: any) => {
+      console.error('Error creating patient:', err);
+    }
+  }));
 
   ngOnInit(): void {
     this.patientForm = this.fb.group({
@@ -42,23 +50,9 @@ export class CreatePatient implements OnInit {
 
   onSubmit(): void {
     if (this.patientForm.valid) {
-      this.loading = true;
-      this.error = null;
-      
       // Filter out fields not supported by backend
       const { blood_type, address, chronic_conditions, is_smoker, is_diabetic, has_hypertension, ...patientData } = this.patientForm.value;
-      
-      this.patientService.create(patientData).subscribe({
-        next: () => {
-          this.loading = false;
-          this.router.navigate(['/dashboard/patients']);
-        },
-        error: (err) => {
-          console.error('Error creating patient:', err);
-          this.error = err.error?.message || 'Failed to register patient. Please check your input.';
-          this.loading = false;
-        }
-      });
+      this.createPatientMutation.mutate(patientData);
     } else {
       Object.keys(this.patientForm.controls).forEach(key => {
         const control = this.patientForm.get(key);
