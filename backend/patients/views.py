@@ -66,32 +66,46 @@ class PatientDetailView(APIView):
             return Response({"error": "Patient not found or access denied"}, status=status.HTTP_404_NOT_FOUND)
 
         try:
-            # Get related records - this is the main value: linking all medical data to patients
-            images = RadiologyImage.objects.filter(patient=patient)
-            diagnoses = Diagnosis.objects.filter(image__in=[img.id for img in images])
-            reports = Report.objects.filter(image__in=[img.id for img in images])
+            # Get related records
+            images = RadiologyImage.objects.filter(patient=patient).order_by('-uploaded_at')
+            diagnoses = Diagnosis.objects.filter(image__in=[img.id for img in images]).order_by('-validated_at')
+            
+            # Calculate last visit
+            last_visit = None
+            if images.first():
+                last_visit = images.first().uploaded_at
+            if diagnoses.first() and (not last_visit or diagnoses.first().validated_at > last_visit):
+                last_visit = diagnoses.first().validated_at
 
             patient_data = PatientSerializer(patient).data
-            patient_data['medical_records'] = {
-                'images_count': images.count(),
-                'diagnoses_count': diagnoses.count(),
-                'reports_count': reports.count(),
-                'recent_images': [
-                    {
-                        'id': str(img.id),
-                        'modality': img.modality,
-                        'uploaded_at': img.uploaded_at.isoformat() if img.uploaded_at else None,
-                        'status': img.status
-                    } for img in images.order_by('-uploaded_at')[:5]
-                ],
-                'recent_diagnoses': [
-                    {
-                        'id': str(diag.id),
-                        'final_finding': diag.final_finding,
-                        'validated_at': diag.validated_at.isoformat() if diag.validated_at else None
-                    } for diag in diagnoses.order_by('-validated_at')[:5]
-                ]
+            patient_data['last_visit'] = last_visit.isoformat() if last_visit else None
+            
+            # Summary stats
+            patient_data['stats'] = {
+                'total_scans': images.count(),
+                'active_diagnoses': diagnoses.count()
             }
+
+            # Detailed records
+            patient_data['recent_scans'] = [
+                {
+                    'id': str(img.id),
+                    'modality': img.modality,
+                    'uploaded_at': img.uploaded_at.isoformat() if img.uploaded_at else None,
+                    'status': img.status,
+                    'file_path': img.file_path
+                } for img in images[:5]
+            ]
+
+            patient_data['active_diagnoses_list'] = [
+                {
+                    'id': str(diag.id),
+                    'final_finding': diag.final_finding,
+                    'clinical_notes': diag.clinical_notes,
+                    'validated_at': diag.validated_at.isoformat() if diag.validated_at else None,
+                    'severity': 'high' if 'severe' in (diag.final_finding or '').lower() else 'normal'
+                } for diag in diagnoses[:5]
+            ]
 
             return Response(patient_data, status=status.HTTP_200_OK)
         except Exception as e:

@@ -10,6 +10,18 @@ export interface Patient {
   gender?: string;
   phone?: string;
   email?: string;
+  last_visit?: string;
+  doctor?: {
+    id: number;
+    email: string;
+    username: string;
+  };
+  stats?: {
+    total_scans: number;
+    active_diagnoses: number;
+  };
+  recent_scans?: any[];
+  active_diagnoses_list?: any[];
   created_at?: string;
 }
 
@@ -25,8 +37,8 @@ export class PatientService {
     return this.http.get<Patient[]>(`${this.apiUrl}/`);
   }
 
-  getById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}/`);
+  getById(id: string): Observable<Patient> {
+    return this.http.get<Patient>(`${this.apiUrl}/${id}/`);
   }
 
   create(patientData: Patient): Observable<Patient> {

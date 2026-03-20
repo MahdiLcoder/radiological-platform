@@ -37,22 +37,13 @@ export class CreatePatient implements OnInit {
       date_of_birth: [''],
       gender: [''],
       phone: [''],
-      email: ['', [Validators.email]],
-      // Exta fields from UI (not in backend model yet)
-      blood_type: [''],
-      address: [''],
-      chronic_conditions: [''],
-      is_smoker: [false],
-      is_diabetic: [false],
-      has_hypertension: [false]
+      email: ['', [Validators.email]]
     });
   }
 
   onSubmit(): void {
     if (this.patientForm.valid) {
-      // Filter out fields not supported by backend
-      const { blood_type, address, chronic_conditions, is_smoker, is_diabetic, has_hypertension, ...patientData } = this.patientForm.value;
-      this.createPatientMutation.mutate(patientData);
+      this.createPatientMutation.mutate(this.patientForm.value);
     } else {
       Object.keys(this.patientForm.controls).forEach(key => {
         const control = this.patientForm.get(key);

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { tap, throwError } from 'rxjs';
+import { Observable, tap, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -39,8 +39,8 @@ export class AuthService {
      }))
   }
 
-  getProfile() {
-    return this.http.get(`${this.apiUrl}/me/`);
+  getProfile(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/me/`);
   }
 
   updateProfile(id: number | string, profileData: any) {
