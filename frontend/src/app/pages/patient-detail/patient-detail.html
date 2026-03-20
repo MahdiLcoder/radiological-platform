@@ -17,36 +17,6 @@
       </button>
     </div>
   } @else if (patientQuery.data(); as patient) {
-    <!-- Header -->
-    <header class="h-16 flex-shrink-0 border-b border-slate-200 bg-white flex items-center justify-between px-8">
-      <div class="flex items-center gap-4">
-        <div class="flex items-center gap-2 text-slate-500 text-sm">
-          <a routerLink="/dashboard/patients" class="hover:text-primary transition-colors cursor-pointer">Patients</a>
-          <span class="material-symbols-outlined text-xs">chevron_right</span>
-          <span class="text-slate-900 font-medium">{{ patient.first_name }} {{ patient.last_name }}</span>
-        </div>
-        <div class="h-6 w-[1px] bg-slate-200"></div>
-        <div class="relative">
-          <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg">search</span>
-          <input class="bg-slate-100 border-none rounded-lg pl-10 pr-4 py-1.5 text-sm w-64 focus:ring-1 focus:ring-primary outline-none" placeholder="Search patient IDs..." type="text"/>
-        </div>
-      </div>
-      <div class="flex items-center gap-4">
-        <button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors shadow-sm">
-          <span class="material-symbols-outlined text-lg">add</span>
-          New Scan
-        </button>
-        <div class="flex items-center gap-2">
-          <button class="p-2 text-slate-500 hover:bg-slate-100 rounded-lg transition-colors relative">
-            <span class="material-symbols-outlined">notifications</span>
-            <span class="absolute top-2 right-2 size-2 bg-red-500 rounded-full"></span>
-          </button>
-          <div class="size-8 rounded-full bg-slate-300 overflow-hidden border border-slate-200">
-            <img class="w-full h-full object-cover" src="https://ui-avatars.com/api/?name={{patient.first_name}}+{{patient.last_name}}&background=random"/>
-          </div>
-        </div>
-      </div>
-    </header>
     
     <!-- Scrollable Area -->
     <div class="flex-1 overflow-y-auto p-8 space-y-8">
@@ -63,7 +33,7 @@
                 <p class="text-slate-500">Patient ID: <span class="font-mono text-primary font-bold">{{ patient.id?.substring(0, 12) | uppercase }}</span></p>
               </div>
               <div class="flex gap-2">
-                <button class="px-4 py-2 border border-slate-200 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">Edit Profile</button>
+                <button [routerLink]="['/dashboard/edit-patient', patient.id]" class="px-4 py-2 border border-slate-200 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">Edit Profile</button>
                 <button class="px-4 py-2 bg-primary/10 text-primary rounded-lg text-sm font-bold hover:bg-primary/20 transition-colors">Share Records</button>
               </div>
             </div>
