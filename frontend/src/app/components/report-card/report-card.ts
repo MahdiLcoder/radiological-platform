@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
+import { ReportService } from '../../services/reportService';
 
 export interface Report {
   id: string;
@@ -9,6 +10,7 @@ export interface Report {
   doctor: string;
   date: string;
   validated: boolean;
+  reportId?: string;
 }
 
 @Component({
@@ -19,6 +21,12 @@ export interface Report {
 })
 export class ReportCard {
   @Input({ required: true }) report!: Report;
+  private reportService = inject(ReportService);
+
+  download() {
+    const id = this.report.reportId ?? this.report.id;
+    this.reportService.downloadReport(id);
+  }
 
   get modalityClass(): string {
     switch (this.report.modality) {

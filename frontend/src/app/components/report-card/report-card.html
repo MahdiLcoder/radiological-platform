@@ -5,7 +5,7 @@
         <span class="text-[10px] font-bold px-2 py-1 rounded-lg uppercase tracking-wider" [class]="modalityClass">{{ report.modality }}</span>
         <span class="text-[10px] font-bold px-2 py-1 rounded-lg uppercase tracking-wider" [class]="statusClass">{{ report.status }}</span>
       </div>
-      <button class="text-slate-400 hover:text-primary transition-colors">
+      <button (click)="download()" class="text-slate-400 hover:text-primary transition-colors">
         <span class="material-symbols-outlined">download</span>
       </button>
     </div>
@@ -35,7 +35,7 @@
       }
     </div>
   </div>
-  <button class="w-full bg-slate-50 hover:bg-slate-100 text-slate-900 font-bold py-3 text-sm transition-all flex items-center justify-center gap-2 border-t border-slate-100">
+  <button (click)="download()" class="w-full bg-slate-50 hover:bg-slate-100 text-slate-900 font-bold py-3 text-sm transition-all flex items-center justify-center gap-2 border-t border-slate-100">
     <span class="material-symbols-outlined text-lg text-primary">picture_as_pdf</span>
     Download PDF Report
   </button>

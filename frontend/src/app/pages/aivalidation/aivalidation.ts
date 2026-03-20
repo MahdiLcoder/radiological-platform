@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { injectQuery, injectMutation } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 import { AnalysisService, AnalysisResult } from '../../services/analysisService';
+import { ReportService } from '../../services/reportService';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -17,6 +18,7 @@ export class Aivalidation {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private analysisService = inject(AnalysisService);
+  private reportService = inject(ReportService);
 
   imageId = this.route.snapshot.params['id'];
   
@@ -96,7 +98,7 @@ export class Aivalidation {
 
   // Validation Mutation
   validationMutation = injectMutation(() => ({
-    mutationFn: (data: { action: 'accepted' | 'rejected' | 'modified' }) => 
+    mutationFn: (data: { action: 'accepted' | 'rejected' | 'modified' }) =>
       lastValueFrom(this.analysisService.createDiagnosis({
         image: this.imageId,
         ai_prediction: this.predictionQuery.data()?.id,
@@ -104,14 +106,19 @@ export class Aivalidation {
         final_finding: this.selectedDiagnosis() || this.predictionQuery.data()?.top_finding,
         clinical_notes: this.clinicalNotes() || `AI Prediction validation: ${data.action}`
       })),
-    onSuccess: () => {
+    onSuccess: (diagnosis: any) => {
+      // Generate report from the saved diagnosis
+      this.reportService.generateReport(diagnosis.id).subscribe({
+        next: (report) => console.log('Report generated:', report.id),
+        error: (err) => console.error('Report generation failed (diagnosis saved):', err),
+      });
       this.showSuccessModal.set(true);
     }
   }));
 
   closeModal() {
     this.showSuccessModal.set(false);
-    this.router.navigate(['/dashboard/patients']);
+    this.router.navigate(['/dashboard/reports']);
   }
 
   constructor() {

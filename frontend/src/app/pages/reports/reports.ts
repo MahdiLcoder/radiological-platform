@@ -1,15 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { WelcomeSection } from '../../components/welcome-section/welcome-section';
 import { FiltersSection, FilterField } from '../../components/filters-section/filters-section';
 import { ReportCard, Report } from '../../components/report-card/report-card';
+import { ReportService, ReportApiItem } from '../../services/reportService';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-reports',
-  imports: [WelcomeSection, FiltersSection, ReportCard],
+  standalone: true,
+  imports: [CommonModule, WelcomeSection, FiltersSection, ReportCard],
   templateUrl: './reports.html',
   styleUrl: './reports.css'
 })
 export class Reports {
+  private reportService = inject(ReportService);
+
   reportFilters: FilterField[] = [
     {
       label: 'Date Range',
@@ -24,66 +31,44 @@ export class Reports {
     }
   ];
 
-  reports: Report[] = [
-    {
-      id: 'PT-11204',
-      patientName: 'Sarah Jenkins',
-      modality: 'MRI',
-      status: 'Critical',
-      diagnosis: 'Evidence of acute ischemic stroke in the right middle cerebral artery territory. Urgent intervention required.',
-      doctor: 'Dr. Alan Vance',
-      date: 'Oct 24, 2023',
-      validated: true
-    },
-    {
-      id: 'PT-09552',
-      patientName: 'Robert Chen',
-      modality: 'X-Ray',
-      status: 'Normal',
-      diagnosis: 'Bilateral lung fields are clear. Normal cardiomediastinal silhouette. No pneumothorax detected.',
-      doctor: 'Dr. Elena Kostic',
-      date: 'Oct 23, 2023',
-      validated: true
-    },
-    {
-      id: 'PT-22391',
-      patientName: "Michael O'Brien",
-      modality: 'CT Scan',
-      status: 'Moderate',
-      diagnosis: 'Non-obstructive renal calculi in the lower pole of the right kidney. Follow-up recommended in 6 months.',
-      doctor: 'Dr. Alan Vance',
-      date: 'Oct 21, 2023',
-      validated: true
-    },
-    {
-      id: 'PT-04429',
-      patientName: 'Linda Thompson',
-      modality: 'MRI',
-      status: 'Moderate',
-      diagnosis: 'Disc protrusion at L4-L5 causing moderate narrowing. Correlate with clinical symptoms of sciatica.',
-      doctor: 'Dr. Sarah Mills',
-      date: 'Oct 20, 2023',
-      validated: true
-    },
-    {
-      id: 'PT-33104',
-      patientName: 'David Miller',
-      modality: 'CT Scan',
-      status: 'Critical',
-      diagnosis: 'Evidence of type A aortic dissection. Immediate cardiothoracic surgery consultation initiated.',
-      doctor: 'Dr. Elena Kostic',
-      date: 'Oct 19, 2023',
-      validated: true
-    },
-    {
-      id: 'PT-18302',
-      patientName: 'Amanda Blake',
-      modality: 'X-Ray',
-      status: 'Normal',
-      diagnosis: 'Uterus and ovaries appear within normal limits. No pelvic free fluid or suspicious masses identified.',
-      doctor: 'Dr. Sarah Mills',
-      date: 'Oct 18, 2023',
-      validated: true
+  reportsQuery = injectQuery(() => ({
+    queryKey: ['reports'],
+    queryFn: () => lastValueFrom(this.reportService.getReports()),
+  }));
+
+  /** Map backend ReportApiItem → ReportCard Report */
+  reports = computed<Report[]>(() => {
+    const data = this.reportsQuery.data();
+    if (!data) return [];
+    return data.map((item: ReportApiItem) => ({
+      id: item.id,
+      patientName: item.image?.patient_name ?? 'Unknown Patient',
+      modality: this.normalizeModality(item.image?.modality),
+      status: this.mapActionToStatus(item.diagnosis?.action),
+      diagnosis: item.diagnosis?.final_finding ?? 'No finding recorded',
+      doctor: `Radiologist #${item.generated_by}`,
+      date: item.generated_at
+        ? new Date(item.generated_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+        : '—',
+      validated: true,
+      reportId: item.id,
+    }));
+  });
+
+  private normalizeModality(raw: string | undefined): 'MRI' | 'CT Scan' | 'X-Ray' {
+    if (!raw) return 'X-Ray';
+    const m = raw.toUpperCase();
+    if (m.includes('MRI')) return 'MRI';
+    if (m.includes('CT')) return 'CT Scan';
+    return 'X-Ray';
+  }
+
+  private mapActionToStatus(action: string | undefined): 'Critical' | 'Moderate' | 'Normal' {
+    switch (action) {
+      case 'accepted':  return 'Normal';
+      case 'modified':  return 'Moderate';
+      case 'rejected':  return 'Critical';
+      default:          return 'Normal';
     }
-  ];
+  }
 }
