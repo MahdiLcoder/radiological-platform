@@ -2,10 +2,14 @@
   <!-- Left Pane: Medical Image Viewer -->
   <div class="flex-1 relative bg-black flex items-center justify-center group overflow-hidden">
     @if (imageQuery.data(); as image) {
-      <div class="relative w-full h-full flex items-center justify-center p-8">
+      <div class="relative w-full h-full flex items-center justify-center p-8 overflow-hidden">
         <img
+          (mousedown)="onMouseDown($event)"
           [src]="image.file_path"
-          class="max-w-full max-h-full object-contain shadow-2xl rounded-lg animate-in fade-in zoom-in-95 duration-700"
+          [style.transform]="'translate(' + panX() + 'px, ' + panY() + 'px) scale(' + zoom() + ')'"
+          [style.filter]="'contrast(' + contrast() + '%) brightness(' + brightness() + '%)'"
+          [class.cursor-move]="isPanning()"
+          class="max-w-full max-h-full object-contain shadow-2xl rounded-lg animate-in fade-in zoom-in-95 duration-700 transition-none pointer-events-auto"
           alt="Radiological Scan"
         />
       </div>
@@ -35,29 +39,46 @@
 
     <!-- Floating Image Tools -->
     <div
-      class="absolute top-6 left-6 flex flex-col gap-2 bg-white/95 backdrop-blur-md p-2 rounded-xl border border-slate-200 shadow-2xl animate-in fade-in slide-in-from-left-4 duration-500"
+      class="absolute top-6 left-6 flex flex-col gap-2 bg-white/95 backdrop-blur-md p-2 rounded-xl border border-slate-200 shadow-2xl animate-in fade-in slide-in-from-left-4 duration-500 z-10"
     >
-      <button class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all" title="Zoom In">
+      <button 
+        (click)="zoomIn()"
+        class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all" 
+        title="Zoom In"
+      >
         <span class="material-symbols-outlined text-xl">zoom_in</span>
       </button>
       <button
+        (click)="zoomOut()"
         class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all"
         title="Zoom Out"
       >
         <span class="material-symbols-outlined text-xl">zoom_out</span>
       </button>
       <div class="h-px bg-slate-200 mx-2"></div>
-      <button class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all" title="Pan">
+      <button 
+        (click)="togglePan()"
+        [class.bg-primary/20]="isPanning()"
+        [class.text-primary]="isPanning()"
+        class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all" 
+        title="Pan"
+      >
         <span class="material-symbols-outlined text-xl">pan_tool</span>
       </button>
       <button
+        (click)="adjustContrast()"
+        [class.text-primary]="contrast() !== 100"
         class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all"
         title="Contrast"
       >
         <span class="material-symbols-outlined text-xl">contrast</span>
       </button>
       <div class="h-px bg-slate-200 mx-2"></div>
-      <button class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all" title="Reset View">
+      <button 
+        (click)="resetView()"
+        class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all" 
+        title="Reset View"
+      >
         <span class="material-symbols-outlined text-xl">restart_alt</span>
       </button>
     </div>
@@ -106,18 +127,31 @@
 
       @if (predictionQuery.data(); as result) {
         <!-- Alert Card -->
-        <div class="bg-red-50 border border-red-100 p-4 rounded-xl animate-in zoom-in-95">
+        <div 
+          [class]="(result.top_finding === 'Normal' || result.top_finding === 'notumor') ? 'bg-emerald-50 border-emerald-100' : 'bg-red-50 border-red-100'"
+          class="border p-4 rounded-xl animate-in zoom-in-95"
+        >
           <div class="flex items-start gap-3">
-            <div class="p-2 bg-red-100 rounded-lg text-red-600">
-              <span class="material-symbols-outlined">warning</span>
+            <div 
+              [class]="(result.top_finding === 'Normal' || result.top_finding === 'notumor') ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'"
+              class="p-2 rounded-lg"
+            >
+              <span class="material-symbols-outlined">
+                {{ (result.top_finding === 'Normal' || result.top_finding === 'notumor') ? 'check_circle' : 'warning' }}
+              </span>
             </div>
             <div>
-              <p class="text-red-700 text-[10px] font-bold uppercase tracking-wide">
-                Target Anomaly Detected
+              <p 
+                [class]="(result.top_finding === 'Normal' || result.top_finding === 'notumor') ? 'text-emerald-700' : 'text-red-700'"
+                class="text-[10px] font-bold uppercase tracking-wide"
+              >
+                {{ (result.top_finding === 'Normal' || result.top_finding === 'notumor') ? 'Normal Diagnostic Result' : 'Target Anomaly Detected' }}
               </p>
-              <h3 class="text-slate-900 font-bold text-lg mt-0.5">{{ result.top_finding }}</h3>
+              <h3 class="text-slate-900 font-bold text-lg mt-0.5">
+                {{ (result.top_finding === 'Normal' || result.top_finding === 'notumor') ? 'Normal' : result.top_finding }}
+              </h3>
               <p class="text-slate-600 text-sm mt-1 leading-relaxed">
-                The AI model has detected high confidence indicators for {{ result.top_finding | lowercase }}.
+                {{ (result.top_finding === 'Normal' || result.top_finding === 'notumor') ? 'The AI model suggests this scan appears within normal limits.' : 'The AI model has detected high confidence indicators for ' + (result.top_finding | lowercase) + '.' }}
               </p>
             </div>
           </div>

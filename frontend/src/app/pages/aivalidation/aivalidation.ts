@@ -24,6 +24,61 @@ export class Aivalidation {
   selectedDiagnosis = signal<string>('');
   clinicalNotes = signal<string>('');
 
+  // Image Viewer state
+  zoom = signal<number>(1);
+  contrast = signal<number>(100);
+  brightness = signal<number>(100);
+  isPanning = signal<boolean>(false);
+  panX = signal<number>(0);
+  panY = signal<number>(0);
+  private startX = 0;
+  private startY = 0;
+
+  onMouseDown(event: MouseEvent) {
+    if (!this.isPanning()) return;
+    event.preventDefault();
+    this.startX = event.clientX - this.panX();
+    this.startY = event.clientY - this.panY();
+    
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      this.panX.set(moveEvent.clientX - this.startX);
+      this.panY.set(moveEvent.clientY - this.startY);
+    };
+
+    const onMouseUp = () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+  }
+
+  zoomIn() {
+    this.zoom.update(z => Math.min(z + 0.2, 5));
+  }
+
+  zoomOut() {
+    this.zoom.update(z => Math.max(z - 0.2, 0.5));
+  }
+
+  togglePan() {
+    this.isPanning.update(p => !p);
+  }
+
+  adjustContrast() {
+    this.contrast.update(c => c === 100 ? 150 : c === 150 ? 200 : 100);
+  }
+
+  resetView() {
+    this.zoom.set(1);
+    this.contrast.set(100);
+    this.brightness.set(100);
+    this.isPanning.set(false);
+    this.panX.set(0);
+    this.panY.set(0);
+  }
+
   // Fetch Image Detail
   imageQuery = injectQuery(() => ({
     queryKey: ['image', this.imageId],
