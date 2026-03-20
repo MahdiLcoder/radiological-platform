@@ -9,6 +9,7 @@ from accounts.permissions import IsRadiologist, IsDoctor, IsAdmin
 from .models import Report
 from .serializers import ReportSerializer
 from diagnosis.models import Diagnosis
+from images.models import RadiologyImage
 
 
 logger = logging.getLogger(__name__)
@@ -89,3 +90,26 @@ class ReportDownloadView(APIView):
         except Exception as e:
             logger.error(f"Error downloading report {pk}: {e}", exc_info=True)
             raise APIException("Failed to download report")
+
+
+class ReportByImageView(APIView):
+    """Return the report associated with a given radiology image ID."""
+    permission_classes = [IsAuthenticated, (IsDoctor | IsRadiologist | IsAdmin)]
+
+    def get(self, request, image_id):
+        try:
+            image = RadiologyImage.objects(id=image_id).first()
+            if not image:
+                raise NotFound("Image not found")
+
+            report = Report.objects(image=image).first()
+            if not report:
+                raise NotFound("No report found for this image")
+
+            serializer = ReportSerializer(report, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except NotFound:
+            raise
+        except Exception as e:
+            logger.error(f"Error finding report for image {image_id}: {e}", exc_info=True)
+            raise APIException("Failed to fetch report")

@@ -1,8 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { PatientService } from '../../services/patientService';
+import { ReportService } from '../../services/reportService';
 import { lastValueFrom } from 'rxjs';
 
 @Component({
@@ -14,7 +15,9 @@ import { lastValueFrom } from 'rxjs';
 })
 export class PatientDetail {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private patientService = inject(PatientService);
+  private reportService = inject(ReportService);
 
   patientId = this.route.snapshot.paramMap.get('id');
 
@@ -38,5 +41,15 @@ export class PatientDetail {
       age--;
     }
     return age;
+  }
+
+  /** Navigate to the AI Validation page for this image */
+  viewScan(imageId: string): void {
+    this.router.navigate(['/dashboard/aivalidation', imageId]);
+  }
+
+  /** Download the PDF report associated with this image */
+  downloadScanReport(imageId: string): void {
+    this.reportService.downloadReportByImageId(imageId);
   }
 }

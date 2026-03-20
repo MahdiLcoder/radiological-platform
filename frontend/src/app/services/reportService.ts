@@ -57,4 +57,17 @@ export class ReportService {
         URL.revokeObjectURL(url);
       });
   }
+
+  /** Find the report associated with a given radiology image ID */
+  getReportByImageId(imageId: string): Observable<ReportApiItem> {
+    return this.http.get<ReportApiItem>(`${this.baseUrl}/by-image/${imageId}/`);
+  }
+
+  /** Download PDF for the report linked to a given image ID */
+  downloadReportByImageId(imageId: string): void {
+    this.getReportByImageId(imageId).subscribe({
+      next: (report) => this.downloadReport(report.id),
+      error: (err) => console.error('No report found for this image:', err),
+    });
+  }
 }
