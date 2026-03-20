@@ -91,6 +91,9 @@ export class Aivalidation {
     queryFn: () => lastValueFrom(this.analysisService.getPrediction(this.imageId)),
   }));
 
+  // UI State
+  showSuccessModal = signal<boolean>(false);
+
   // Validation Mutation
   validationMutation = injectMutation(() => ({
     mutationFn: (data: { action: 'accepted' | 'rejected' | 'modified' }) => 
@@ -102,10 +105,14 @@ export class Aivalidation {
         clinical_notes: this.clinicalNotes() || `AI Prediction validation: ${data.action}`
       })),
     onSuccess: () => {
-      alert('Validation saved successfully!');
-      this.router.navigate(['/dashboard/patients']);
+      this.showSuccessModal.set(true);
     }
   }));
+
+  closeModal() {
+    this.showSuccessModal.set(false);
+    this.router.navigate(['/dashboard/patients']);
+  }
 
   constructor() {
     console.log('Aivalidation initialized with imageId:', this.imageId);
