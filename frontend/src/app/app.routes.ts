@@ -25,7 +25,7 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/admin/admin').then((m) => m.Admin),
       },
       {
-        path: 'aivalidation',
+        path: 'aivalidation/:id',
         loadComponent: () => import('./pages/aivalidation/aivalidation').then((m) => m.Aivalidation),
       },
       {

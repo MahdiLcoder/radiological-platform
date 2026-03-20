@@ -7,6 +7,7 @@ from .serializers import RadiologyImageSerializer
 from .models import RadiologyImage
 from accounts.permissions import IsRadiologist, IsAdmin, IsDoctor
 import logging
+from bson import ObjectId
 
 logger = logging.getLogger(__name__)
 
@@ -40,14 +41,14 @@ class ImageDetailView(APIView):
 
     def get_permissions(self):
         if self.request.method == 'GET':
-            return [IsAuthenticated(), (IsDoctor() | IsAdmin())]
+            return [IsAuthenticated(), (IsDoctor | IsAdmin | IsRadiologist)()]
         elif self.request.method == 'DELETE':
             return [IsAuthenticated(), IsAdmin()]
         return [IsAuthenticated()]
 
     def get(self, request, pk):
         try:
-            image = RadiologyImage.objects(id=pk).first()
+            image = RadiologyImage.objects(id=ObjectId(pk)).first()
             if not image:
                 raise NotFound("Image not found!")
             serializer = RadiologyImageSerializer(image)

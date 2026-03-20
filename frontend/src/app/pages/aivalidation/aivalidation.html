@@ -1,55 +1,77 @@
 <main class="flex flex-1 overflow-hidden h-full -m-6 min-h-[calc(100vh-80px)]">
-  <!-- Left Pane: Medical Image Viewer (STAYS DARK) -->
+  <!-- Left Pane: Medical Image Viewer -->
   <div class="flex-1 relative bg-black flex items-center justify-center group overflow-hidden">
-    <div
-      class="absolute inset-0 opacity-80"
-      data-alt="High resolution medical chest X-ray scan"
-      style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA7tA4mw64Gpu10RoEfBStdnuvTSsKVXQbpWjNR1x-Wuu0ABsbVghoasSdcRJ-fEZTk-Hp_fNHdOvGSY4cRI0ISgxqZGioBbek4IFL1a7iAuvEXteEfpNH0XklRxnkXKLnYFlhBOTJ-RtXTyb5qCnea3yCDfcQn1-ajANfSQW6Q-pkkC0wWRgekCWD7edA7qhYIYox_ewCvL0AeKFjmbvnfYcTj2oULTZY4E9dtxt-HQ-EXcv3OEkNA_VFAUWxF-vEvUICvo6wiqF8'); background-size: contain; background-repeat: no-repeat; background-position: center;"
-    ></div>
+    @if (imageQuery.data(); as image) {
+      <div class="relative w-full h-full flex items-center justify-center p-8">
+        <img
+          [src]="image.file_path"
+          class="max-w-full max-h-full object-contain shadow-2xl rounded-lg animate-in fade-in zoom-in-95 duration-700"
+          alt="Radiological Scan"
+        />
+      </div>
+    } @else if (imageQuery.isError()) {
+      <div class="flex flex-col items-center gap-4 text-red-500/60 p-12 text-center">
+        <span class="material-symbols-outlined text-5xl">wifi_off</span>
+        <div>
+            <h4 class="font-bold text-white mb-1">Failed to Load Image</h4>
+            <p class="text-sm text-white/50 max-w-[300px]">
+              Could not retrieve the scan details from the server.
+              Check your connection or permissions.
+            </p>
+        </div>
+        <button 
+          (click)="imageQuery.refetch()"
+          class="px-5 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-sm transition-all"
+        >
+          Try Again
+        </button>
+      </div>
+    } @else if (imageQuery.isLoading()) {
+      <div class="flex flex-col items-center gap-4 text-white/40">
+        <div class="w-10 h-10 border-4 border-white/10 border-t-white/40 rounded-full animate-spin"></div>
+        <p class="text-sm font-medium">Loading medical image...</p>
+      </div>
+    }
 
     <!-- Floating Image Tools -->
     <div
       class="absolute top-6 left-6 flex flex-col gap-2 bg-white/95 backdrop-blur-md p-2 rounded-xl border border-slate-200 shadow-2xl animate-in fade-in slide-in-from-left-4 duration-500"
     >
       <button class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all" title="Zoom In">
-        <span class="material-symbols-outlined">zoom_in</span>
+        <span class="material-symbols-outlined text-xl">zoom_in</span>
       </button>
       <button
         class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all"
         title="Zoom Out"
       >
-        <span class="material-symbols-outlined">zoom_out</span>
+        <span class="material-symbols-outlined text-xl">zoom_out</span>
       </button>
       <div class="h-px bg-slate-200 mx-2"></div>
       <button class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all" title="Pan">
-        <span class="material-symbols-outlined">pan_tool</span>
+        <span class="material-symbols-outlined text-xl">pan_tool</span>
       </button>
       <button
         class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all"
         title="Contrast"
       >
-        <span class="material-symbols-outlined">contrast</span>
-      </button>
-      <button
-        class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all"
-        title="Invert Colors"
-      >
-        <span class="material-symbols-outlined">invert_colors</span>
+        <span class="material-symbols-outlined text-xl">contrast</span>
       </button>
       <div class="h-px bg-slate-200 mx-2"></div>
       <button class="p-2 hover:bg-primary/10 rounded-lg text-slate-700 transition-all" title="Reset View">
-        <span class="material-symbols-outlined">restart_alt</span>
+        <span class="material-symbols-outlined text-xl">restart_alt</span>
       </button>
     </div>
 
     <!-- Image Metadata Overlay -->
-    <div
-      class="absolute bottom-6 left-6 text-white/70 text-[11px] font-mono space-y-1 bg-black/60 backdrop-blur-sm p-3 rounded-lg border border-white/10"
-    >
-      <p>PATIENT: #2944-CX-82</p>
-      <p>DOB: 12-MAY-1978</p>
-      <p>ACQ: PA VIEW | 85kVp</p>
-    </div>
+    @if (imageQuery.data(); as image) {
+      <div
+        class="absolute bottom-6 left-6 text-white/70 text-[11px] font-mono space-y-1 bg-black/60 backdrop-blur-sm p-3 rounded-lg border border-white/10"
+      >
+        <p>PATIENT ID: {{ image.patient?.id || 'Unknown' }}</p>
+        <p>NAME: {{ image.patient?.first_name }} {{ image.patient?.last_name }}</p>
+        <p>ACQ: {{ image.modality }} | {{ image.uploaded_at | date:'dd-MMM-yyyy HH:mm' }}</p>
+      </div>
+    }
   </div>
 
   <!-- Right Pane: AI Insights -->
@@ -63,9 +85,11 @@
           <div class="flex items-center gap-2 mt-1">
             <span
               class="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded tracking-wider"
-              >MIMIC-CXR</span
+              >AI-MED-VIS</span
             >
-            <span class="text-slate-500 text-xs">Model v2.4.1 (Deep-Vision-X)</span>
+            @if (predictionQuery.data(); as pred) {
+              <span class="text-slate-500 text-xs">Model: {{ pred.model_name }}</span>
+            }
           </div>
         </div>
         <span class="material-symbols-outlined text-primary">psychology</span>
@@ -73,94 +97,125 @@
     </div>
 
     <div class="p-6 space-y-6 flex-1">
-      <!-- Alert Card -->
-      <div class="bg-red-50 border border-red-100 p-4 rounded-xl">
-        <div class="flex items-start gap-3">
-          <div class="p-2 bg-red-100 rounded-lg text-red-600">
-            <span class="material-symbols-outlined">warning</span>
-          </div>
-          <div>
-            <p class="text-red-700 text-xs font-bold uppercase tracking-wide">
-              Target Anomaly Detected
-            </p>
-            <h3 class="text-slate-900 font-bold text-lg mt-0.5">Pneumonia</h3>
-            <p class="text-slate-600 text-sm mt-1 leading-relaxed">
-              Patchy opacity noted in the lower left lobe. Consistent with consolidative process.
-            </p>
-          </div>
+      @if (predictionQuery.isLoading()) {
+        <div class="py-12 flex flex-col items-center justify-center space-y-4">
+          <div class="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+          <p class="text-slate-500 font-medium">Retrieving AI insights...</p>
         </div>
-      </div>
+      }
 
-      <!-- Confidence Score & Gauge -->
-      <div class="grid grid-cols-2 gap-4">
-        <div
-          class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col items-center justify-center text-center"
-        >
-          <div
-            class="relative size-20 rounded-full confidence-gauge flex items-center justify-center shadow-sm"
-          >
-            <div class="size-16 bg-white rounded-full flex items-center justify-center">
-              <span class="text-xl font-bold text-primary">94%</span>
+      @if (predictionQuery.data(); as result) {
+        <!-- Alert Card -->
+        <div class="bg-red-50 border border-red-100 p-4 rounded-xl animate-in zoom-in-95">
+          <div class="flex items-start gap-3">
+            <div class="p-2 bg-red-100 rounded-lg text-red-600">
+              <span class="material-symbols-outlined">warning</span>
+            </div>
+            <div>
+              <p class="text-red-700 text-[10px] font-bold uppercase tracking-wide">
+                Target Anomaly Detected
+              </p>
+              <h3 class="text-slate-900 font-bold text-lg mt-0.5">{{ result.top_finding }}</h3>
+              <p class="text-slate-600 text-sm mt-1 leading-relaxed">
+                The AI model has detected high confidence indicators for {{ result.top_finding | lowercase }}.
+              </p>
             </div>
           </div>
-          <p class="text-slate-500 text-[10px] font-bold mt-3 uppercase tracking-wider">
-            Confidence Score
-          </p>
         </div>
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-center">
-          <div class="flex items-center gap-2 text-slate-900 mb-1">
-            <span class="material-symbols-outlined text-sm text-primary">history_edu</span>
-            <span class="text-sm font-semibold">Prior Comparison</span>
+
+        <!-- Confidence Score & Gauge -->
+        <div class="grid grid-cols-2 gap-4">
+          <div
+            class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col items-center justify-center text-center"
+          >
+            <div
+              class="relative w-20 h-20 rounded-full border-4 border-slate-200 flex items-center justify-center shadow-sm"
+              [style.borderColor]="result.confidence > 0.8 ? '#10b981' : '#f59e0b'"
+            >
+              <span class="text-xl font-bold text-slate-900">{{ (result.confidence * 100).toFixed(0) }}%</span>
+            </div>
+            <p class="text-slate-500 text-[10px] font-bold mt-3 uppercase tracking-wider">
+              Confidence Score
+            </p>
           </div>
-          <p class="text-slate-500 text-xs leading-normal">
-            Comparison to 24-JAN-2023 shows increased density in the region.
-          </p>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-center">
+            <div class="flex items-center gap-2 text-slate-900 mb-1">
+              <span class="material-symbols-outlined text-sm text-primary">analytics</span>
+              <span class="text-sm font-semibold">Probability Check</span>
+            </div>
+            <p class="text-slate-500 text-[10px] leading-normal uppercase font-bold tracking-tighter">
+                {{ result.top_finding }}: {{ (result.confidence * 100).toFixed(1) }}%
+            </p>
+            <div class="w-full bg-slate-200 h-1.5 rounded-full mt-1">
+                <div class="bg-primary h-full rounded-full" [style.width]="(result.confidence * 100) + '%'"></div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <!-- Findings Area -->
-      <div class="space-y-4">
-        <div>
-          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2"
-            >Final Diagnosis</label
-          >
-          <select
-            class="w-full bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-primary focus:border-primary px-3 py-2 text-slate-900"
-          >
-            <option>Likely Bacterial Pneumonia</option>
-            <option>Viral Interstitial Pneumonia</option>
-            <option>Atelectasis</option>
-            <option>Normal Finding (False Positive)</option>
-          </select>
+        <!-- Findings Area -->
+        <div class="space-y-4">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2"
+              >Final Diagnosis (Correction)</label
+            >
+            <div class="relative">
+                <select
+                [(ngModel)]="selectedDiagnosis"
+                class="w-full bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-primary focus:border-primary px-3 py-2.5 text-slate-900 appearance-none cursor-pointer"
+                >
+                <option value="">Select Findings...</option>
+                <option [value]="result.top_finding">{{ result.top_finding }} (AI Suggestion)</option>
+                @for (item of result.predictions | keyvalue; track item.key) {
+                    @if (item.key !== result.top_finding) {
+                        <option [value]="item.key">{{ item.key }}</option>
+                    }
+                }
+                <option value="Normal">Normal Finding</option>
+                </select>
+                <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
+            </div>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2"
+              >Clinical Notes</label
+            >
+            <textarea
+              [(ngModel)]="clinicalNotes"
+              class="w-full h-32 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-primary focus:border-primary p-3 text-slate-900 resize-none leading-relaxed"
+              placeholder="Enter additional observations or corrections here..."
+            ></textarea>
+          </div>
         </div>
-        <div>
-          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2"
-            >Clinical Notes</label
-          >
-          <textarea
-            class="w-full h-40 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-primary focus:border-primary p-3 text-slate-900 resize-none leading-relaxed"
-            placeholder="Enter additional observations or corrections here..."
-          >
-Presence of air bronchograms confirms consolidation in the left lower lobe. No evidence of pleural effusion or cardiomegaly. Recommend follow-up in 48 hours post-antibiotic initiation.</textarea
-          >
-        </div>
-      </div>
 
-      <!-- Validation Actions -->
-      <div class="pt-4 flex gap-3">
-        <button
-          class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
-        >
-          <span class="material-symbols-outlined">check_circle</span>
-          Confirm AI Findings
-        </button>
-        <button
-          class="px-4 py-3 border border-slate-200 text-slate-400 hover:bg-slate-50 rounded-lg transition-colors"
-          title="Flag for second review"
-        >
-          <span class="material-symbols-outlined">flag</span>
-        </button>
-      </div>
+        <!-- Validation Actions -->
+        <div class="pt-4 flex flex-col gap-3">
+          <button
+            (click)="confirmFindings()"
+            [disabled]="validationMutation.isPending()"
+            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-lg transition-all shadow-lg shadow-emerald-200/50 flex items-center justify-center gap-2 disabled:opacity-50"
+          >
+            @if (validationMutation.isPending()) {
+                <div class="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+            } @else {
+                <span class="material-symbols-outlined">check_circle</span>
+            }
+            Confirm & Save Diagnosis
+          </button>
+          <button
+            (click)="rejectFindings()"
+            [disabled]="validationMutation.isPending()"
+            class="w-full py-3.5 border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold rounded-lg transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+          >
+            <span class="material-symbols-outlined text-base">cancel</span>
+            Mark as Incorrect
+          </button>
+        </div>
+      } @else if (!predictionQuery.isLoading()) {
+          <div class="py-12 flex flex-col items-center text-center space-y-4 px-6">
+              <span class="material-symbols-outlined text-4xl text-slate-200">error</span>
+              <p class="text-slate-500 text-sm italic">No AI prediction data found for this scan. You may need to trigger analysis first.</p>
+          </div>
+      }
     </div>
   </aside>
 </main>

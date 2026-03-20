@@ -95,7 +95,7 @@ class RunAiPredictionView(APIView):
 
 
 class AiPredictionsView(APIView):
-    permission_classes = [IsAuthenticated, (IsDoctor | IsAdmin)]
+    permission_classes = [IsAuthenticated, (IsDoctor | IsAdmin | IsRadiologist)]
 
     def get(self, request, image_id):
         try:
