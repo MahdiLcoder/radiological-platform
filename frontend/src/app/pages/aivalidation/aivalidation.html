@@ -195,7 +195,8 @@
             <div class="relative">
                 <select
                 [(ngModel)]="selectedDiagnosis"
-                class="w-full bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-primary focus:border-primary px-3 py-2.5 text-slate-900 appearance-none cursor-pointer"
+                [disabled]="imageQuery.data()?.status === 'validated'"
+                class="w-full bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-primary focus:border-primary px-3 py-2.5 text-slate-900 appearance-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                 <option value="">Select Findings...</option>
                 <option [value]="result.top_finding">{{ result.top_finding }} (AI Suggestion)</option>
@@ -215,35 +216,56 @@
             >
             <textarea
               [(ngModel)]="clinicalNotes"
-              class="w-full h-32 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-primary focus:border-primary p-3 text-slate-900 resize-none leading-relaxed"
+              [disabled]="imageQuery.data()?.status === 'validated'"
+              class="w-full h-32 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-primary focus:border-primary p-3 text-slate-900 resize-none leading-relaxed disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="Enter additional observations or corrections here..."
             ></textarea>
           </div>
         </div>
 
         <!-- Validation Actions -->
-        <div class="pt-4 flex flex-col gap-3">
-          <button
-            (click)="confirmFindings()"
-            [disabled]="validationMutation.isPending()"
-            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-lg transition-all shadow-lg shadow-emerald-200/50 flex items-center justify-center gap-2 disabled:opacity-50"
-          >
-            @if (validationMutation.isPending()) {
-                <div class="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-            } @else {
-                <span class="material-symbols-outlined">check_circle</span>
-            }
-            Confirm & Save Diagnosis
-          </button>
-          <button
-            (click)="rejectFindings()"
-            [disabled]="validationMutation.isPending()"
-            class="w-full py-3.5 border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold rounded-lg transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-50"
-          >
-            <span class="material-symbols-outlined text-base">cancel</span>
-            Mark as Incorrect
-          </button>
-        </div>
+        @if (imageQuery.data()?.status !== 'validated') {
+          <div class="pt-4 flex flex-col gap-3">
+            <button
+              (click)="confirmFindings()"
+              [disabled]="validationMutation.isPending()"
+              class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-lg transition-all shadow-lg shadow-emerald-200/50 flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              @if (validationMutation.isPending()) {
+                  <div class="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+              } @else {
+                  <span class="material-symbols-outlined">check_circle</span>
+              }
+              Confirm & Save Diagnosis
+            </button>
+            <button
+              (click)="rejectFindings()"
+              [disabled]="validationMutation.isPending()"
+              class="w-full py-3.5 border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold rounded-lg transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              <span class="material-symbols-outlined text-base">cancel</span>
+              Mark as Incorrect
+            </button>
+          </div>
+        } @else {
+          <div class="pt-4 mt-2">
+            <div class="flex items-center gap-3 bg-emerald-50 text-emerald-700 p-4 rounded-xl border border-emerald-100">
+              <span class="material-symbols-outlined text-2xl">verified</span>
+              <div>
+                <p class="font-bold text-sm">Diagnosis Validated</p>
+                <p class="text-xs text-emerald-600/80 mt-0.5">This analysis has been reviewed and saved.</p>
+              </div>
+            </div>
+            
+            <button
+              (click)="router.navigate(['/dashboard/reports'])"
+              class="w-full mt-3 bg-white py-3.5 border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold rounded-lg transition-all text-sm flex items-center justify-center gap-2"
+            >
+              <span class="material-symbols-outlined text-base">description</span>
+              View Reports
+            </button>
+          </div>
+        }
       } @else if (!predictionQuery.isLoading()) {
           <div class="py-12 flex flex-col items-center text-center space-y-4 px-6">
               <span class="material-symbols-outlined text-4xl text-slate-200">error</span>

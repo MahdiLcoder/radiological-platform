@@ -30,7 +30,7 @@
             <div class="flex items-center justify-between w-full">
               <div>
                 <h2 class="text-3xl font-bold text-slate-900">{{ patient.first_name }} {{ patient.last_name }}</h2>
-                <p class="text-slate-500">Patient ID: <span class="font-mono text-primary font-bold">{{ patient.id?.substring(0, 12) | uppercase }}</span></p>
+                <p class="text-slate-500">Patient ID: <span class="font-mono text-primary font-bold">{{ patient.id | uppercase }}</span></p>
               </div>
               <div class="flex gap-2">
                 <button [routerLink]="['/dashboard/edit-patient', patient.id]" class="px-4 py-2 border border-slate-200 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">Edit Profile</button>

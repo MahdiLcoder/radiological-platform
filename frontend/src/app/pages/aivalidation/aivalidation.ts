@@ -16,7 +16,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class Aivalidation {
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  router = inject(Router);
   private analysisService = inject(AnalysisService);
   private reportService = inject(ReportService);
 
