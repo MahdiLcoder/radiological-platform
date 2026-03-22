@@ -13,7 +13,7 @@
   <!-- Nav Links -->
   <nav class="flex-1 px-4 space-y-1">
     <a
-      routerLink="/dashboard/radiologist"
+      routerLink="/dashboard/{{ profileQuery.data()?.role?.toLowerCase() }}"
       routerLinkActive="!bg-primary/10 !text-primary"
       [routerLinkActiveOptions]="{ exact: true }"
       class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
