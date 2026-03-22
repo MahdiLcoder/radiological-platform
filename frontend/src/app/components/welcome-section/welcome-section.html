@@ -9,6 +9,7 @@
     
     @if (buttonText) {
       <button
+        [routerLink]="buttonLink"
         class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-lg font-bold shadow-lg shadow-primary/25 transition-all active:scale-95"
       >
         @if (buttonIcon) {

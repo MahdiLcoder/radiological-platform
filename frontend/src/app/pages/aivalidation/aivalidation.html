@@ -229,7 +229,7 @@
             <!-- Button 1: Accept AI -->
             <button
               (click)="confirmFindings()"
-              [disabled]="validationMutation.isPending()"
+              [disabled]="validationMutation.isPending() || selectedDiagnosis() !== result.top_finding"
               class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-lg transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50"
             >
               @if (validationMutation.isPending()) {
