@@ -27,9 +27,17 @@
   } @else {
     <app-stats-summary [stats]="summaryStats()"></app-stats-summary>
 
+    <div class="flex items-center justify-between pt-4">
+      <h2 class="text-xl font-bold text-slate-900">Recent Scans</h2>
+      <a routerLink="/dashboard/all-images" class="text-sm font-bold text-primary hover:underline flex items-center gap-1 bg-primary/10 px-4 py-2 rounded-lg transition-all hover:bg-primary/20">
+        View All Scans <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+      </a>
+    </div>
+
     <app-worklist-table 
       [columns]="tableColumns" 
       [data]="worklistData()"
+      [hideFooter]="true"
     ></app-worklist-table>
   }
 </div>

@@ -1,65 +1,26 @@
 import { Component, inject, computed } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { WelcomeSection } from '../../components/welcome-section/welcome-section';
-import { StatsSummary, StatItem } from '../../components/stats-summary/stats-summary';
 import { WorklistTable, WorklistItem } from '../../components/worklist-table/worklist-table';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 import { AnalysisService } from '../../services/analysisService';
 
 @Component({
-  selector: 'app-radiologist',
+  selector: 'app-all-images',
   standalone: true,
-  imports: [WelcomeSection, StatsSummary, WorklistTable, RouterModule],
-  templateUrl: './radiologist.html',
-  styleUrl: './radiologist.css',
+  imports: [WorklistTable, RouterModule],
+  templateUrl: './all-images.html',
+  styleUrl: './all-images.css',
 })
-export class Radiologist {
+export class AllImages {
   private analysisService = inject(AnalysisService);
 
   tableColumns: string[] = ['Patient Details', 'Modality', 'Upload Date', 'AI Status', 'Actions'];
 
   imagesQuery = injectQuery(() => ({
-    queryKey: ['all_images'],
+    queryKey: ['all_images_full'],
     queryFn: () => lastValueFrom(this.analysisService.getAllImages()).then(data => Array.isArray(data) ? data : []),
   }));
-
-  summaryStats = computed<StatItem[]>(() => {
-    const images = this.imagesQuery.data() || [];
-    const pendingCount = images.filter(img => img.status === 'uploaded' || img.status === 'pending_analysis').length;
-    const analyzedCount = images.filter(img => img.status === 'analyzed' || img.status === 'validated').length;
-    const criticalCount = 0; 
-
-    return [
-      {
-        title: 'Pending Analysis',
-        value: pendingCount.toString(),
-        trendText: 'Real-time queue',
-        trendColorClass: 'text-slate-500',
-        icon: 'hourglass_empty',
-        iconColorClass: 'text-amber-600 dark:text-amber-500',
-        iconBgClass: 'bg-amber-100 dark:bg-amber-500/10'
-      },
-      {
-        title: 'Analyzed Scans',
-        value: analyzedCount.toString(),
-        trendText: 'Total completed',
-        trendColorClass: 'text-emerald-500',
-        icon: 'smart_toy',
-        iconColorClass: 'text-primary',
-        iconBgClass: 'bg-blue-100 dark:bg-primary/10'
-      },
-      {
-        title: 'Total Scans',
-        value: images.length.toString(),
-        trendText: 'All time uploads',
-        trendColorClass: 'text-slate-500',
-        icon: 'folder_open',
-        iconColorClass: 'text-indigo-600 dark:text-indigo-500',
-        iconBgClass: 'bg-indigo-100 dark:bg-indigo-500/10'
-      }
-    ];
-  });
 
   worklistData = computed<WorklistItem[]>(() => {
     const images = this.imagesQuery.data() || [];
@@ -107,7 +68,6 @@ export class Radiologist {
           text: actionText
         }
       };
-    }).sort((a, b) => new Date(b.uploadDate.date + ' ' + b.uploadDate.time).getTime() - new Date(a.uploadDate.date + ' ' + a.uploadDate.time).getTime())
-      .slice(0, 5);
+    }).sort((a, b) => new Date(b.uploadDate.date + ' ' + b.uploadDate.time).getTime() - new Date(a.uploadDate.date + ' ' + a.uploadDate.time).getTime());
   });
 }

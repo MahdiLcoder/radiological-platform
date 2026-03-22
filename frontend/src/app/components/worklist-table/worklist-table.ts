@@ -30,6 +30,8 @@ export interface WorklistItem {
 export class WorklistTable {
   @Input() columns: string[] = [];
   @Input() data: WorklistItem[] = [];
+  @Input() totalItems?: number;
+  @Input() hideFooter: boolean = false;
 
   getModalityClass(modality: string): string {
     switch (modality) {

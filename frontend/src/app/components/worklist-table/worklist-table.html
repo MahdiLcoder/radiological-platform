@@ -24,13 +24,13 @@
                   <td class="px-6 py-5">
                     <div class="flex items-center gap-3">
                       <div
-                        class="h-9 w-9 rounded-full flex items-center justify-center font-bold {{ item.patient.isEmergency ? 'bg-red-100 text-red-500' : 'bg-slate-100 text-slate-400' }}"
+                        class="h-9 w-9 rounded-full flex items-center justify-center font-bold bg-slate-100 text-slate-400"
                       >
                         {{ item.patient.initials }}
                       </div>
                       <div>
                         <div class="flex items-center gap-2">
-                          <a [routerLink]="['/dashboard/patient-detail', item.patient.id]" class="text-sm font-bold text-slate-900 leading-tight hover:text-primary hover:underline cursor-pointer">
+                          <a class="text-sm font-bold text-slate-900 leading-tight hover:text-primary hover:underline cursor-pointer">
                             {{ item.patient.name }}
                           </a>
                           @if (item.patient.isEmergency) {
@@ -95,22 +95,27 @@
       </tbody>
     </table>
   </div>
-  <div
-    class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between"
-  >
-    <p class="text-xs font-medium text-slate-500">Showing {{ data.length }} of 12 entries</p>
-    <div class="flex gap-2">
-      <button
-        class="p-1 rounded bg-white border border-slate-200 text-slate-500 hover:text-primary disabled:opacity-50"
-        disabled=""
-      >
-        <span class="material-symbols-outlined text-sm leading-none">chevron_left</span>
-      </button>
-      <button
-        class="p-1 rounded bg-white border border-slate-200 text-slate-500 hover:text-primary"
-      >
-        <span class="material-symbols-outlined text-sm leading-none">chevron_right</span>
-      </button>
+  @if (!hideFooter) {
+    <div
+      class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between"
+    >
+      <p class="text-xs font-medium text-slate-500">
+        Showing {{ data.length }} {{ totalItems !== undefined ? 'of ' + totalItems : '' }} entries
+      </p>
+      <div class="flex gap-2">
+        <button
+          class="p-1 rounded bg-white border border-slate-200 text-slate-500 hover:text-primary disabled:opacity-50"
+          disabled=""
+        >
+          <span class="material-symbols-outlined text-sm leading-none">chevron_left</span>
+        </button>
+        <button
+          class="p-1 rounded bg-white border border-slate-200 text-slate-500 hover:text-primary disabled:opacity-50"
+          disabled=""
+        >
+          <span class="material-symbols-outlined text-sm leading-none">chevron_right</span>
+        </button>
+      </div>
     </div>
-  </div>
+  }
 </div>
