@@ -20,20 +20,18 @@ export class Radiologist {
   tableColumns: string[] = ['Patient Details', 'Modality', 'Upload Date', 'AI Status', 'Actions'];
 
   imagesQuery = injectQuery(() => ({
-    queryKey: ['all_images'],
-    queryFn: () => lastValueFrom(this.analysisService.getAllImages()).then(data => Array.isArray(data) ? data : []),
+    queryKey: ['recent_images_radiologist'],
+    queryFn: () => lastValueFrom(this.analysisService.getAllImages({ page_size: 5 })),
   }));
 
   summaryStats = computed<StatItem[]>(() => {
-    const images = this.imagesQuery.data() || [];
-    const pendingCount = images.filter(img => img.status === 'uploaded' || img.status === 'pending_analysis').length;
-    const analyzedCount = images.filter(img => img.status === 'analyzed' || img.status === 'validated').length;
-    const criticalCount = 0; 
+    const rawData: any = this.imagesQuery.data();
+    const stats = rawData?.stats || { pending: 0, analyzed: 0, total: 0 };
 
     return [
       {
         title: 'Pending Analysis',
-        value: pendingCount.toString(),
+        value: stats.pending.toString(),
         trendText: 'Real-time queue',
         trendColorClass: 'text-slate-500',
         icon: 'hourglass_empty',
@@ -42,7 +40,7 @@ export class Radiologist {
       },
       {
         title: 'Analyzed Scans',
-        value: analyzedCount.toString(),
+        value: stats.analyzed.toString(),
         trendText: 'Total completed',
         trendColorClass: 'text-emerald-500',
         icon: 'smart_toy',
@@ -51,7 +49,7 @@ export class Radiologist {
       },
       {
         title: 'Total Scans',
-        value: images.length.toString(),
+        value: stats.total.toString(),
         trendText: 'All time uploads',
         trendColorClass: 'text-slate-500',
         icon: 'folder_open',
@@ -62,7 +60,9 @@ export class Radiologist {
   });
 
   worklistData = computed<WorklistItem[]>(() => {
-    const images = this.imagesQuery.data() || [];
+    const rawData: any = this.imagesQuery.data();
+    const images: any[] = rawData?.results || [];
+
     return images.map(img => {
       const p = img.patient;
       const fName = p?.first_name || '';
@@ -107,7 +107,6 @@ export class Radiologist {
           text: actionText
         }
       };
-    }).sort((a, b) => new Date(b.uploadDate.date + ' ' + b.uploadDate.time).getTime() - new Date(a.uploadDate.date + ' ' + a.uploadDate.time).getTime())
-      .slice(0, 5);
+    }).sort((a, b) => new Date(b.uploadDate.date + ' ' + b.uploadDate.time).getTime() - new Date(a.uploadDate.date + ' ' + a.uploadDate.time).getTime());
   });
 }

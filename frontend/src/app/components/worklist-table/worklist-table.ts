@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 export interface WorklistItem {
@@ -31,7 +31,12 @@ export class WorklistTable {
   @Input() columns: string[] = [];
   @Input() data: WorklistItem[] = [];
   @Input() totalItems?: number;
+  @Input() currentPage?: number;
+  @Input() totalPages?: number;
   @Input() hideFooter: boolean = false;
+
+  @Output() prevPage = new EventEmitter<void>();
+  @Output() nextPage = new EventEmitter<void>();
 
   getModalityClass(modality: string): string {
     switch (modality) {

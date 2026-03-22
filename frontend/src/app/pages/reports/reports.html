@@ -8,7 +8,8 @@
         <label class="text-xs font-bold uppercase tracking-wider text-slate-500 pl-3">Modality:</label>
         <div class="relative w-40">
           <select 
-            [(ngModel)]="modalityFilter"
+            [ngModel]="modalityFilter()"
+            (ngModelChange)="modalityFilter.set($event); onFilterChange()"
             class="w-full appearance-none bg-slate-50 border-none rounded-md py-2 px-3 text-sm font-bold focus:ring-2 focus:ring-primary focus:outline-none cursor-pointer"
           >
             <option value="All Modalities">All Modalities</option>
@@ -33,7 +34,8 @@
           </label>
           <div class="relative">
             <select 
-              [(ngModel)]="dateFilter"
+              [ngModel]="dateFilter()"
+              (ngModelChange)="dateFilter.set($event); onFilterChange()"
               class="w-full appearance-none bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-primary focus:border-primary cursor-pointer">
               <option value="All Time">All Time</option>
               <option value="Last 7 Days">Last 7 Days</option>
@@ -49,7 +51,8 @@
           </label>
           <div class="relative">
             <input 
-              [(ngModel)]="patientIdFilter"
+              [ngModel]="patientIdFilter()"
+              (ngModelChange)="patientIdFilter.set($event); onFilterChange()"
               class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-primary focus:border-primary pl-9" 
               placeholder="Search Name or ID..." 
               type="text"
@@ -101,11 +104,19 @@
     <!-- Pagination (shown only when there are results) -->
     @if (reportsQuery.isSuccess() && reports().length > 0) {
       <div class="mt-12 flex items-center justify-center gap-2">
-        <button class="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors text-slate-600">
+        <button 
+          class="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors text-slate-600 disabled:opacity-50"
+          [disabled]="currentPage() === 1"
+          (click)="prevPage()"
+        >
           <span class="material-symbols-outlined">chevron_left</span>
         </button>
-        <button class="w-10 h-10 rounded-lg bg-primary text-white font-bold">1</button>
-        <button class="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors text-slate-600">
+        <button class="w-10 h-10 rounded-lg bg-primary text-white font-bold">{{ currentPage() }}</button>
+        <button 
+          class="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors text-slate-600 disabled:opacity-50"
+          [disabled]="currentPage() === totalPages()"
+          (click)="nextPage()"
+        >
           <span class="material-symbols-outlined">chevron_right</span>
         </button>
       </div>

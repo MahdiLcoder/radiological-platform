@@ -105,13 +105,15 @@
       <div class="flex gap-2">
         <button
           class="p-1 rounded bg-white border border-slate-200 text-slate-500 hover:text-primary disabled:opacity-50"
-          disabled=""
+          [disabled]="currentPage === 1 || !currentPage"
+          (click)="prevPage.emit()"
         >
           <span class="material-symbols-outlined text-sm leading-none">chevron_left</span>
         </button>
         <button
           class="p-1 rounded bg-white border border-slate-200 text-slate-500 hover:text-primary disabled:opacity-50"
-          disabled=""
+          [disabled]="currentPage === totalPages || !currentPage"
+          (click)="nextPage.emit()"
         >
           <span class="material-symbols-outlined text-sm leading-none">chevron_right</span>
         </button>

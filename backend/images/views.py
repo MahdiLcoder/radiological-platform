@@ -29,9 +29,56 @@ class ImageListView(APIView):
 
     def get(self, request):
         try:
+            page = int(request.query_params.get('page', 1))
+            page_size = int(request.query_params.get('page_size', 10))
+            search = request.query_params.get('search', '').strip().lower()
+            modality = request.query_params.get('modality', '')
+            status_filter = request.query_params.get('status', '')
+
             images = RadiologyImage.objects.all()
-            serializer = RadiologyImageSerializer(images, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+
+            if modality:
+                images = images.filter(modality__iexact=modality)
+            if status_filter:
+                images = images.filter(status__iexact=status_filter)
+
+            if search:
+                from mongoengine.queryset.visitor import Q
+                from patients.models import Patient
+                matching_patients = Patient.objects(
+                    Q(first_name__icontains=search) | 
+                    Q(last_name__icontains=search)
+                )
+                patient_ids = [p.id for p in matching_patients]
+                
+                try:
+                    from bson import ObjectId
+                    obj_id = ObjectId(search)
+                    images = images.filter(Q(patient__in=patient_ids) | Q(id=obj_id))
+                except Exception:
+                    images = images.filter(patient__in=patient_ids)
+
+            total = images.count()
+            
+            pending_count = images.filter(status__in=['uploaded', 'pending_analysis']).count()
+            analyzed_count = images.filter(status__in=['analyzed', 'validated']).count()
+
+            skip = (page - 1) * page_size
+            images_paginated = images.skip(skip).limit(page_size)
+
+            serializer = RadiologyImageSerializer(images_paginated, many=True)
+            return Response({
+                'count': total,
+                'page': page,
+                'page_size': page_size,
+                'total_pages': max(1, (total + page_size - 1) // page_size),
+                'stats': {
+                    'pending': pending_count,
+                    'analyzed': analyzed_count,
+                    'total': total
+                },
+                'results': serializer.data
+            }, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error(f"Error in ImageListView: {e}", exc_info=True)
             raise APIException("Something went wrong")

@@ -22,17 +22,26 @@ export class Reports {
   modalityFilter = signal('All Modalities');
   dateFilter = signal('All Time');
   patientIdFilter = signal('');
+  currentPage = signal(1);
 
   reportsQuery = injectQuery(() => ({
-    queryKey: ['reports'],
-    queryFn: () => lastValueFrom(this.reportService.getReports()),
+    queryKey: ['reports', this.modalityFilter(), this.dateFilter(), this.patientIdFilter(), this.currentPage()],
+    queryFn: () => lastValueFrom(
+      this.reportService.getReports({
+        search: this.patientIdFilter(),
+        modality: this.modalityFilter() === 'All Modalities' ? '' : this.modalityFilter(),
+        date_range: this.dateFilter() === 'All Time' ? '' : this.dateFilter(),
+        page: this.currentPage(),
+        page_size: 10
+      })
+    ),
   }));
 
   reports = computed<Report[]>(() => {
-    const data = this.reportsQuery.data();
-    if (!data) return [];
+    const data: any = this.reportsQuery.data();
+    if (!data || !data.results) return [];
     
-    let filtered = data.map((item: ReportApiItem) => ({
+    return data.results.map((item: ReportApiItem) => ({
       id: item.id,
       patientName: item.image?.patient_name ?? 'Unknown Patient',
       modality: this.normalizeModality(item.image?.modality),
@@ -45,32 +54,26 @@ export class Reports {
       validated: true,
       reportId: item.id,
     }));
-
-    const mod = this.modalityFilter();
-    if (mod !== 'All Modalities') {
-      filtered = filtered.filter(r => r.modality === mod);
-    }
-
-    const pid = this.patientIdFilter().toLowerCase().trim();
-    if (pid) {
-      filtered = filtered.filter(r => r.patientName.toLowerCase().includes(pid) || r.id.toLowerCase().includes(pid));
-    }
-
-    const dR = this.dateFilter();
-    if (dR !== 'All Time') {
-      const now = new Date();
-      filtered = filtered.filter(r => {
-        if (!r.date || r.date === '—') return false;
-        const d = new Date(r.date);
-        const diffDays = (now.getTime() - d.getTime()) / (1000 * 3600 * 24);
-        if (dR === 'Last 7 Days') return diffDays <= 7;
-        if (dR === 'Last 30 Days') return diffDays <= 30;
-        return true;
-      });
-    }
-
-    return filtered;
   });
+
+  totalPages = computed(() => (this.reportsQuery.data() as any)?.total_pages || 1);
+  totalItems = computed(() => (this.reportsQuery.data() as any)?.count || 0);
+
+  nextPage() {
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.update(p => p + 1);
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage() > 1) {
+      this.currentPage.update(p => p - 1);
+    }
+  }
+
+  onFilterChange() {
+    this.currentPage.set(1);
+  }
 
   private normalizeModality(raw: string | undefined): 'MRI' | 'CT Scan' | 'X-Ray' {
     if (!raw) return 'X-Ray';

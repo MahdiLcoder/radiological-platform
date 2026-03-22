@@ -18,35 +18,43 @@ export class Patients {
 
   searchQuery = signal('');
   activeTab = signal<'ALL'|'RECENT'|'PRIORITY'>('ALL');
+  currentPage = signal(1);
 
   patientsQuery = injectQuery(() => ({
-    queryKey: ['patients'],
-    queryFn: () => lastValueFrom(this.patientService.getAll()).then(data => {
-      console.log('Received patients:', data);
-      return Array.isArray(data) ? data : [];
-    }),
+    queryKey: ['patients', this.searchQuery(), this.activeTab(), this.currentPage()],
+    queryFn: () => lastValueFrom(
+      this.patientService.getAll({
+        search: this.searchQuery(),
+        tab: this.activeTab(),
+        page: this.currentPage(),
+        page_size: 10
+      })
+    ),
   }));
 
   filteredPatients = computed<Patient[]>(() => {
-    let patients = this.patientsQuery.data() || [];
-    
-    if (this.activeTab() === 'RECENT') {
-      patients = [...patients].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
-    } else if (this.activeTab() === 'PRIORITY') {
-      patients = patients.filter(p => (p.stats?.active_diagnoses || 0) > 0);
-    }
-
-    const q = this.searchQuery().toLowerCase();
-    if (q) {
-      patients = patients.filter(p => 
-        p.first_name?.toLowerCase().includes(q) ||
-        p.last_name?.toLowerCase().includes(q) ||
-        p.id?.toLowerCase().includes(q)
-      );
-    }
-    
-    return patients;
+    const data: any = this.patientsQuery.data();
+    return data?.results || [];
   });
+
+  totalPages = computed(() => (this.patientsQuery.data() as any)?.total_pages || 1);
+  totalItems = computed(() => (this.patientsQuery.data() as any)?.count || 0);
+
+  nextPage() {
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.update(p => p + 1);
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage() > 1) {
+      this.currentPage.update(p => p - 1);
+    }
+  }
+
+  onFilterChange() {
+    this.currentPage.set(1);
+  }
 
   getInitials(firstName: string, lastName: string): string {
     if (!firstName || !lastName) return 'P';

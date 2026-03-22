@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { PaginatedResponse } from '../models/pagination';
 
 export interface AnalysisResult {
   id: string;
@@ -55,8 +56,14 @@ export class AnalysisService {
     return this.http.get<UploadResponse>(`${this.imagesApiUrl}/${id}/`);
   }
 
-  getAllImages(): Observable<UploadResponse[]> {
-    return this.http.get<UploadResponse[]>(`${this.imagesApiUrl}/`);
+  getAllImages(params: any = {}): Observable<PaginatedResponse<UploadResponse[]>> {
+    let httpParams = new HttpParams();
+    Object.keys(params).forEach(key => {
+      if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
+        httpParams = httpParams.append(key, params[key]);
+      }
+    });
+    return this.http.get<PaginatedResponse<UploadResponse[]>>(`${this.imagesApiUrl}/`, { params: httpParams });
   }
 
   runPrediction(imageId: string): Observable<AnalysisResult> {

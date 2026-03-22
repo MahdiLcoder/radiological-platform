@@ -27,8 +27,8 @@
         class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-xl"
         >search</span
       >
-      <input
-        [(ngModel)]="searchQuery"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event); onFilterChange()"
         class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg py-2.5 pl-10 pr-4 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
         placeholder="Search by name, patient ID or scan ID..."
         type="text"
@@ -36,7 +36,7 @@
     </div>
     <div class="flex gap-2">
       <button
-        (click)="activeTab.set('ALL')"
+        (click)="activeTab.set('ALL'); onFilterChange()"
         [class.text-primary]="activeTab() === 'ALL'"
         [class.bg-slate-50]="activeTab() === 'ALL'"
         class="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-slate-700 dark:text-slate-300"
@@ -45,7 +45,7 @@
         All Patients
       </button>
       <button
-        (click)="activeTab.set('RECENT')"
+        (click)="activeTab.set('RECENT'); onFilterChange()"
         [class.text-primary]="activeTab() === 'RECENT'"
         [class.bg-slate-50]="activeTab() === 'RECENT'"
         class="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-slate-700 dark:text-slate-300"
@@ -54,7 +54,7 @@
         Recent Visits
       </button>
       <button
-        (click)="activeTab.set('PRIORITY')"
+        (click)="activeTab.set('PRIORITY'); onFilterChange()"
         [class.text-primary]="activeTab() === 'PRIORITY'"
         [class.bg-slate-50]="activeTab() === 'PRIORITY'"
         class="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-slate-700 dark:text-slate-300"
@@ -157,24 +157,26 @@
           class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between"
         >
           <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold">
-            Showing <span class="text-slate-900 dark:text-white">1 to {{ filteredPatients().length }}</span> of
-            <span class="text-slate-900 dark:text-white">{{ filteredPatients().length }}</span> patients
+            Showing <span class="text-slate-900 dark:text-white">{{ ((currentPage() - 1) * 10) + 1 }} to {{ ((currentPage() - 1) * 10) + filteredPatients().length }}</span> of
+            <span class="text-slate-900 dark:text-white">{{ totalItems() }}</span> patients
           </span>
           <div class="flex gap-1">
             <button
               class="size-8 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 text-slate-400 hover:bg-white dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
-              disabled
+              [disabled]="currentPage() === 1"
+              (click)="prevPage()"
             >
               <span class="material-symbols-outlined text-sm">chevron_left</span>
             </button>
             <button
               class="size-8 flex items-center justify-center rounded border border-primary bg-primary text-white text-sm font-bold shadow-sm shadow-primary/10"
             >
-              1
+              {{ currentPage() }}
             </button>
             <button
               class="size-8 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 text-slate-400 hover:bg-white dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
-              disabled
+              [disabled]="currentPage() === totalPages()"
+              (click)="nextPage()"
             >
               <span class="material-symbols-outlined text-sm">chevron_right</span>
             </button>

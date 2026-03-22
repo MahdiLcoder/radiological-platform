@@ -41,9 +41,61 @@ class ReportListView(APIView):
 
     def get(self, request):
         try:
+            modality = request.query_params.get('modality', '')
+            search = request.query_params.get('search', '').lower().strip()
+            date_range = request.query_params.get('date_range', '')
+            page = int(request.query_params.get('page', 1))
+            page_size = int(request.query_params.get('page_size', 10))
+
             reports = Report.objects.all()
-            serializer = ReportSerializer(reports, many=True, context={'request': request})
-            return Response(serializer.data, status=status.HTTP_200_OK)
+
+            if date_range == 'Last 7 Days':
+                import datetime
+                threshold = datetime.datetime.utcnow() - datetime.timedelta(days=7)
+                reports = reports.filter(generated_at__gte=threshold)
+            elif date_range == 'Last 30 Days':
+                import datetime
+                threshold = datetime.datetime.utcnow() - datetime.timedelta(days=30)
+                reports = reports.filter(generated_at__gte=threshold)
+
+            if modality or search:
+                from images.models import RadiologyImage
+                from patients.models import Patient
+                from mongoengine.queryset.visitor import Q
+
+                image_qs = RadiologyImage.objects.all()
+                if modality and modality != 'All Modalities':
+                    image_qs = image_qs.filter(modality__iexact=modality)
+                
+                if search:
+                    matching_patients = Patient.objects(
+                        Q(first_name__icontains=search) | 
+                        Q(last_name__icontains=search)
+                    )
+                    patient_ids = [p.id for p in matching_patients]
+                    
+                    try:
+                        from bson import ObjectId
+                        obj_id = ObjectId(search)
+                        image_qs = image_qs.filter(Q(patient__in=patient_ids) | Q(id=obj_id))
+                    except Exception:
+                        image_qs = image_qs.filter(patient__in=patient_ids)
+
+                matching_images = [img.id for img in image_qs]
+                reports = reports.filter(image__in=matching_images)
+
+            total = reports.count()
+            skip = (page - 1) * page_size
+            reports_paginated = reports.skip(skip).limit(page_size)
+
+            serializer = ReportSerializer(reports_paginated, many=True, context={'request': request})
+            return Response({
+                'count': total,
+                'page': page,
+                'page_size': page_size,
+                'total_pages': max(1, (total + page_size - 1) // page_size),
+                'results': serializer.data
+            }, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error(f"Error fetching reports: {e}", exc_info=True)
             raise APIException("Failed to fetch reports")

@@ -22,15 +22,26 @@ export class AllImages {
   searchQuery = signal('');
   selectedModality = signal('');
   selectedStatus = signal('');
+  currentPage = signal(1);
 
   imagesQuery = injectQuery(() => ({
-    queryKey: ['all_images_full'],
-    queryFn: () => lastValueFrom(this.analysisService.getAllImages()).then(data => Array.isArray(data) ? data : []),
+    queryKey: ['all_images_full', this.searchQuery(), this.selectedModality(), this.selectedStatus(), this.currentPage()],
+    queryFn: () => lastValueFrom(
+      this.analysisService.getAllImages({
+        search: this.searchQuery(),
+        modality: this.selectedModality(),
+        status: this.selectedStatus().toLowerCase(),
+        page: this.currentPage(),
+        page_size: 10
+      })
+    ),
   }));
 
   worklistData = computed<WorklistItem[]>(() => {
-    const images = this.imagesQuery.data() || [];
-    const mapped: WorklistItem[] = images.map(img => {
+    const response: any = this.imagesQuery.data();
+    if (!response || !response.results) return [];
+    
+    return response.results.map((img: any) => {
       const p = img.patient;
       const fName = p?.first_name || '';
       const lName = p?.last_name || '';
@@ -75,22 +86,24 @@ export class AllImages {
         }
       };
     });
-
-    const q = this.searchQuery().toLowerCase();
-    const mod = this.selectedModality();
-    const stat = this.selectedStatus();
-
-    return mapped.filter(item => {
-      const matchesSearch = 
-        !q || 
-        item.patient.name.toLowerCase().includes(q) || 
-        item.patient.id.toLowerCase().includes(q) ||
-        item.modality.toLowerCase().includes(q);
-
-      const matchesModality = !mod || item.modality === mod;
-      const matchesStatus = !stat || item.aiStatus === stat;
-
-      return matchesSearch && matchesModality && matchesStatus;
-    }).sort((a, b) => new Date(b.uploadDate.date + ' ' + b.uploadDate.time).getTime() - new Date(a.uploadDate.date + ' ' + a.uploadDate.time).getTime());
   });
+
+  totalPages = computed(() => (this.imagesQuery.data() as any)?.total_pages || 1);
+  totalItems = computed(() => (this.imagesQuery.data() as any)?.count || 0);
+
+  nextPage() {
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.update(p => p + 1);
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage() > 1) {
+      this.currentPage.update(p => p - 1);
+    }
+  }
+
+  onFilterChange() {
+    this.currentPage.set(1);
+  }
 }

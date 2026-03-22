@@ -19,14 +19,55 @@ class PatientListCreateView(APIView):
     def get(self, request):
         """List patients managed by the current doctor"""
         try:
-            # Doctors can see patients they manage, admins can see all
+            tab = request.query_params.get('tab', 'ALL')
+            search = request.query_params.get('search', '').lower().strip()
+            page = int(request.query_params.get('page', 1))
+            page_size = int(request.query_params.get('page_size', 10))
+
             if request.user.role == 'admin':
                 patients = Patient.objects.all()
             else:
                 patients = Patient.objects(doctor_id=request.user.id)
 
-            serializer = PatientSerializer(patients, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            if search:
+                from mongoengine.queryset.visitor import Q
+                try:
+                    from bson import ObjectId
+                    obj_id = ObjectId(search)
+                    patients = patients.filter(
+                        Q(first_name__icontains=search) | 
+                        Q(last_name__icontains=search) |
+                        Q(id=obj_id)
+                    )
+                except Exception:
+                    patients = patients.filter(
+                        Q(first_name__icontains=search) | 
+                        Q(last_name__icontains=search)
+                    )
+
+            if tab == 'RECENT':
+                patients = patients.order_by('-created_at')
+            elif tab == 'PRIORITY':
+                from diagnosis.models import Diagnosis
+                from images.models import RadiologyImage
+                diags = Diagnosis.objects.all()
+                images_with_diags = [d.image.id for d in diags if getattr(d, 'image', None)]
+                all_images = RadiologyImage.objects(id__in=images_with_diags)
+                patient_ids_with_diags = [img.patient.id for img in all_images if getattr(img, 'patient', None)]
+                patients = patients.filter(id__in=patient_ids_with_diags)
+
+            total = patients.count()
+            skip = (page - 1) * page_size
+            patients_paginated = patients.skip(skip).limit(page_size)
+
+            serializer = PatientSerializer(patients_paginated, many=True)
+            return Response({
+                'count': total,
+                'page': page,
+                'page_size': page_size,
+                'total_pages': max(1, (total + page_size - 1) // page_size),
+                'results': serializer.data
+            }, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { PaginatedResponse } from '../models/pagination';
 
 export interface ReportApiItem {
   id: string;
@@ -35,8 +36,14 @@ export class ReportService {
   }
 
   /** List all reports */
-  getReports(): Observable<ReportApiItem[]> {
-    return this.http.get<ReportApiItem[]>(`${this.baseUrl}/`);
+  getReports(params: any = {}): Observable<PaginatedResponse<ReportApiItem[]>> {
+    let httpParams = new HttpParams();
+    Object.keys(params).forEach(key => {
+      if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
+        httpParams = httpParams.append(key, params[key]);
+      }
+    });
+    return this.http.get<PaginatedResponse<ReportApiItem[]>>(`${this.baseUrl}/`, { params: httpParams });
   }
 
   /** Get a single report by ID */
