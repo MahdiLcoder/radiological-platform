@@ -17,6 +17,42 @@
     </button>
   </div>
 
+  <!-- Filter Bar -->
+  <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-wrap gap-4 items-center shadow-sm">
+    <div class="flex-1 min-w-[240px] relative group">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-xl">search</span>
+      <input
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+        class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 pl-10 pr-4 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
+        placeholder="Search by patient name, patient ID, or modality..."
+        type="text"
+      />
+    </div>
+    <div class="flex gap-2">
+      <select
+        [ngModel]="selectedModality()"
+        (ngModelChange)="selectedModality.set($event)"
+        class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors text-slate-700 outline-none focus:border-primary cursor-pointer"
+      >
+        <option value="">All Modalities</option>
+        <option value="X-Ray">X-Ray</option>
+        <option value="CT Scan">CT Scan</option>
+        <option value="MRI">MRI</option>
+      </select>
+      <select
+        [ngModel]="selectedStatus()"
+        (ngModelChange)="selectedStatus.set($event)"
+        class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors text-slate-700 outline-none focus:border-primary cursor-pointer"
+      >
+        <option value="">All Statuses</option>
+        <option value="Pending">Pending</option>
+        <option value="Analyzed">Analyzed</option>
+        <option value="Validated">Validated</option>
+      </select>
+    </div>
+  </div>
+
   @if (imagesQuery.isPending()) {
     <div class="px-6 py-24 text-center bg-white rounded-xl border border-slate-200 shadow-sm">
       <div class="flex flex-col items-center gap-3">
