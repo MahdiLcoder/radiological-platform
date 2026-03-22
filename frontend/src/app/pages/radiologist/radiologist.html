@@ -35,10 +35,12 @@
       </a>
     </div>
 
+    
     <app-worklist-table 
-      [columns]="tableColumns" 
-      [data]="worklistData()"
-      [hideFooter]="true"
+    [columns]="tableColumns" 
+    [data]="worklistData()"
+    [hideFooter]="true"
     ></app-worklist-table>
+    <app-radiology-charts [data]="worklistData()"></app-radiology-charts>
   }
 </div>
