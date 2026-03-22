@@ -98,12 +98,12 @@ export class Aivalidation {
 
   // Validation Mutation
   validationMutation = injectMutation(() => ({
-    mutationFn: (data: { action: 'accepted' | 'rejected' | 'modified' }) =>
+    mutationFn: (data: { action: 'accepted' | 'rejected' }) =>
       lastValueFrom(this.analysisService.createDiagnosis({
         image: this.imageId,
         ai_prediction: this.predictionQuery.data()?.id,
         action: data.action,
-        final_finding: this.selectedDiagnosis() || this.predictionQuery.data()?.top_finding,
+        final_finding: data.action === 'accepted' ? this.predictionQuery.data()?.top_finding : this.selectedDiagnosis(),
         clinical_notes: this.clinicalNotes() || `AI Prediction validation: ${data.action}`
       })),
     onSuccess: (diagnosis: any) => {
