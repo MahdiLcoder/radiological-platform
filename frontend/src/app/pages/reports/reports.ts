@@ -1,5 +1,6 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { WelcomeSection } from '../../components/welcome-section/welcome-section';
 import { FiltersSection, FilterField } from '../../components/filters-section/filters-section';
 import { ReportCard, Report } from '../../components/report-card/report-card';
@@ -10,37 +11,28 @@ import { lastValueFrom } from 'rxjs';
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, WelcomeSection, FiltersSection, ReportCard],
+  imports: [CommonModule, FormsModule, WelcomeSection, FiltersSection, ReportCard],
   templateUrl: './reports.html',
   styleUrl: './reports.css'
 })
 export class Reports {
   private reportService = inject(ReportService);
 
-  reportFilters: FilterField[] = [
-    {
-      label: 'Date Range',
-      type: 'select',
-      icon: 'calendar_today',
-      options: ['Last 7 Days', 'Last 30 Days', 'Custom Range']
-    },
-    {
-      label: 'Patient ID',
-      type: 'text',
-      placeholder: 'Ex: PT-9821'
-    }
-  ];
+  // Filters
+  modalityFilter = signal('All Modalities');
+  dateFilter = signal('All Time');
+  patientIdFilter = signal('');
 
   reportsQuery = injectQuery(() => ({
     queryKey: ['reports'],
     queryFn: () => lastValueFrom(this.reportService.getReports()),
   }));
 
-  /** Map backend ReportApiItem → ReportCard Report */
   reports = computed<Report[]>(() => {
     const data = this.reportsQuery.data();
     if (!data) return [];
-    return data.map((item: ReportApiItem) => ({
+    
+    let filtered = data.map((item: ReportApiItem) => ({
       id: item.id,
       patientName: item.image?.patient_name ?? 'Unknown Patient',
       modality: this.normalizeModality(item.image?.modality),
@@ -53,6 +45,31 @@ export class Reports {
       validated: true,
       reportId: item.id,
     }));
+
+    const mod = this.modalityFilter();
+    if (mod !== 'All Modalities') {
+      filtered = filtered.filter(r => r.modality === mod);
+    }
+
+    const pid = this.patientIdFilter().toLowerCase().trim();
+    if (pid) {
+      filtered = filtered.filter(r => r.patientName.toLowerCase().includes(pid) || r.id.toLowerCase().includes(pid));
+    }
+
+    const dR = this.dateFilter();
+    if (dR !== 'All Time') {
+      const now = new Date();
+      filtered = filtered.filter(r => {
+        if (!r.date || r.date === '—') return false;
+        const d = new Date(r.date);
+        const diffDays = (now.getTime() - d.getTime()) / (1000 * 3600 * 24);
+        if (dR === 'Last 7 Days') return diffDays <= 7;
+        if (dR === 'Last 30 Days') return diffDays <= 30;
+        return true;
+      });
+    }
+
+    return filtered;
   });
 
   private normalizeModality(raw: string | undefined): 'MRI' | 'CT Scan' | 'X-Ray' {

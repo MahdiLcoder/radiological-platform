@@ -28,6 +28,7 @@
         >search</span
       >
       <input
+        [(ngModel)]="searchQuery"
         class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg py-2.5 pl-10 pr-4 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
         placeholder="Search by name, patient ID or scan ID..."
         type="text"
@@ -35,25 +36,31 @@
     </div>
     <div class="flex gap-2">
       <button
+        (click)="activeTab.set('ALL')"
+        [class.text-primary]="activeTab() === 'ALL'"
+        [class.bg-slate-50]="activeTab() === 'ALL'"
         class="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-slate-700 dark:text-slate-300"
       >
         <span class="material-symbols-outlined text-[20px]">filter_alt</span>
         All Patients
-        <span class="material-symbols-outlined text-[18px]">expand_more</span>
       </button>
       <button
+        (click)="activeTab.set('RECENT')"
+        [class.text-primary]="activeTab() === 'RECENT'"
+        [class.bg-slate-50]="activeTab() === 'RECENT'"
         class="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-slate-700 dark:text-slate-300"
       >
         <span class="material-symbols-outlined text-[20px]">history</span>
         Recent Visits
-        <span class="material-symbols-outlined text-[18px]">expand_more</span>
       </button>
       <button
+        (click)="activeTab.set('PRIORITY')"
+        [class.text-primary]="activeTab() === 'PRIORITY'"
+        [class.bg-slate-50]="activeTab() === 'PRIORITY'"
         class="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-slate-700 dark:text-slate-300"
       >
-        <span class="material-symbols-outlined text-[20px] text-primary">emergency</span>
+        <span class="material-symbols-outlined text-[20px] {{ activeTab() === 'PRIORITY' ? 'text-primary' : 'text-red-500' }}">emergency</span>
         Priority
-        <span class="material-symbols-outlined text-[18px]">expand_more</span>
       </button>
     </div>
   </div>
@@ -80,7 +87,7 @@
         </div>
       </div>
     } @else {
-      @if ((patientsQuery.data() || []).length > 0) {
+      @if (filteredPatients().length > 0) {
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead
@@ -108,7 +115,7 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-              @for (patient of (patientsQuery.data() || []); track patient.id) {
+              @for (patient of filteredPatients(); track patient.id) {
                 <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors group text-sm">
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
@@ -150,8 +157,8 @@
           class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between"
         >
           <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold">
-            Showing <span class="text-slate-900 dark:text-white">1 to {{ (patientsQuery.data() || []).length }}</span> of
-            <span class="text-slate-900 dark:text-white">{{ (patientsQuery.data() || []).length }}</span> patients
+            Showing <span class="text-slate-900 dark:text-white">1 to {{ filteredPatients().length }}</span> of
+            <span class="text-slate-900 dark:text-white">{{ filteredPatients().length }}</span> patients
           </span>
           <div class="flex gap-1">
             <button

@@ -7,11 +7,14 @@
       <div class="flex items-center gap-3 bg-white border border-slate-200 rounded-lg p-1.5 shadow-sm">
         <label class="text-xs font-bold uppercase tracking-wider text-slate-500 pl-3">Modality:</label>
         <div class="relative w-40">
-          <select class="w-full appearance-none bg-slate-50 border-none rounded-md py-2 px-3 text-sm font-bold focus:ring-2 focus:ring-primary focus:outline-none cursor-pointer">
-            <option>All Modalities</option>
-            <option>MRI</option>
-            <option>CT Scan</option>
-            <option>X-Ray</option>
+          <select 
+            [(ngModel)]="modalityFilter"
+            class="w-full appearance-none bg-slate-50 border-none rounded-md py-2 px-3 text-sm font-bold focus:ring-2 focus:ring-primary focus:outline-none cursor-pointer"
+          >
+            <option value="All Modalities">All Modalities</option>
+            <option value="MRI">MRI</option>
+            <option value="CT Scan">CT Scan</option>
+            <option value="X-Ray">X-Ray</option>
           </select>
           <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
         </div>
@@ -21,11 +24,42 @@
   
   <div class="px-8 pb-8 space-y-8">
     <!-- Filters Section -->
-    <app-filters-section 
-      [filters]="reportFilters" 
-      buttonText="Apply Filters" 
-      buttonIcon="filter_list">
-    </app-filters-section>
+    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm mb-8">
+      <div class="flex flex-wrap items-end gap-4">
+        
+        <div class="flex-1 min-w-[200px]">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+            Date Range
+          </label>
+          <div class="relative">
+            <select 
+              [(ngModel)]="dateFilter"
+              class="w-full appearance-none bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-primary focus:border-primary cursor-pointer">
+              <option value="All Time">All Time</option>
+              <option value="Last 7 Days">Last 7 Days</option>
+              <option value="Last 30 Days">Last 30 Days</option>
+            </select>
+            <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
+          </div>
+        </div>
+
+        <div class="flex-1 min-w-[200px]">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+            Patient Search
+          </label>
+          <div class="relative">
+            <input 
+              [(ngModel)]="patientIdFilter"
+              class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-primary focus:border-primary pl-9" 
+              placeholder="Search Name or ID..." 
+              type="text"
+            />
+            <span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">search</span>
+          </div>
+        </div>
+        
+      </div>
+    </div>
     
     <!-- Loading State -->
     @if (reportsQuery.isPending()) {
