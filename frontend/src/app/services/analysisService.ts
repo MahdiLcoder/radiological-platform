@@ -55,6 +55,10 @@ export class AnalysisService {
     return this.http.get<UploadResponse>(`${this.imagesApiUrl}/${id}/`);
   }
 
+  getAllImages(): Observable<UploadResponse[]> {
+    return this.http.get<UploadResponse[]>(`${this.imagesApiUrl}/`);
+  }
+
   runPrediction(imageId: string): Observable<AnalysisResult> {
     return this.http.post<AnalysisResult>(`${this.inferenceApiUrl}/${imageId}/run/`, {});
   }

@@ -30,9 +30,9 @@
                       </div>
                       <div>
                         <div class="flex items-center gap-2">
-                          <p class="text-sm font-bold text-slate-900 leading-tight">
+                          <a [routerLink]="['/dashboard/patient-detail', item.patient.id]" class="text-sm font-bold text-slate-900 leading-tight hover:text-primary hover:underline cursor-pointer">
                             {{ item.patient.name }}
-                          </p>
+                          </a>
                           @if (item.patient.isEmergency) {
                             <span class="material-symbols-outlined text-red-500 text-sm">emergency</span>
                           }
@@ -67,16 +67,16 @@
                   </td>
                   <td class="px-6 py-5 text-right">
                     @if (item.action.type === 'analyze') {
-                      <button class="text-sm font-bold text-primary hover:underline flex items-center justify-end gap-1 ml-auto">
+                      <button [routerLink]="['/dashboard/aivalidation', item.id]" class="text-sm font-bold text-primary hover:underline flex items-center justify-end gap-1 ml-auto">
                         {{ item.action.text }}
                         <span class="material-symbols-outlined text-sm">chevron_right</span>
                       </button>
                     } @else if (item.action.type === 'view') {
-                      <button class="bg-primary/10 hover:bg-primary/20 text-primary px-3 py-1.5 rounded-lg text-xs font-bold transition-all">
+                      <button [routerLink]="['/dashboard/aivalidation', item.id]" class="bg-primary/10 hover:bg-primary/20 text-primary px-3 py-1.5 rounded-lg text-xs font-bold transition-all">
                         {{ item.action.text }}
                       </button>
                     } @else if (item.action.type === 'critical') {
-                      <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-md">
+                      <button [routerLink]="['/dashboard/aivalidation', item.id]" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-md">
                         {{ item.action.text }}
                       </button>
                     }

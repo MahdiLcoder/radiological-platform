@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 export interface WorklistItem {
   id: string;
@@ -22,7 +23,7 @@ export interface WorklistItem {
 
 @Component({
   selector: 'app-worklist-table',
-  imports: [],
+  imports: [RouterModule],
   templateUrl: './worklist-table.html',
   styleUrl: './worklist-table.css',
 })
