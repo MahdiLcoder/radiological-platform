@@ -21,22 +21,26 @@
       <span class="material-symbols-outlined text-[20px]">dashboard</span>
       <span>Dashboard</span>
     </a>
-    <a
-      routerLink="/dashboard/upload"
-      routerLinkActive="!bg-primary/10 !text-primary"
-      class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
-    >
-      <span class="material-symbols-outlined text-[20px]">upload_file</span>
-      <span>Upload Scans</span>
-    </a>
-    <a
-      routerLink="/dashboard/all-images"
-      routerLinkActive="!bg-primary/10 !text-primary"
-      class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
-    >
-      <span class="material-symbols-outlined text-[20px]">collections</span>
-      <span>All Scans</span>
-    </a>
+
+    @if (profileQuery.data()?.role?.toLowerCase() === 'radiologist') {
+      <a
+        routerLink="/dashboard/upload"
+        routerLinkActive="!bg-primary/10 !text-primary"
+        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
+      >
+        <span class="material-symbols-outlined text-[20px]">upload_file</span>
+        <span>Upload Scans</span>
+      </a>
+      <a
+        routerLink="/dashboard/all-images"
+        routerLinkActive="!bg-primary/10 !text-primary"
+        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
+      >
+        <span class="material-symbols-outlined text-[20px]">collections</span>
+        <span>All Scans</span>
+      </a>
+    }
+
     <a
       routerLink="/dashboard/reports"
       routerLinkActive="!bg-primary/10 !text-primary"
@@ -45,41 +49,44 @@
       <span class="material-symbols-outlined text-[20px]">clinical_notes</span>
       <span>Reports</span>
     </a>
-    <a
-      routerLink="/dashboard/patients"
-      routerLinkActive="!bg-primary/10 !text-primary"
-      class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
-    >
-      <span class="material-symbols-outlined text-[20px]">groups</span>
-      <span>Patient Records</span>
-    </a>
-    <a
-      routerLink="/dashboard/analytics"
-      routerLinkActive="!bg-primary/10 !text-primary"
-      class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
-    >
-      <span class="material-symbols-outlined text-[20px]">analytics</span>
-      <span>Analytics</span>
-    </a>
-    <a
-      href="#"
-      class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
-    >
-      <span class="material-symbols-outlined text-[20px]">settings</span>
-      <span>Settings</span>
-    </a>
+
+    @if (profileQuery.data()?.role?.toLowerCase() === 'doctor') {
+      <a
+        routerLink="/dashboard/patients"
+        routerLinkActive="!bg-primary/10 !text-primary"
+        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
+      >
+        <span class="material-symbols-outlined text-[20px]">groups</span>
+        <span>Patient Records</span>
+      </a>
+    }
+
+    @if (profileQuery.data()?.role?.toLowerCase() === 'admin') {
+      <a
+        routerLink="/dashboard/analytics"
+        routerLinkActive="!bg-primary/10 !text-primary"
+        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
+      >
+        <span class="material-symbols-outlined text-[20px]">analytics</span>
+        <span>Analytics</span>
+      </a>
+    }
   </nav>
 
   <div class="p-4 border-t border-slate-100">
     <div class="flex items-center gap-3 p-2">
       <img
         src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxmcDMztQDCY-3bjozN55Kn1K9jz5TK_NTSt1RX6fRx1kiEQKOcn8NZbLUCN8zp8S7DlxblnorTXZKknMI9BgvK72aniQR50gZisL4B-eJdNA1qRTJyV-bsrXe7NGDVM86zKmzNBZjpFPFFOzmgnndxvvbHFWhaBLhmv8xxATJ9BtlTBU05igqAB7L9QVNB65NOvN1sSt9uu6eO7HjxwBhoiJLjC77QqAZpv5x9UkSy-hgFMHIRnjkp2hVP1u8dNtt9A4DnQFifzM"
-        alt="Dr. Julian Vance"
+        alt="Doctor Profile"
         class="w-10 h-10 rounded-full object-cover"
       />
       <div class="overflow-hidden">
-        <p class="text-xs font-semibold truncate text-slate-900">Dr. Julian Vance</p>
-        <p class="text-[10px] text-slate-500 uppercase">Radiologist</p>
+        @if (profileQuery.data(); as profile) {
+          <p class="text-xs font-semibold truncate text-slate-900">{{ profile.first_name || profile.last_name ? profile.first_name + ' ' + (profile.last_name || '') : profile.username }}</p>
+          <p class="text-[10px] text-slate-500 uppercase">{{ profile.role }}</p>
+        } @else {
+          <p class="text-xs font-semibold truncate text-slate-900">Loading...</p>
+        }
       </div>
     </div>
   </div>
