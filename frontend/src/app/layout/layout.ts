@@ -29,7 +29,7 @@ export class Layout implements OnInit {
             this.router.navigate(['/dashboard/radiologist']);
             break;
           case 'doctor':
-            this.router.navigate(['/dashboard/patients']);
+            this.router.navigate(['/dashboard/doctor']);
             break;
           default:
             this.router.navigate(['/']);

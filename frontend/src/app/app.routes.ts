@@ -13,6 +13,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/radiologist/radiologist').then((m) => m.Radiologist),
       },
       {
+        path: 'doctor',
+        loadComponent: () => import('./pages/doctor/doctor').then((m) => m.Doctor),
+      },
+      {
         path: 'all-images',
         loadComponent: () => import('./pages/all-images/all-images').then((m) => m.AllImages),
       },
