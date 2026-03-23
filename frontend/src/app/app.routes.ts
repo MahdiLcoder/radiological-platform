@@ -33,6 +33,11 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/admin/admin').then((m) => m.Admin),
       },
       {
+        path: 'admin/invite',
+        loadComponent: () => import('./pages/admin-invite/admin-invite').then((m) => m.AdminInvite),
+      },
+
+      {
         path: 'aivalidation/:id',
         loadComponent: () => import('./pages/aivalidation/aivalidation').then((m) => m.Aivalidation),
       },

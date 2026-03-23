@@ -5,6 +5,7 @@ import { injectQuery, injectMutation } from '@tanstack/angular-query-experimenta
 import { lastValueFrom } from 'rxjs';
 import { AnalysisService, AnalysisResult } from '../../services/analysisService';
 import { ReportService } from '../../services/reportService';
+import { AuthService } from '../../services/authService';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -19,8 +20,16 @@ export class Aivalidation {
   router = inject(Router);
   private analysisService = inject(AnalysisService);
   private reportService = inject(ReportService);
+  private authService = inject(AuthService);
 
   imageId = this.route.snapshot.params['id'];
+
+  profileQuery = injectQuery(() => ({
+    queryKey: ['profile'],
+    queryFn: () => lastValueFrom(this.authService.getProfile()),
+  }));
+  
+  isRadiologist = () => this.profileQuery.data()?.role === 'radiologist';
   
   // Form state
   selectedDiagnosis = signal<string>('');

@@ -1,4 +1,5 @@
-<div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+<div class="w-full space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
   <!-- Title Section -->
   <div class="flex items-center justify-between">
     <div class="flex flex-col gap-1">
@@ -10,14 +11,17 @@
       </p>
     </div>
     <button
+      routerLink="/dashboard/admin/invite"
       class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/20"
     >
       <span class="material-symbols-outlined text-[22px]">person_add</span>
       <span>Invite New User</span>
     </button>
+
   </div>
 
   <!-- Stats Overview -->
+  @if (statsQuery.data(); as stats) {
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     <div
       class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-2"
@@ -26,45 +30,50 @@
         <span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Total Users</span>
         <span
           class="text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-1 rounded text-xs font-bold"
-          >+12.5%</span
+          >Active</span
         >
       </div>
-      <p class="text-3xl font-bold text-slate-900 dark:text-white">12,482</p>
+      <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ stats.users.total }}</p>
       <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
-        <div class="bg-primary h-full w-[75%] rounded-full"></div>
+        <div class="bg-primary h-full" [style.width.%]="(stats.users.active / stats.users.total) * 100"></div>
       </div>
     </div>
     <div
       class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-2"
     >
       <div class="flex items-center justify-between">
-        <span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Active Now</span>
+        <span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Medical Professionals</span>
         <span
           class="text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-1 rounded text-xs font-bold"
-          >+4.2%</span
+          >{{ stats.users.by_role.doctor + stats.users.by_role.radiologist }}</span
         >
       </div>
-      <p class="text-3xl font-bold text-slate-900 dark:text-white">842</p>
-      <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
-        <div class="bg-primary h-full w-[40%] rounded-full"></div>
-      </div>
+      <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ stats.images.total }}</p>
+      <p class="text-xs text-slate-500">Total Scans Analyzed</p>
     </div>
     <div
       class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-2"
     >
       <div class="flex items-center justify-between">
-        <span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Pending Invites</span>
+        <span class="text-slate-500 dark:text-slate-400 text-sm font-medium">System Output</span>
         <span
           class="text-orange-500 bg-orange-50 dark:bg-orange-500/10 px-2 py-1 rounded text-xs font-bold"
-          >-2.1%</span
+          >Reports</span
         >
       </div>
-      <p class="text-3xl font-bold text-slate-900 dark:text-white">156</p>
+      <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ stats.reports.total }}</p>
       <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
-        <div class="bg-orange-400 h-full w-[25%] rounded-full"></div>
+        <div class="bg-orange-400 h-full w-[100%] rounded-full"></div>
       </div>
     </div>
   </div>
+  } @else if (statsQuery.isLoading()) {
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      @for (i of [1,2,3]; track i) {
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm animate-pulse h-32"></div>
+      }
+    </div>
+  }
 
   <!-- Table Section -->
   <div
@@ -102,188 +111,80 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-          <!-- Dr. Sarah Chen -->
-          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <img
-                  class="size-9 rounded-full object-cover"
-                  data-alt="Female doctor avatar"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiwMA-q17QfY0sQEuGjIRCGzQ0FFV_EvK9bs0sCgBoM2Q36QXO8n7EvySkSY7hGEpBtyz3EU9HWKU-fMLo4OllCwU_JMpXZwPzpJLSG_61HoHXb-bFf8iFBQyYu_DSA1iVI-7NPCbqp_8sJNLnrYD7_lZ1yp1sELpaYQZ25R3dlkib8mc3RABdEpuNbzEnnwz60CVrSuceT6SXbetxJb35-6OAsyIFkTlFRqoMUjb8csjK2NJfYAIBYGUAEJTVOyJ-I-5TLPxqWA0"
-                />
-                <span class="font-semibold text-slate-900 dark:text-white">Dr. Sarah Chen</span>
-              </div>
-            </td>
-            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">s.chen@hospital.org</td>
-            <td class="px-6 py-4">
-              <span
-                class="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold border border-slate-200 dark:border-slate-700"
-                >Radiologist</span
-              >
-            </td>
-            <td class="px-6 py-4">
-              <div
-                class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-sm font-semibold"
-              >
-                <span class="size-2 rounded-full bg-emerald-500"></span>
-                Active
-              </div>
-            </td>
-            <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">Oct 12, 2023</td>
-            <td class="px-6 py-4 text-right space-x-3">
-              <button class="text-primary hover:text-primary/80 font-bold text-xs">Edit Role</button>
-              <button class="text-slate-400 hover:text-red-500 font-bold text-xs transition-colors">
-                Deactivate
-              </button>
-            </td>
-          </tr>
-          <!-- James Wilson -->
-          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <img
-                  class="size-9 rounded-full object-cover"
-                  data-alt="Male professional headshot"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-KJfIe7aeuLlZZ8bIKBn1xAm0gO2-qwb0Bs3L9W_3IhKkJny4D54zNWTX0IURwgdrpsPJvqZyFZPVQ4dDFneJNJZ-aGr4IVL-m-XQ_mT2MtGPAo0M08RsyLbRgsdKc3d7AzhJQpVZLxel87098O7XGNAvW7i599ed5LMxDWxbJQHt9MyWDsjq27tk2Z2-ek0ZPvVa53wtkiY_hEg-ykMCMxQYO77eCXFeFxTQxeYk9IqwdF87hVRhhVIkEALV_rchpFsTcDdIN9E"
-                />
-                <span class="font-semibold text-slate-900 dark:text-white">James Wilson</span>
-              </div>
-            </td>
-            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">j.wilson@medai.com</td>
-            <td class="px-6 py-4">
-              <span
-                class="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold border border-primary/20"
-                >Admin</span
-              >
-            </td>
-            <td class="px-6 py-4">
-              <div
-                class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-sm font-semibold"
-              >
-                <span class="size-2 rounded-full bg-emerald-500"></span>
-                Active
-              </div>
-            </td>
-            <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">Sep 05, 2023</td>
-            <td class="px-6 py-4 text-right space-x-3">
-              <button class="text-primary hover:text-primary/80 font-bold text-xs">Edit Role</button>
-              <button class="text-slate-400 hover:text-red-500 font-bold text-xs transition-colors">
-                Deactivate
-              </button>
-            </td>
-          </tr>
-          <!-- Dr. Elena Rodriguez -->
-          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <img
-                  class="size-9 rounded-full object-cover"
-                  data-alt="Female doctor smiling"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHYmupCDTkGHZo6aOqpAMJ9FvP0rDi5rfUor5l5JsL7v4LDGpcZ_GLzn0QqYR4BY_F6zf_ouHKI_I_h1hUtR9wibT1Ibw1a4Uyrb65ARhS-pPcZDE80cnpzJtn35AFT8ck742bjIwNQZauhSV6TisdLDRUbggCN4p4qCNoLjbDucCUuTgMhk3j48jlmEzAyGJKQGU4JDWo2QYXKd_qPStP_H5ocqhOQJ4c1dbVeGCJplEoE4daaXR2HJzKNElQ_NfF4uj02OROrTY"
-                />
-                <span class="font-semibold text-slate-900 dark:text-white"
-                  >Dr. Elena Rodriguez</span
-                >
-              </div>
-            </td>
-            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">e.rod@clinic.io</td>
-            <td class="px-6 py-4">
-              <span
-                class="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold border border-slate-200 dark:border-slate-700"
-                >Doctor</span
-              >
-            </td>
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-1.5 text-slate-400 text-sm font-semibold">
-                <span class="size-2 rounded-full bg-slate-300 dark:bg-slate-600"></span>
-                Inactive
-              </div>
-            </td>
-            <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">Nov 01, 2023</td>
-            <td class="px-6 py-4 text-right space-x-3">
-              <button class="text-primary hover:text-primary/80 font-bold text-xs">Edit Role</button>
-              <button class="text-red-500 hover:text-red-600 font-bold text-xs transition-colors">
-                Reactivate
-              </button>
-            </td>
-          </tr>
-          <!-- Marcus Thorne -->
-          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <img
-                  class="size-9 rounded-full object-cover"
-                  data-alt="Male doctor profile"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdwthUxbDGE4kzQom3bwtTrl21nIYS-90dkAA7dU_Had5SeHtSU9f11s0PxScMJXL2wmXyElQ6P6eNFWWlApdy7Imxtawn62swZNyYYyN3ZGRZ10abLP2285LsOy6oE3aiRmOsA8zJNuxYZ6Xk9nSpm6xur0RPExDnDGOIjkmMClBLGgFvLXtZFSyElThGBCMtz8sIpjolSmL00FBsVc55nU5WIBS57hPAnQ2L-kngU4aSHHeZBl9qJ_9ReOJHUHnK7XiEEnG0bQQ"
-                />
-                <span class="font-semibold text-slate-900 dark:text-white">Marcus Thorne</span>
-              </div>
-            </td>
-            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">m.thorne@imaging.net</td>
-            <td class="px-6 py-4">
-              <span
-                class="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold border border-slate-200 dark:border-slate-700"
-                >Radiologist</span
-              >
-            </td>
-            <td class="px-6 py-4">
-              <div
-                class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-sm font-semibold"
-              >
-                <span class="size-2 rounded-full bg-emerald-500"></span>
-                Active
-              </div>
-            </td>
-            <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">Jan 15, 2024</td>
-            <td class="px-6 py-4 text-right space-x-3">
-              <button class="text-primary hover:text-primary/80 font-bold text-xs">Edit Role</button>
-              <button class="text-slate-400 hover:text-red-500 font-bold text-xs transition-colors">
-                Deactivate
-              </button>
-            </td>
-          </tr>
-          <!-- Dr. Amit Puri -->
-          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <img
-                  class="size-9 rounded-full object-cover"
-                  data-alt="Senior male doctor avatar"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8ei9mbjHQDDoECjuQ5YTk6v7Zjb2OMoykEJTBWGEgDmFzwkq5d8b1uO9XAzVRkj_vaaZ8ywz5Vf4bJyHeZLW52F1cieZrMtkJDFW5vCPPfABgJRtSZosYcnekZYHySFpEcFPv_Lpmih02MGWaZtr-tFFQCxk5BL_2wRv5Xi5F6RxSCYQYZRxZodOrun8QAgiFiPgk7khvY80SZslWRtRrLdNLR7XLB4e7Mu9x2EoQkvm8oK8yzOYK6eKZD6zilNH33Hb2UxxmVJI"
-                />
-                <span class="font-semibold text-slate-900 dark:text-white">Dr. Amit Puri</span>
-              </div>
-            </td>
-            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">a.puri@university.edu</td>
-            <td class="px-6 py-4">
-              <span
-                class="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold border border-slate-200 dark:border-slate-700"
-                >Doctor</span
-              >
-            </td>
-            <td class="px-6 py-4">
-              <div
-                class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-sm font-semibold"
-              >
-                <span class="size-2 rounded-full bg-emerald-500"></span>
-                Active
-              </div>
-            </td>
-            <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">Dec 20, 2023</td>
-            <td class="px-6 py-4 text-right space-x-3">
-              <button class="text-primary hover:text-primary/80 font-bold text-xs">Edit Role</button>
-              <button class="text-slate-400 hover:text-red-500 font-bold text-xs transition-colors">
-                Deactivate
-              </button>
-            </td>
-          </tr>
+          @if (usersQuery.data(); as users) {
+            @for (user of users; track user.id) {
+              <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div class="size-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
+                      {{ getInitials(user) }}
+                    </div>
+                    <span class="font-semibold text-slate-900 dark:text-white">
+                      {{ user.first_name }} {{ user.last_name || user.username }}
+                    </span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">{{ user.email }}</td>
+                <td class="px-6 py-4">
+                  <span
+                    class="px-2.5 py-1 rounded-full text-xs font-bold border capitalize"
+                    [ngClass]="getRoleClass(user.role)"
+                  >
+                    {{ user.role }}
+                  </span>
+                </td>
+                <td class="px-6 py-4">
+                  <div
+                    class="flex items-center gap-1.5 text-sm font-semibold"
+                    [class.text-emerald-600]="user.is_active"
+                    [class.dark:text-emerald-400]="user.is_active"
+                    [class.text-slate-400]="!user.is_active"
+                  >
+                    <span class="size-2 rounded-full" [class.bg-emerald-500]="user.is_active" [class.bg-slate-300]="!user.is_active"></span>
+                    {{ user.is_active ? 'Active' : 'Inactive' }}
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">{{ formatDate(user.date_joined) }}</td>
+                <td class="px-6 py-4 text-right space-x-2">
+                  <button (click)="openEditModal(user)" 
+                    class="p-2 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
+                    title="Edit User"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                  </button>
+                  <button (click)="deleteUser(user)" 
+                    class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                    title="Delete User"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="px-6 py-10 text-center text-slate-500">
+                  No professionals found.
+                </td>
+              </tr>
+            }
+          } @else if (usersQuery.isLoading()) {
+            @for (i of [1,2,3,4,5]; track i) {
+              <tr class="animate-pulse">
+                <td colspan="6" class="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
+                  <div class="h-8 bg-slate-100 dark:bg-slate-800 rounded w-full"></div>
+                </td>
+              </tr>
+            }
+          }
         </tbody>
       </table>
     </div>
     <div
       class="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between"
     >
-      <span class="text-sm text-slate-500">Showing 5 of 12,482 professionals</span>
+      <span class="text-sm text-slate-500">
+        Showing {{ usersQuery.data()?.length || 0 }} professionals
+      </span>
       <div class="flex gap-2">
         <button
           class="px-3 py-1 text-sm border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
@@ -298,4 +199,81 @@
       </div>
     </div>
   </div>
+
+  <!-- Edit User Modal -->
+  @if (isEditModalOpen()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+      <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 p-8 flex flex-col gap-6 animate-in zoom-in-95 duration-200">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white">Edit Professional</h3>
+          <button (click)="closeEditModal()" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 transition-colors">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-bold text-slate-500 uppercase">First Name</label>
+              <input 
+                type="text" 
+                [(ngModel)]="editingUser().first_name"
+                class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white"
+              />
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-bold text-slate-500 uppercase">Last Name</label>
+              <input 
+                type="text" 
+                [(ngModel)]="editingUser().last_name"
+                class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white"
+              />
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-slate-500 uppercase">Email Address</label>
+            <input 
+              type="email" 
+              [(ngModel)]="editingUser().email"
+              class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white"
+            />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-slate-500 uppercase">Professional Role</label>
+            <select 
+              [(ngModel)]="editingUser().role"
+              class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white appearance-none"
+            >
+              <option value="doctor">Doctor</option>
+              <option value="radiologist">Radiologist</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex gap-3 pt-4">
+          <button 
+            (click)="closeEditModal()"
+            class="flex-1 px-4 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            (click)="saveEdit()"
+            [disabled]="updateUserMutation.isPending()"
+            class="flex-1 bg-primary hover:bg-primary/90 text-white px-4 py-2.5 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/20 disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            @if (updateUserMutation.isPending()) {
+              <div class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+            }
+            {{ updateUserMutation.isPending() ? 'Saving...' : 'Save Changes' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>
+
+

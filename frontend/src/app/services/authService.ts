@@ -47,7 +47,23 @@ export class AuthService {
     return this.http.patch(`${this.apiUrl}/users/${id}/`, profileData);
   }
 
+  getUsers(role?: string, isActive?: boolean): Observable<any[]> {
+    let params: any = {};
+    if (role) params.role = role;
+    if (isActive !== undefined) params.is_active = isActive;
+    return this.http.get<any[]>(`${this.apiUrl}/users/`, { params });
+  }
+
+  getStats(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/stats/`);
+  }
+
+  deleteUser(id: number | string) {
+    return this.http.delete(`${this.apiUrl}/users/${id}/`);
+  }
+
   logout() {
+
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
   }

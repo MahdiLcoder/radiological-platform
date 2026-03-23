@@ -1,0 +1,149 @@
+<main class="flex-1 overflow-y-auto bg-slate-50 p-8 min-h-screen">
+  <div class="w-full">
+
+    <!-- Header Section -->
+    <div class="mb-8 animate-in fade-in slide-in-from-top-4 duration-500">
+      <nav class="flex items-center gap-2 text-xs text-slate-500 mb-4">
+        <a class="hover:text-primary transition-colors cursor-pointer" (click)="cancel()">Staff Management</a>
+        <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+        <span class="text-slate-900 font-medium">Invite New User</span>
+      </nav>
+      <h2 class="text-3xl font-black tracking-tight text-slate-900 mb-2">Invite New Staff Member</h2>
+      <p class="text-slate-600 max-w-2xl">Expand your healthcare team by adding authorized professionals. They will receive an invitation email to set up their credentials.</p>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div class="p-6 border-b border-slate-100 bg-slate-50/50">
+        <h3 class="text-lg font-bold flex items-center gap-2 text-slate-900">
+          <span class="material-symbols-outlined text-primary">person_outline</span>
+          Staff Member Information
+        </h3>
+      </div>
+      <div class="p-8">
+        <!-- General Information Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-700">Full Name</label>
+            <input 
+              class="w-full rounded-lg border-slate-300 bg-white text-slate-900 focus:ring-primary focus:border-primary placeholder:text-slate-400 p-2.5 outline-none transition-all" 
+              placeholder="e.g. Dr. Jane Smith" 
+              type="text"
+              [(ngModel)]="inviteData.first_name"
+            />
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-700">Professional Email Address</label>
+            <input 
+              class="w-full rounded-lg border-slate-300 bg-white text-slate-900 focus:ring-primary focus:border-primary placeholder:text-slate-400 p-2.5 outline-none transition-all" 
+              placeholder="jane.smith@hospital.com" 
+              type="email"
+              [(ngModel)]="inviteData.email"
+            />
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-700">Professional Role</label>
+            <select 
+              class="w-full rounded-lg border-slate-300 bg-white text-slate-900 focus:ring-primary focus:border-primary p-2.5 outline-none transition-all"
+              [(ngModel)]="inviteData.role"
+            >
+              <option value="" disabled>Select a role...</option>
+              <option value="admin">Admin</option>
+              <option value="radiologist">Radiologist</option>
+              <option value="doctor">Doctor</option>
+            </select>
+          </div>
+
+          <!-- Role Specific Fields -->
+          @if (inviteData.role === 'admin') {
+            <div class="space-y-2">
+              <label class="text-sm font-semibold text-slate-700">Department</label>
+              <input 
+                class="w-full rounded-lg border-slate-300 bg-white text-slate-900 focus:ring-primary focus:border-primary placeholder:text-slate-400 p-2.5 outline-none transition-all" 
+                placeholder="e.g. IT, HR, Radiology" 
+                type="text"
+                [(ngModel)]="inviteData.department"
+              />
+            </div>
+          }
+
+          @if (inviteData.role === 'radiologist' || inviteData.role === 'doctor') {
+            <div class="space-y-2">
+              <label class="text-sm font-semibold text-slate-700">Medical License Number</label>
+              <input 
+                class="w-full rounded-lg border-slate-300 bg-white text-slate-900 focus:ring-primary focus:border-primary placeholder:text-slate-400 p-2.5 outline-none transition-all" 
+                placeholder="e.g. ML-78901" 
+                type="text"
+                [(ngModel)]="inviteData.medical_license_number"
+              />
+            </div>
+          }
+
+          @if (inviteData.role === 'doctor') {
+            <div class="space-y-2">
+              <label class="text-sm font-semibold text-slate-700">Specialty</label>
+              <input 
+                class="w-full rounded-lg border-slate-300 bg-white text-slate-900 focus:ring-primary focus:border-primary placeholder:text-slate-400 p-2.5 outline-none transition-all" 
+                placeholder="e.g. Cardiology, Neurology" 
+                type="text"
+                [(ngModel)]="inviteData.department"
+              />
+            </div>
+            <div class="space-y-2">
+              <label class="text-sm font-semibold text-slate-700">Clinic / Hospital</label>
+              <input 
+                class="w-full rounded-lg border-slate-300 bg-white text-slate-900 focus:ring-primary focus:border-primary placeholder:text-slate-400 p-2.5 outline-none transition-all" 
+                placeholder="e.g. General Hospital" 
+                type="text"
+                [(ngModel)]="inviteData.clinic"
+              />
+            </div>
+          }
+
+          @if (inviteData.role === 'radiologist') {
+            <div class="space-y-2">
+              <label class="text-sm font-semibold text-slate-700">Years of Experience</label>
+              <input 
+                class="w-full rounded-lg border-slate-300 bg-white text-slate-900 focus:ring-primary focus:border-primary placeholder:text-slate-400 p-2.5 outline-none transition-all" 
+                placeholder="e.g. 5" 
+                type="number"
+                [(ngModel)]="inviteData.years_of_experience"
+              />
+            </div>
+          }
+
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="p-6 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-4">
+        <button 
+          (click)="cancel()"
+          class="px-6 py-2.5 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-200 transition-colors"
+        >
+          Cancel
+        </button>
+        <button 
+          (click)="sendInvitation()"
+          [disabled]="inviteMutation.isPending()"
+          class="px-8 py-2.5 rounded-lg text-sm font-bold text-white bg-gradient-to-r from-primary to-[#0e7490] hover:opacity-90 shadow-lg shadow-primary/20 transition-all flex items-center gap-2 disabled:opacity-50"
+        >
+          @if (inviteMutation.isPending()) {
+            <div class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+          }
+          <span class="material-symbols-outlined text-[18px]">send</span>
+          {{ inviteMutation.isPending() ? 'Sending...' : 'Send Invitation' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Security Notice -->
+    <div class="mt-6 flex items-start gap-3 p-4 rounded-lg bg-primary/5 border border-primary/20 animate-in fade-in slide-in-from-bottom-2 duration-700">
+      <span class="material-symbols-outlined text-primary text-[20px]">verified_user</span>
+      <div>
+        <p class="text-xs font-semibold text-slate-900 leading-none mb-1">Secure Invitation System</p>
+        <p class="text-[11px] text-slate-500">All invitations are logged and expire after 48 hours. Staff members must complete HIPAA compliance training upon their first login.</p>
+      </div>
+    </div>
+  </div>
+</main>

@@ -126,6 +126,16 @@
       }
 
       @if (predictionQuery.data(); as result) {
+        @if (!isRadiologist() && imageQuery.data()?.status !== 'validated') {
+          <!-- Non-radiologist sees "not validated yet" until scan is validated -->
+          <div class="py-16 flex flex-col items-center text-center space-y-4 px-6">
+            <span class="material-symbols-outlined text-5xl text-slate-300">pending</span>
+            <div>
+              <p class="font-bold text-slate-600">Not validated yet</p>
+              <p class="text-sm text-slate-400 mt-1">The results will be available once a radiologist validates this scan.</p>
+            </div>
+          </div>
+        } @else {
         <!-- Alert Card -->
         <div 
           [class]="(result.top_finding === 'Normal' || result.top_finding === 'notumor') ? 'bg-emerald-50 border-emerald-100' : 'bg-red-50 border-red-100'"
@@ -195,7 +205,7 @@
             <div class="relative">
                 <select
                 [(ngModel)]="selectedDiagnosis"
-                [disabled]="imageQuery.data()?.status === 'validated'"
+                [disabled]="imageQuery.data()?.status === 'validated' || !isRadiologist()"
                 class="w-full bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-primary focus:border-primary px-3 py-2.5 text-slate-900 appearance-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                 <option value="">Select Findings...</option>
@@ -216,7 +226,7 @@
             >
             <textarea
               [(ngModel)]="clinicalNotes"
-              [disabled]="imageQuery.data()?.status === 'validated'"
+              [disabled]="imageQuery.data()?.status === 'validated' || !isRadiologist()"
               class="w-full h-32 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-primary focus:border-primary p-3 text-slate-900 resize-none leading-relaxed disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="Enter additional observations or corrections here..."
             ></textarea>
@@ -225,31 +235,33 @@
 
         <!-- Validation Actions -->
         @if (imageQuery.data()?.status !== 'validated') {
-          <div class="pt-4 flex flex-col gap-3">
-            <!-- Button 1: Accept AI -->
-            <button
-              (click)="confirmFindings()"
-              [disabled]="validationMutation.isPending() || selectedDiagnosis() !== result.top_finding"
-              class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-lg transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              @if (validationMutation.isPending()) {
-                  <div class="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-              } @else {
-                  <span class="material-symbols-outlined">verified</span>
-              }
-              Confirm AI Prediction
-            </button>
-          
-            <!-- Button 2: Reject AI and send correction -->
-            <button
-              (click)="rejectFindings()"
-              [disabled]="validationMutation.isPending() || selectedDiagnosis() === result.top_finding"
-              class="w-full py-3.5 border border-red-200 text-red-600 hover:bg-red-50 font-bold rounded-lg transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              <span class="material-symbols-outlined text-base">cancel</span>
-              Reject & Submit Correction
-            </button>
-          </div>
+          @if (isRadiologist()) {
+            <div class="pt-4 flex flex-col gap-3">
+              <!-- Button 1: Accept AI -->
+              <button
+                (click)="confirmFindings()"
+                [disabled]="validationMutation.isPending() || selectedDiagnosis() !== result.top_finding"
+                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-lg transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                @if (validationMutation.isPending()) {
+                    <div class="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                } @else {
+                    <span class="material-symbols-outlined">verified</span>
+                }
+                Confirm AI Prediction
+              </button>
+            
+              <!-- Button 2: Reject AI and send correction -->
+              <button
+                (click)="rejectFindings()"
+                [disabled]="validationMutation.isPending() || selectedDiagnosis() === result.top_finding"
+                class="w-full py-3.5 border border-red-200 text-red-600 hover:bg-red-50 font-bold rounded-lg transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                <span class="material-symbols-outlined text-base">cancel</span>
+                Reject &amp; Submit Correction
+              </button>
+            </div>
+          }
         } @else {
           <div class="pt-4 mt-2">
             <div class="flex items-center gap-3 bg-emerald-50 text-emerald-700 p-4 rounded-xl border border-emerald-100">
@@ -269,6 +281,7 @@
             </button>
           </div>
         }
+        } <!-- end isRadiologist/validated check -->
       } @else if (!predictionQuery.isLoading()) {
           <div class="py-12 flex flex-col items-center text-center space-y-4 px-6">
               <span class="material-symbols-outlined text-4xl text-slate-200">error</span>
