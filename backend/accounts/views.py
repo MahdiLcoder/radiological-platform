@@ -79,6 +79,22 @@ class UserDetailView(APIView):
             if field in request.data:
                 setattr(user, field, request.data[field])
 
+        new_password = request.data.get('new_password')
+        old_password = request.data.get('old_password')
+
+        if new_password:
+            if not old_password:
+                return Response(
+                    {"detail": "Old password is required to set a new password."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if not user.check_password(old_password):
+                return Response(
+                    {"detail": "Incorrect old password."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            user.set_password(new_password)
+
         user.save()
 
         if user.role == UserRole.ADMIN:
