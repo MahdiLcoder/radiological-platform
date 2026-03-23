@@ -13,7 +13,7 @@ import { lastValueFrom } from 'rxjs';
   standalone: true,
   imports: [CommonModule, FormsModule, WelcomeSection, ReportCard],
   templateUrl: './reports.html',
-  styleUrl: './reports.css'
+  styleUrl: './reports.css',
 })
 export class Reports {
   private reportService = inject(ReportService);
@@ -25,22 +25,29 @@ export class Reports {
   currentPage = signal(1);
 
   reportsQuery = injectQuery(() => ({
-    queryKey: ['reports', this.modalityFilter(), this.dateFilter(), this.patientIdFilter(), this.currentPage()],
-    queryFn: () => lastValueFrom(
-      this.reportService.getReports({
-        search: this.patientIdFilter(),
-        modality: this.modalityFilter() === 'All Modalities' ? '' : this.modalityFilter(),
-        date_range: this.dateFilter() === 'All Time' ? '' : this.dateFilter(),
-        page: this.currentPage(),
-        page_size: 10
-      })
-    ),
+    queryKey: [
+      'reports',
+      this.modalityFilter(),
+      this.dateFilter(),
+      this.patientIdFilter(),
+      this.currentPage(),
+    ],
+    queryFn: () =>
+      lastValueFrom(
+        this.reportService.getReports({
+          search: this.patientIdFilter(),
+          modality: this.modalityFilter() === 'All Modalities' ? '' : this.modalityFilter(),
+          date_range: this.dateFilter() === 'All Time' ? '' : this.dateFilter(),
+          page: this.currentPage(),
+          page_size: 10,
+        }),
+      ),
   }));
 
   reports = computed<Report[]>(() => {
     const data: any = this.reportsQuery.data();
     if (!data || !data.results) return [];
-    
+
     return data.results.map((item: ReportApiItem) => ({
       id: item.id,
       patientName: item.image?.patient_name ?? 'Unknown Patient',
@@ -49,7 +56,11 @@ export class Reports {
       diagnosis: item.diagnosis?.final_finding ?? 'No finding recorded',
       doctor: `Radiologist #${item.generated_by}`,
       date: item.generated_at
-        ? new Date(item.generated_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+        ? new Date(item.generated_at).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })
         : '—',
       validated: true,
       reportId: item.id,
@@ -61,13 +72,13 @@ export class Reports {
 
   nextPage() {
     if (this.currentPage() < this.totalPages()) {
-      this.currentPage.update(p => p + 1);
+      this.currentPage.update((p) => p + 1);
     }
   }
 
   prevPage() {
     if (this.currentPage() > 1) {
-      this.currentPage.update(p => p - 1);
+      this.currentPage.update((p) => p - 1);
     }
   }
 
@@ -85,10 +96,14 @@ export class Reports {
 
   private mapActionToStatus(action: string | undefined): 'Critical' | 'Moderate' | 'Normal' {
     switch (action) {
-      case 'accepted':  return 'Normal';
-      case 'modified':  return 'Moderate';
-      case 'rejected':  return 'Critical';
-      default:          return 'Normal';
+      case 'accepted':
+        return 'Normal';
+      case 'modified':
+        return 'Moderate';
+      case 'rejected':
+        return 'Critical';
+      default:
+        return 'Normal';
     }
   }
 }

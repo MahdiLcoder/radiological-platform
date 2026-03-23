@@ -98,6 +98,12 @@ class ImageDetailView(APIView):
             image = RadiologyImage.objects(id=ObjectId(pk)).first()
             if not image:
                 raise NotFound("Image not found!")
+                
+            if hasattr(request.user, 'role') and request.user.role == 'doctor':
+                from rest_framework.exceptions import PermissionDenied
+                if not image.patient or image.patient.doctor_id != request.user.id:
+                    raise PermissionDenied("You do not have permission to access this image.")
+                    
             serializer = RadiologyImageSerializer(image)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except NotFound:
