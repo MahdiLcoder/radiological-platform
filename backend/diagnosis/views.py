@@ -92,6 +92,11 @@ class DiagnosisRetrieveUpdateView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
+        if hasattr(request.user, 'role') and request.user.role == 'radiologist':
+            from rest_framework.exceptions import PermissionDenied
+            if diagnosis.image and diagnosis.image.uploaded_by_id != request.user.id:
+                raise PermissionDenied("You do not have permission to modify a diagnosis for this image.")
+
         serializer = DiagnosisSerializer(
             diagnosis,
             data=request.data,

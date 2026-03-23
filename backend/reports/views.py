@@ -58,6 +58,8 @@ class ReportListView(APIView):
                 doctor_images = RadiologyImage.objects(patient__in=patient_ids)
                 image_ids = [img.id for img in doctor_images]
                 reports = reports.filter(image__in=image_ids)
+            elif hasattr(request.user, 'role') and request.user.role == 'radiologist':
+                reports = reports.filter(generated_by=request.user.id)
 
             if date_range == 'Last 7 Days':
                 import datetime
@@ -124,6 +126,10 @@ class ReportDetailView(APIView):
                 from rest_framework.exceptions import PermissionDenied
                 if not report.image or not report.image.patient or report.image.patient.doctor_id != request.user.id:
                     raise PermissionDenied("You do not have permission to access this report.")
+            elif hasattr(request.user, 'role') and request.user.role == 'radiologist':
+                from rest_framework.exceptions import PermissionDenied
+                if report.generated_by != request.user.id:
+                    raise PermissionDenied("You do not have permission to access this report.")
                     
             serializer = ReportSerializer(report, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -146,6 +152,10 @@ class ReportDownloadView(APIView):
             if hasattr(request.user, 'role') and request.user.role == 'doctor':
                 from rest_framework.exceptions import PermissionDenied
                 if not report.image or not report.image.patient or report.image.patient.doctor_id != request.user.id:
+                    raise PermissionDenied("You do not have permission to download this report.")
+            elif hasattr(request.user, 'role') and request.user.role == 'radiologist':
+                from rest_framework.exceptions import PermissionDenied
+                if report.generated_by != request.user.id:
                     raise PermissionDenied("You do not have permission to download this report.")
 
             if not report.pdf_data:
@@ -178,6 +188,10 @@ class ReportByImageView(APIView):
             if hasattr(request.user, 'role') and request.user.role == 'doctor':
                 from rest_framework.exceptions import PermissionDenied
                 if not image.patient or image.patient.doctor_id != request.user.id:
+                    raise PermissionDenied("You do not have permission to access this report.")
+            elif hasattr(request.user, 'role') and request.user.role == 'radiologist':
+                from rest_framework.exceptions import PermissionDenied
+                if image.uploaded_by_id != request.user.id:
                     raise PermissionDenied("You do not have permission to access this report.")
 
             report = Report.objects(image=image).first()

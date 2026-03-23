@@ -36,6 +36,9 @@ class ImageListView(APIView):
             status_filter = request.query_params.get('status', '')
 
             images = RadiologyImage.objects.all()
+            
+            if hasattr(request.user, 'role') and request.user.role == 'radiologist':
+                images = images.filter(uploaded_by_id=request.user.id)
 
             if modality:
                 images = images.filter(modality__iexact=modality)
@@ -102,6 +105,10 @@ class ImageDetailView(APIView):
             if hasattr(request.user, 'role') and request.user.role == 'doctor':
                 from rest_framework.exceptions import PermissionDenied
                 if not image.patient or image.patient.doctor_id != request.user.id:
+                    raise PermissionDenied("You do not have permission to access this image.")
+            elif hasattr(request.user, 'role') and request.user.role == 'radiologist':
+                from rest_framework.exceptions import PermissionDenied
+                if image.uploaded_by_id != request.user.id:
                     raise PermissionDenied("You do not have permission to access this image.")
                     
             serializer = RadiologyImageSerializer(image)
