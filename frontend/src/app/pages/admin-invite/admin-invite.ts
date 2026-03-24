@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -17,12 +17,18 @@ export class AdminInvite {
   private authService = inject(AuthService);
   private router = inject(Router);
 
+  // Modal States
+  isSuccessModalOpen = signal(false);
+  isErrorModalOpen = signal(false);
+  errorMessage = signal('');
+
   inviteData = {
     first_name: '',
     last_name: '',
     email: '',
     role: '',
     department: '',
+    specialty: '',
     medical_license_number: '',
     years_of_experience: null as number | null,
     clinic: ''
@@ -31,35 +37,42 @@ export class AdminInvite {
 
   inviteMutation = injectMutation(() => ({
     mutationFn: (data: any) => {
-      // Mapping fields for registration if specific invite doesn't exist
       const payload = {
+        ...data,
         username: data.email,
-        email: data.email,
-        first_name: data.first_name,
-        last_name: data.last_name,
-        role: data.role,
-        password: 'TemporaryPassword123!' // Placeholder
+        password: 'TemporaryPassword123!' // Placeholder as per design
       };
-      return lastValueFrom(this.authService.register(payload.username, payload.password));
+      return lastValueFrom(this.authService.register(payload));
     },
     onSuccess: () => {
-      alert('Invitation sent successfully!');
-      this.router.navigate(['/dashboard/admin']);
+      this.isSuccessModalOpen.set(true);
     },
     onError: (error: any) => {
-      alert('Error sending invitation: ' + (error.error?.detail || error.message));
+      this.errorMessage.set(error.error?.detail || error.message || 'An unexpected error occurred');
+      this.isErrorModalOpen.set(true);
     }
   }));
 
   sendInvitation() {
     if (!this.inviteData.email || !this.inviteData.role) {
-      alert('Please fill in at least the email and role.');
+      this.errorMessage.set('Please fill in at least the email and role.');
+      this.isErrorModalOpen.set(true);
       return;
     }
     this.inviteMutation.mutate(this.inviteData);
   }
 
+  closeSuccessModal() {
+    this.isSuccessModalOpen.set(false);
+    this.router.navigate(['/dashboard/admin/users']);
+  }
+
+  closeErrorModal() {
+    this.isErrorModalOpen.set(false);
+  }
+
   cancel() {
-    this.router.navigate(['/dashboard/admin']);
+    this.router.navigate(['/dashboard/admin/users']);
   }
 }
+
