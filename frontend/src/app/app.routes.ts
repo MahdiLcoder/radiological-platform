@@ -67,10 +67,6 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/create-patient/create-patient').then((m) => m.CreatePatient),
       },
       {
-        path: 'all-findings',
-        loadComponent: () => import('./pages/all-finding/all-finding').then((m) => m.AllFinding),
-      },
-      {
         path: 'edit-profile',
         loadComponent: () => import('./pages/edit-profile/edit-profile').then((m) => m.EditProfile),
       },
