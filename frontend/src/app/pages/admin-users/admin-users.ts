@@ -119,13 +119,14 @@ export class AdminUsers {
   saveEdit() {
     const user = this.editingUser();
     if (user) {
-      const { id, first_name, last_name, email, role, department, medical_license_number, years_of_experience, clinic, is_active } = user;
+      const { id, first_name, last_name, email, role, department, medical_license_number, years_of_experience, clinic } = user;
       this.updateUserMutation.mutate({
         id,
-        payload: { first_name, last_name, email, role, department, medical_license_number, years_of_experience, clinic, is_active }
+        payload: { first_name, last_name, email, role, department, medical_license_number, years_of_experience, clinic }
       });
     }
   }
+
 
 
   formatDate(dateStr: string) {

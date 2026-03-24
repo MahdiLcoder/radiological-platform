@@ -10,7 +10,7 @@ import { EChartsOption } from 'echarts';
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, RouterLink, NgxEchartsModule],
+  imports: [CommonModule, NgxEchartsModule],
   templateUrl: './admin.html',
   styleUrl: './admin.css',
 })

@@ -51,11 +51,8 @@ class UserListView(generics.ListAPIView):
         if role:
             qs = qs.filter(role=role)
 
-        is_active = self.request.query_params.get('is_active')
-        if is_active is not None:
-            qs = qs.filter(is_active=is_active.lower() == 'true')
-
         return qs
+
 
 
 class UserDetailView(APIView):
@@ -198,8 +195,6 @@ class SystemStatsView(APIView):
         stats = {
             "users": {
                 "total": user_qs.count(),
-                "active": user_qs.filter(is_active=True).count(),
-                "inactive": user_qs.filter(is_active=False).count(),
                 "by_role": {
                     "admin": by_role.get('admin', 0),
                     "radiologist": by_role.get('radiologist', 0),
@@ -220,5 +215,6 @@ class SystemStatsView(APIView):
             "diagnoses": {"total": Diagnosis.objects.count()},
             "reports": {"total": Report.objects.count()},
         }
+
 
         return Response(stats, status=status.HTTP_200_OK)
