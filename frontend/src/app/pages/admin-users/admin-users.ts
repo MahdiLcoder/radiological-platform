@@ -40,7 +40,8 @@ export class AdminUsers {
 
   usersQuery = injectQuery(() => ({
     queryKey: ['admin_users', this.currentPage()],
-    queryFn: () => lastValueFrom(this.authService.getUsers(undefined, undefined, this.currentPage(), this.pageSize())),
+    queryFn: () => lastValueFrom(this.authService.getUsers(undefined, this.currentPage(), this.pageSize())),
+
   }));
 
 
