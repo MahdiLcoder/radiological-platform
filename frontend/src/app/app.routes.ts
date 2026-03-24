@@ -51,10 +51,6 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/patients/patients').then((m) => m.Patients),
       },
       {
-        path: 'analytics',
-        loadComponent: () => import('./pages/analytics/analytics').then((m) => m.Analytics),
-      },
-      {
         path: 'create-patient',
         loadComponent: () => import('./pages/create-patient/create-patient').then((m) => m.CreatePatient),
       },
