@@ -21,10 +21,12 @@ export class AdminInvite {
   isSuccessModalOpen = signal(false);
   isErrorModalOpen = signal(false);
   errorMessage = signal('');
+  generatedPassword = signal('');
 
   inviteData = {
     first_name: '',
     last_name: '',
+    username: '',
     email: '',
     role: '',
     department: '',
@@ -34,13 +36,22 @@ export class AdminInvite {
     clinic: ''
   };
 
+  private generatePassword(length = 12): string {
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+    let retVal = "";
+    for (let i = 0, n = charset.length; i < length; ++i) {
+      retVal += charset.charAt(Math.floor(Math.random() * n));
+    }
+    return retVal;
+  }
 
   inviteMutation = injectMutation(() => ({
     mutationFn: (data: any) => {
+      const password = this.generatePassword();
+      this.generatedPassword.set(password);
       const payload = {
         ...data,
-        username: data.email,
-        password: 'TemporaryPassword123!' // Placeholder as per design
+        password: password
       };
       return lastValueFrom(this.authService.register(payload));
     },
@@ -54,13 +65,14 @@ export class AdminInvite {
   }));
 
   sendInvitation() {
-    if (!this.inviteData.email || !this.inviteData.role) {
-      this.errorMessage.set('Please fill in at least the email and role.');
+    if (!this.inviteData.email || !this.inviteData.role || !this.inviteData.username) {
+      this.errorMessage.set('Please fill in at least the username, email, and role.');
       this.isErrorModalOpen.set(true);
       return;
     }
     this.inviteMutation.mutate(this.inviteData);
   }
+
 
   closeSuccessModal() {
     this.isSuccessModalOpen.set(false);

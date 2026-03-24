@@ -43,6 +43,15 @@
           </div>
 
           <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-700">Username</label>
+            <input 
+              class="w-full rounded-lg border-slate-300 bg-white text-slate-900 focus:ring-primary focus:border-primary placeholder:text-slate-400 p-2.5 outline-none transition-all font-mono" 
+              placeholder="e.g. jsmith_radio" 
+              type="text"
+              [(ngModel)]="inviteData.username"
+            />
+          </div>
+          <div class="space-y-2">
             <label class="text-sm font-semibold text-slate-700">Professional Email Address</label>
             <input 
               class="w-full rounded-lg border-slate-300 bg-white text-slate-900 focus:ring-primary focus:border-primary placeholder:text-slate-400 p-2.5 outline-none transition-all" 
@@ -51,6 +60,7 @@
               [(ngModel)]="inviteData.email"
             />
           </div>
+
           <div class="space-y-2">
             <label class="text-sm font-semibold text-slate-700">Professional Role</label>
             <select 
@@ -160,13 +170,32 @@
           <span class="material-symbols-outlined text-[40px]">check_circle</span>
         </div>
         <h3 class="text-2xl font-black text-slate-900 mb-2">Invitation Sent!</h3>
-        <p class="text-slate-600 mb-8">The professional has been successfully added to the system. An invitation link has been dispatched to their email.</p>
+        <p class="text-slate-600 mb-6">The professional has been successfully added. Please share these temporary credentials with them:</p>
+        
+        <div class="flex flex-col gap-3 mb-8">
+          <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-4 relative group">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 text-left">Username</p>
+            <div class="flex items-center justify-between">
+              <code class="text-lg font-mono font-bold text-slate-900 tracking-wider">{{ inviteData.username }}</code>
+            </div>
+          </div>
+
+          <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-4 relative group">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 text-left">Temporary Password</p>
+            <div class="flex items-center justify-between">
+              <code class="text-lg font-mono font-bold text-primary tracking-wider">{{ generatedPassword() }}</code>
+            </div>
+          </div>
+        </div>
+
+
         <button 
           (click)="closeSuccessModal()"
           class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-slate-200"
         >
           Return to Dashboard
         </button>
+
       </div>
     </div>
   }
