@@ -152,13 +152,20 @@ class SystemStatsView(APIView):
         role_counts = user_qs.values('role').annotate(count=Count('id'))
         by_role = {item['role']: item['count'] for item in role_counts}
 
-        # Modality distribution (Replacement for item_frequencies which uses mapReduce)
+        # Modality distribution
         pipeline_modality = [
             {"$group": {"_id": "$modality", "count": {"$sum": 1}}}
         ]
         modality_dist_raw = list(RadiologyImage.objects.aggregate(pipeline_modality))
         modality_dist = {item['_id']: item['count'] for item in modality_dist_raw if item['_id']}
         
+        # Status distribution
+        pipeline_status = [
+            {"$group": {"_id": "$status", "count": {"$sum": 1}}}
+        ]
+        status_dist_raw = list(RadiologyImage.objects.aggregate(pipeline_status))
+        status_dist = {item['_id'] if item['_id'] else 'pending': item['count'] for item in status_dist_raw}
+
         # Scans trend (Last 7 days)
         now = datetime.utcnow()
         scans_trend = []
@@ -169,7 +176,7 @@ class SystemStatsView(APIView):
             count = RadiologyImage.objects(uploaded_at__gte=start, uploaded_at__lte=end).count()
             scans_trend.append({"date": day.strftime("%Y-%m-%d"), "count": count})
 
-        # Top findings from AI (Replacement for item_frequencies which uses mapReduce)
+        # Top findings from AI
         pipeline_findings = [
             {"$group": {"_id": "$top_finding", "count": {"$sum": 1}}},
             {"$sort": {"count": -1}},
@@ -180,6 +187,13 @@ class SystemStatsView(APIView):
             {"name": item['_id'], "value": item['count']} 
             for item in findings_raw if item['_id']
         ]
+
+        # Average confidence
+        pipeline_confidence = [
+            {"$group": {"_id": None, "avg_conf": {"$avg": "$confidence"}}}
+        ]
+        conf_raw = list(AiPredictions.objects.aggregate(pipeline_confidence))
+        avg_confidence = conf_raw[0]['avg_conf'] if conf_raw else 0
 
         stats = {
             "users": {
@@ -195,10 +209,12 @@ class SystemStatsView(APIView):
             "images": {
                 "total": RadiologyImage.objects.count(),
                 "by_modality": modality_dist,
+                "by_status": status_dist,
                 "trend": scans_trend
             },
             "findings": {
-                "top": top_findings
+                "top": top_findings,
+                "avg_confidence": avg_confidence
             },
             "inferences": {"total": AiPredictions.objects.count()},
             "diagnoses": {"total": Diagnosis.objects.count()},

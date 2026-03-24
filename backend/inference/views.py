@@ -110,3 +110,57 @@ class AiPredictionsView(APIView):
         except Exception as e:
             logger.error(f"Error in AiPredictionsView: {e}", exc_info=True)
             raise APIException("Something went wrong.")
+class AllFindingsListView(APIView):
+    permission_classes = [IsAuthenticated, (IsDoctor | IsAdmin | IsRadiologist)]
+
+    def get(self, request):
+        # Filtering parameters
+        modality = request.query_params.get('modality')
+        confidence_min = request.query_params.get('confidence_min')
+        status_filter = request.query_params.get('status')
+        
+        query = {}
+        if confidence_min:
+            try:
+                query['confidence__gte'] = float(confidence_min)
+            except ValueError:
+                pass
+            
+        # Modality and Status filters (join-like logic for MongoEngine)
+        image_filters = {}
+        if modality and modality != 'All':
+            image_filters['modality'] = modality
+        if status_filter and status_filter != 'All':
+            # Map frontend labels to backend status if needed
+            status_map = {'Validated': 'validated', 'Pending Review': 'analyzed', 'Rejected': 'pending'}
+            backend_status = status_map.get(status_filter)
+            if backend_status:
+                image_filters['status'] = backend_status
+            
+        if image_filters:
+            image_ids = RadiologyImage.objects(**image_filters).scalar('id')
+            query['image__in'] = image_ids
+            
+        findings = AiPredictions.objects(**query).order_by('-analyzed_at')
+        
+        # Pagination logic
+        try:
+            page = int(request.query_params.get('page', 1))
+            page_size = int(request.query_params.get('page_size', 10))
+        except ValueError:
+            page = 1
+            page_size = 10
+            
+        total = findings.count()
+        start = (page - 1) * page_size
+        end = start + page_size
+        
+        results = findings[start:end]
+        serializer = AiPredictionsSerializer(results, many=True)
+        
+        return Response({
+            "count": total,
+            "page": page,
+            "page_size": page_size,
+            "results": serializer.data
+        }, status=status.HTTP_200_OK)

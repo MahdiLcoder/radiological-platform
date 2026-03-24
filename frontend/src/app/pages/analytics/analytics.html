@@ -28,80 +28,104 @@
         <div class="h-full bg-primary w-[100%] rounded-full shadow-sm shadow-primary/20"></div>
       </div>
     </div>
-    <!-- AI Inferences -->
+    <!-- AI Reliability -->
     <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
       <div class="flex justify-between items-start mb-4">
-        <p class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">AI Inferences</p>
-        <span class="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-bold px-2 py-1 rounded-full">Active</span>
+        <p class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">AI Reliability</p>
+        <span class="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-bold px-2 py-1 rounded-full">High</span>
       </div>
-      <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ stats.inferences.total | number }}</p>
+      <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ (stats.findings.avg_confidence * 100) | number:'1.1-1' }}%</p>
       <p class="text-xs text-slate-500 dark:text-slate-400 mt-4 flex items-center gap-1">
-        <span class="material-symbols-outlined text-sm text-green-500">verified_user</span> System Status: Healthy
+        <span class="material-symbols-outlined text-sm text-green-500">verified_user</span> Avg. Confidence Score
       </p>
     </div>
     <!-- Validated Reports -->
     <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
       <div class="flex justify-between items-start mb-4">
-        <p class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Validated Reports</p>
-        <span class="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-xs font-bold px-2 py-1 rounded-full">{{ (stats.reports.total / (stats.images.total || 1) * 100) | number:'1.0-0' }}%</span>
+        <p class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Validation Rate</p>
+        <span class="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-xs font-bold px-2 py-1 rounded-full">
+          {{ ((stats.images.by_status['validated'] || 0) / (stats.images.total || 1) * 100) | number:'1.0-0' }}%
+        </span>
       </div>
-      <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ stats.reports.total | number }}</p>
-      <p class="text-xs text-slate-500 dark:text-slate-400 mt-4 font-medium">Out of {{ stats.images.total }} scans</p>
+      <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ stats.images.by_status['validated'] || 0 | number }}</p>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-4 font-medium">Validated out of {{ stats.images.total }}</p>
     </div>
     <!-- System Users -->
     <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
       <div class="flex justify-between items-start mb-4">
-        <p class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">System Users</p>
-        <span class="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold px-2 py-1 rounded-full">{{ stats.users.active }} Active</span>
+        <p class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Active Professionals</p>
+        <span class="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold px-2 py-1 rounded-full">{{ stats.users.active }} / {{ stats.users.total }}</span>
       </div>
-      <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ stats.users.total | number }}</p>
+      <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ stats.users.active | number }}</p>
       <div class="mt-4 flex items-center gap-3">
         <div class="flex -space-x-2">
-          <div class="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 bg-slate-200 dark:bg-slate-700"></div>
-          <div class="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 bg-slate-300 dark:bg-slate-600"></div>
-          <div class="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 bg-slate-400 dark:bg-slate-500"></div>
+          <div class="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">A</div>
+          <div class="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 bg-blue-500/20 flex items-center justify-center text-[10px] font-bold text-blue-600">R</div>
+          <div class="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 bg-emerald-500/20 flex items-center justify-center text-[10px] font-bold text-emerald-600">D</div>
         </div>
-        <span class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Managed Professionals</span>
+        <span class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Multi-role Team</span>
       </div>
     </div>
   </div>
 
   <!-- Charts Section -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- Scan Volume vs AI Detections -->
-    <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Scan Volume Trend -->
+    <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm lg:col-span-2 hover:shadow-md transition-shadow">
       <div class="flex items-center justify-between mb-6">
-        <h3 class="font-bold text-lg text-slate-900 dark:text-white">Scan Volume Trend</h3>
-        <button class="text-slate-400 hover:text-slate-600 transition-colors">
-          <span class="material-symbols-outlined text-[20px]">more_horiz</span>
-        </button>
-      </div>
-      <div echarts [options]="trendOptions()" class="h-64 w-full"></div>
-      <div class="flex gap-6 mt-6 pt-4 border-t border-slate-50 dark:border-slate-800">
-        <div class="flex items-center gap-2">
-          <div class="size-3 bg-primary rounded-sm"></div>
-          <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold">Total Scans per Day</span>
+        <h3 class="font-bold text-lg text-slate-900 dark:text-white">Scan Activity Trend</h3>
+        <div class="flex gap-2">
+          <div class="flex items-center gap-1.5 px-3 py-1 bg-slate-50 dark:bg-slate-800 rounded-full text-[10px] font-bold text-slate-500 border border-slate-100 dark:border-slate-700">
+            <span class="size-2 rounded-full bg-primary"></span> Volume
+          </div>
         </div>
       </div>
+      <div echarts [options]="trendOptions()" class="h-64 w-full"></div>
     </div>
-    <!-- Detections by Modality -->
+
+    <!-- AI Reliability Gauge -->
     <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
       <div class="flex items-center justify-between mb-6">
-        <h3 class="font-bold text-lg text-slate-900 dark:text-white">Detections by Modality</h3>
-        <button class="text-slate-400 hover:text-slate-600 transition-colors">
-          <span class="material-symbols-outlined text-[20px]">more_horiz</span>
-        </button>
+        <h3 class="font-bold text-lg text-slate-900 dark:text-white">AI Reliability</h3>
+        <span class="material-symbols-outlined text-primary text-[20px]">verified</span>
+      </div>
+      <div class="flex flex-col items-center justify-center h-full pb-8">
+        <div echarts [options]="confidenceOptions()" class="h-48 w-full"></div>
+        <p class="text-xs text-slate-500 text-center mt-2 px-4 italic">Weighted average of confidence scores across all diagnostics.</p>
+      </div>
+    </div>
+
+    <!-- Validation Status Breakdown -->
+    <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="font-bold text-lg text-slate-900 dark:text-white">Validation Status</h3>
+        <span class="material-symbols-outlined text-slate-400 text-[20px]">assignment_turned_in</span>
+      </div>
+      <div echarts [options]="statusOptions()" class="h-64 w-full"></div>
+    </div>
+
+    <!-- Detections by Modality -->
+    <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm lg:col-span-2 hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="font-bold text-lg text-slate-900 dark:text-white">Modality Distribution</h3>
+        <div class="flex gap-4">
+           @for (item of stats.images.by_modality | keyvalue; track item.key) {
+             <div class="flex items-center gap-1.5 font-bold text-[10px] text-slate-500">
+               <span class="size-2 rounded-full" [ngClass]="getModalityColor(item.key.toString())"></span> {{ item.key }}
+             </div>
+           }
+        </div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-        <div echarts [options]="modalityOptions()" class="h-48 w-full"></div>
-        <div class="space-y-4">
+        <div echarts [options]="modalityOptions()" class="h-56 w-full"></div>
+        <div class="space-y-4 pr-4">
           @for (item of stats.images.by_modality | keyvalue; track item.key) {
             <div>
               <div class="flex justify-between text-sm mb-1.5">
                 <span class="font-bold text-slate-700 dark:text-slate-200">{{ item.key }}</span>
-                <span class="text-slate-500 dark:text-slate-400 text-xs">{{ item.value }} scans</span>
+                <span class="text-slate-500 dark:text-slate-400 text-xs">{{ ((item.value / stats.images.total) * 100) | number:'1.0-1' }}%</span>
               </div>
-              <div class="h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+              <div class="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                 <div 
                   class="h-full rounded-full transition-all duration-1000" 
                   [ngClass]="getModalityColor(item.key.toString())"
@@ -115,56 +139,9 @@
     </div>
   </div>
 
-  <!-- Table Section -->
-  <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-    <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/30">
-      <h3 class="font-bold text-lg text-slate-900 dark:text-white">Top Detected Findings</h3>
-      <a routerLink="/dashboard/all-findings" class="text-primary text-sm font-bold hover:text-primary/80 transition-colors cursor-pointer">View All Findings</a>
-    </div>
-    <div class="overflow-x-auto">
-      <table class="w-full text-left">
-        <thead class="bg-slate-50 dark:bg-slate-800/50">
-          <tr>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Finding Type</th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Frequency</th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Impact</th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">Trend</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-          @for (finding of stats.findings.top; track finding.name) {
-            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <div class="size-8 rounded bg-primary/10 text-primary flex items-center justify-center">
-                    <span class="material-symbols-outlined text-sm">{{ getFindingIcon(finding.name) }}</span>
-                  </div>
-                  <span class="text-sm font-bold text-slate-900 dark:text-white">{{ finding.name }}</span>
-                </div>
-              </td>
-              <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">{{ finding.value }} cases</td>
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-2">
-                  <div class="h-1.5 w-16 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                    <div class="h-full bg-primary" [style.width.%]="(finding.value / stats.inferences.total) * 100"></div>
-                  </div>
-                  <span class="text-[10px] font-bold text-slate-400">{{ (finding.value / stats.inferences.total * 100) | number:'1.0-1' }}%</span>
-                </div>
-              </td>
-              <td class="px-6 py-4 text-center">
-                <span class="text-green-500 material-symbols-outlined font-bold">trending_up</span>
-              </td>
-            </tr>
-          } @empty {
-            <tr>
-              <td colspan="4" class="px-6 py-10 text-center text-slate-400 text-sm">No findings detected yet.</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </div>
+
 </div>
+
 } @else if (statsQuery.isError()) {
   <div class="flex flex-col items-center justify-center h-96 space-y-4">
     <div class="size-16 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 flex items-center justify-center">

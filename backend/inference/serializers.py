@@ -38,17 +38,34 @@ class AiPredictionsSerializer(serializers.Serializer):
         return result
 
     def to_representation(self, instance):
+        import mongoengine as me
+        
+        image_data = None
+        try:
+            if instance.image:
+                patient_data = None
+                try:
+                    if instance.image.patient:
+                        patient_data = {
+                            "id": str(instance.image.patient.id),
+                            "first_name": instance.image.patient.first_name,
+                            "last_name": instance.image.patient.last_name,
+                        }
+                except me.DoesNotExist:
+                    pass
+
+                image_data = {
+                    "id": str(instance.image.id),
+                    "patient": patient_data,
+                    "modality": instance.image.modality,
+                    "status": instance.image.status,
+                }
+        except me.DoesNotExist:
+            pass
+
         return {
             "id": str(instance.id),
-            "image": {
-            "id": str(instance.image.id),
-            "patient": {
-                "id": str(instance.image.patient.id),
-                "first_name": instance.image.patient.first_name,
-                "last_name": instance.image.patient.last_name,
-            } if instance.image and instance.image.patient else None,
-            "modality": instance.image.modality,
-        } if instance.image else None,
+            "image": image_data,
             "model_name": instance.model_name,
             "predictions": instance.predictions,
             "top_finding": instance.top_finding,
@@ -60,3 +77,4 @@ class AiPredictionsSerializer(serializers.Serializer):
             } if instance.analyzed_by else None,
             "analyzed_at": instance.analyzed_at.isoformat() if instance.analyzed_at else None,
         }
+

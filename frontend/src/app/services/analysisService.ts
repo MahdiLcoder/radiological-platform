@@ -5,7 +5,7 @@ import { PaginatedResponse } from '../models/pagination';
 
 export interface AnalysisResult {
   id: string;
-  image: {
+  image?: {
     id: string;
     patient?: {
       id: string;
@@ -13,12 +13,16 @@ export interface AnalysisResult {
       last_name: string;
     };
     modality: string;
+    status: string;
   };
   model_name: string;
   predictions: Record<string, number>;
   top_finding: string;
   confidence: number;
+  analyzed_at: string;
 }
+
+
 
 export interface UploadResponse {
   id: string;
@@ -83,4 +87,15 @@ export class AnalysisService {
   }): Observable<any> {
     return this.http.post<any>(`http://localhost:8000/api/diagnosis/`, data);
   }
+
+  getAllFindings(params: any = {}): Observable<PaginatedResponse<AnalysisResult[]>> {
+    let httpParams = new HttpParams();
+    Object.keys(params).forEach(key => {
+      if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
+        httpParams = httpParams.append(key, params[key]);
+      }
+    });
+    return this.http.get<PaginatedResponse<AnalysisResult[]>>(`${this.inferenceApiUrl}/all-findings/`, { params: httpParams });
+  }
 }
+

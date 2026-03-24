@@ -1,8 +1,6 @@
 <div class="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
   <!-- Filters Section -->
-  <div
-    class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-4 shadow-sm"
-  >
+  <div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-4 shadow-sm">
     <div class="flex items-center gap-2 pr-4 border-r border-slate-200 dark:border-slate-800">
       <span class="material-symbols-outlined text-slate-400 text-[20px]">filter_list</span>
       <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Filters:</span>
@@ -10,290 +8,160 @@
     <!-- Filter Dropdowns -->
     <div class="flex flex-wrap gap-3 flex-1">
       <select
+        [(ngModel)]="selectedModality"
+        (change)="currentPage.set(1)"
         class="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-600 dark:text-slate-300 focus:ring-primary outline-none"
       >
-        <option>Modality: All</option>
-        <option>X-Ray</option>
-        <option>CT Scan</option>
-        <option>MRI</option>
-        <option>Ultrasound</option>
+        <option value="All">Modality: All</option>
+        <option value="X-Ray">X-Ray</option>
+        <option value="CT">CT Scan</option>
+        <option value="MRI">MRI</option>
       </select>
+
       <select
+        [(ngModel)]="minConfidence"
+        (change)="currentPage.set(1)"
         class="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-600 dark:text-slate-300 focus:ring-primary outline-none"
       >
-        <option>Date Range: Last 30 Days</option>
-        <option>Last 7 Days</option>
-        <option>Today</option>
-        <option>Custom Range</option>
+        <option [value]="0">Confidence: All</option>
+        <option [value]="0.95">>95% Critical</option>
+        <option [value]="0.90">>90% High</option>
+        <option [value]="0.80">>80% Medium</option>
       </select>
+
       <select
+        [(ngModel)]="selectedStatus"
+        (change)="currentPage.set(1)"
         class="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-600 dark:text-slate-300 focus:ring-primary outline-none"
       >
-        <option>Confidence Score: >80%</option>
-        <option>>95% Critical</option>
-        <option>>90% High</option>
-        <option>>70% All</option>
-      </select>
-      <select
-        class="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-600 dark:text-slate-300 focus:ring-primary outline-none"
-      >
-        <option>Status: All Findings</option>
-        <option>Validated</option>
-        <option>Pending Review</option>
-        <option>Rejected</option>
+        <option value="All">Status: All</option>
+        <option value="Validated">Validated</option>
+        <option value="Pending Review">Pending Review</option>
+        <option value="Rejected">Rejected</option>
       </select>
     </div>
-    <button class="text-primary text-sm font-semibold hover:underline px-2">Clear All</button>
-    <button
-      class="bg-primary text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-primary/90 transition-all flex items-center gap-2 shadow-sm shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
-    >
-      <span class="material-symbols-outlined text-[18px]">download</span>
-      Export CSV
-    </button>
+    <button (click)="clearFilters()" class="text-primary text-sm font-semibold hover:underline px-2">Clear All</button>
   </div>
 
   <!-- Data Table Card -->
-  <div
-    class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm"
-  >
-    <div class="overflow-x-auto">
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Anomaly Type
-            </th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Patient Name & ID
-            </th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Modality
-            </th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Detection Date
-            </th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              AI Confidence
-            </th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Status
-            </th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-          <!-- Row 1: Pneumonia -->
-          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <div class="size-8 rounded bg-primary/10 text-primary flex items-center justify-center">
-                  <span class="material-symbols-outlined text-[18px]">pulmonology</span>
-                </div>
-                <span class="font-semibold text-sm text-slate-900 dark:text-slate-100">Pneumonia</span>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <div class="text-sm font-medium text-slate-900 dark:text-slate-100">Johnathan Doe</div>
-              <div class="text-xs text-slate-500 dark:text-slate-400">ID: #RAD-8821</div>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded text-xs font-medium uppercase tracking-tight"
-                >X-Ray</span
-              >
-            </td>
-            <td class="px-6 py-4">
-              <div class="text-sm text-slate-900 dark:text-slate-100">Oct 24, 2023</div>
-              <div class="text-xs text-slate-400">09:14 AM</div>
-            </td>
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <span class="text-sm font-bold text-slate-700 dark:text-slate-300">92%</span>
-                <div class="w-24 bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                  <div class="bg-emerald-500 h-full" style="width: 92%"></div>
-                </div>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800"
-              >
-                <span class="size-1.5 rounded-full bg-emerald-500"></span>
-                Validated
-              </span>
-            </td>
-            <td class="px-6 py-4 text-right">
-              <button class="text-primary hover:text-primary/80 font-semibold text-sm">View Scan</button>
-            </td>
-          </tr>
-          <!-- Row 2: Pulmonary Nodule -->
-          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <div class="size-8 rounded bg-amber-100 dark:bg-amber-900/30 text-amber-600 flex items-center justify-center">
-                  <span class="material-symbols-outlined text-[18px]">grain</span>
-                </div>
-                <span class="font-semibold text-sm text-slate-900 dark:text-white">Pulmonary Nodule</span>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <div class="text-sm font-medium text-slate-900 dark:text-white">Jane Smith</div>
-              <div class="text-xs text-slate-500 dark:text-slate-400">ID: #RAD-4432</div>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded text-xs font-medium uppercase tracking-tight"
-                >CT Scan</span
-              >
-            </td>
-            <td class="px-6 py-4">
-              <div class="text-sm text-slate-900 dark:text-white">Oct 23, 2023</div>
-              <div class="text-xs text-slate-400">02:45 PM</div>
-            </td>
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <span class="text-sm font-bold text-slate-700 dark:text-slate-300">85%</span>
-                <div class="w-24 bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                  <div class="bg-amber-500 h-full" style="width: 85%"></div>
-                </div>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800"
-              >
-                <span class="size-1.5 rounded-full bg-amber-500"></span>
-                Pending
-              </span>
-            </td>
-            <td class="px-6 py-4 text-right">
-              <button class="text-primary hover:text-primary/80 font-semibold text-sm">View Scan</button>
-            </td>
-          </tr>
-          <!-- Row 3: Tibia Fracture -->
-          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <div class="size-8 rounded bg-red-100 dark:bg-red-900/30 text-red-600 flex items-center justify-center">
-                  <span class="material-symbols-outlined text-[18px]">skeleton</span>
-                </div>
-                <span class="font-semibold text-sm text-slate-900 dark:text-white">Tibia Fracture</span>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <div class="text-sm font-medium text-slate-900 dark:text-white">Robert Brown</div>
-              <div class="text-xs text-slate-500 dark:text-slate-400">ID: #RAD-1109</div>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded text-xs font-medium uppercase tracking-tight"
-                >X-Ray</span
-              >
-            </td>
-            <td class="px-6 py-4">
-              <div class="text-sm text-slate-900 dark:text-white">Oct 22, 2023</div>
-              <div class="text-xs text-slate-400">11:20 AM</div>
-            </td>
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <span class="text-sm font-bold text-slate-700 dark:text-slate-300">98%</span>
-                <div class="w-24 bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                  <div class="bg-emerald-500 h-full" style="width: 98%"></div>
-                </div>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800"
-              >
-                <span class="size-1.5 rounded-full bg-emerald-500"></span>
-                Validated
-              </span>
-            </td>
-            <td class="px-6 py-4 text-right">
-              <button class="text-primary hover:text-primary/80 font-semibold text-sm">View Scan</button>
-            </td>
-          </tr>
-          <!-- Row 4: Pleural Effusion -->
-          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <div class="size-8 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center">
-                  <span class="material-symbols-outlined text-[18px]">water_drop</span>
-                </div>
-                <span class="font-semibold text-sm text-slate-900 dark:text-white">Pleural Effusion</span>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <div class="text-sm font-medium text-slate-900 dark:text-white">Emily Davis</div>
-              <div class="text-xs text-slate-500 dark:text-slate-400">ID: #RAD-7765</div>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded text-xs font-medium uppercase tracking-tight"
-                >Ultrasound</span
-              >
-            </td>
-            <td class="px-6 py-4">
-              <div class="text-sm text-slate-900 dark:text-white">Oct 21, 2023</div>
-              <div class="text-xs text-slate-400">08:05 AM</div>
-            </td>
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <span class="text-sm font-bold text-slate-700 dark:text-slate-300">72%</span>
-                <div class="w-24 bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                  <div class="bg-red-500 h-full" style="width: 72%"></div>
-                </div>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800"
-              >
-                <span class="size-1.5 rounded-full bg-red-500"></span>
-                Rejected
-              </span>
-            </td>
-            <td class="px-6 py-4 text-right">
-              <button class="text-primary hover:text-primary/80 font-semibold text-sm">View Scan</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+    @if (findingsQuery.data(); as findings) {
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+              <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Anomaly Type</th>
+              <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Patient Info</th>
+              <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Modality</th>
+              <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Detection Date</th>
+              <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">AI Confidence</th>
+              <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+            @for (finding of findings.results; track finding.id) {
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div class="size-8 rounded bg-primary/10 text-primary flex items-center justify-center">
+                      <span class="material-symbols-outlined text-[18px]">{{ getFindingIcon(finding.top_finding) }}</span>
+                    </div>
+                    <span class="font-semibold text-sm text-slate-900 dark:text-slate-100">{{ finding.top_finding }}</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  @if (finding.image?.patient; as patient) {
+                    <div class="text-sm font-medium text-slate-900 dark:text-slate-100">{{ patient.first_name }} {{ patient.last_name }}</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400">ID: {{ patient.id | slice:-6 }}</div>
+                  } @else {
+                    <span class="text-xs text-slate-400 italic">Unknown Patient</span>
+                  }
+                </td>
+                <td class="px-6 py-4">
+                  <span class="px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded text-xs font-medium uppercase tracking-tight">
+                    {{ finding.image?.modality }}
+                  </span>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="text-sm text-slate-900 dark:text-slate-100">{{ finding.analyzed_at | date:'MMM d, y' }}</div>
+                  <div class="text-xs text-slate-400">{{ finding.analyzed_at | date:'hh:mm a' }}</div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <span class="text-sm font-bold text-slate-700 dark:text-slate-300">{{ finding.confidence * 100 | number:'1.0-0' }}%</span>
+                    <div class="w-24 bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                      <div class="h-full transition-all duration-500" [ngClass]="getConfidenceColor(finding.confidence)" [style.width.%]="finding.confidence * 100"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  @if (finding.image?.status; as status) {
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border" [ngClass]="getStatusClass(status)">
+                      <span class="size-1.5 rounded-full" [ngClass]="getStatusIcon(status)"></span>
+                      {{ getStatusLabel(status) }}
+                    </span>
+                  }
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <a [routerLink]="['/dashboard/aivalidation', finding.image?.id]" class="text-primary hover:text-primary/80 font-semibold text-sm cursor-pointer">View Scan</a>
+                </td>
 
-    <!-- Pagination -->
-    <div
-      class="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between"
-    >
-      <p class="text-sm text-slate-500 dark:text-slate-400">Showing 1 to 6 of 124 results</p>
-      <div class="flex gap-2">
-        <button
-          class="px-3 py-1 border border-slate-200 dark:border-slate-700 rounded text-sm bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
-          disabled=""
-        >
-          Previous
-        </button>
-        <button class="px-3 py-1 bg-primary text-white rounded text-sm font-medium">1</button>
-        <button
-          class="px-3 py-1 border border-slate-200 dark:border-slate-700 rounded text-sm bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-        >
-          2
-        </button>
-        <button
-          class="px-3 py-1 border border-slate-200 dark:border-slate-700 rounded text-sm bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-        >
-          3
-        </button>
-        <span class="px-2 py-1 text-slate-400">...</span>
-        <button
-          class="px-3 py-1 border border-slate-200 dark:border-slate-700 rounded text-sm bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-        >
-          Next
-        </button>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="px-6 py-12 text-center text-slate-400 bg-slate-50/30 dark:bg-slate-800/30">
+                  <div class="flex flex-col items-center gap-2">
+                    <span class="material-symbols-outlined text-4xl opacity-20">search_off</span>
+                    <p>No findings match your current filters.</p>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
-    </div>
+
+      <!-- Pagination -->
+      <div class="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
+        <p class="text-sm text-slate-500 dark:text-slate-400">
+          Showing {{ (currentPage() - 1) * pageSize() + 1 }} to {{ (currentPage() * pageSize() > findings.count ? findings.count : currentPage() * pageSize()) }} of {{ findings.count }} results
+        </p>
+        <div class="flex gap-2">
+          <button
+            (click)="prevPage()"
+            [disabled]="currentPage() === 1"
+            class="px-4 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-sm"
+          >
+            Previous
+          </button>
+          <div class="flex items-center px-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold text-slate-700 dark:text-slate-200 shadow-sm">
+            Page {{ currentPage() }}
+          </div>
+          <button
+            (click)="nextPage()"
+            [disabled]="currentPage() * pageSize() >= findings.count"
+            class="px-4 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-sm"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    } @else if (findingsQuery.isError()) {
+      <div class="p-12 text-center">
+        <div class="size-16 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 mx-auto flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-3xl">error</span>
+        </div>
+        <h3 class="font-bold text-slate-900 dark:text-white mb-2">Error loading findings</h3>
+        <p class="text-slate-500 dark:text-slate-400 mb-6">Failed to retrieve analysis data from the server.</p>
+        <button (click)="findingsQuery.refetch()" class="px-6 py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-all">Retry Load</button>
+      </div>
+    } @else {
+      <div class="p-20 flex flex-col items-center justify-center space-y-4">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <p class="text-slate-500 animate-pulse font-medium">Fetching analysis results...</p>
+      </div>
+    }
   </div>
 </div>
+
