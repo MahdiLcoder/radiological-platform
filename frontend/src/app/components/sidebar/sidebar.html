@@ -12,66 +12,19 @@
 
   <!-- Nav Links -->
   <nav class="flex-1 px-4 space-y-1">
-    <a
-      routerLink="/dashboard/{{ profileQuery.data()?.role?.toLowerCase() }}"
-      routerLinkActive="!bg-primary/10 !text-primary"
-      [routerLinkActiveOptions]="{ exact: true }"
-      class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
-    >
-      <span class="material-symbols-outlined text-[20px]">dashboard</span>
-      <span>Dashboard</span>
-    </a>
-
-    @if (profileQuery.data()?.role?.toLowerCase() === 'radiologist') {
+    @for (item of filteredNavItems; track item.link) {
       <a
-        routerLink="/dashboard/upload"
+        [routerLink]="item.link"
         routerLinkActive="!bg-primary/10 !text-primary"
+        [routerLinkActiveOptions]="{ exact: item.exact || false }"
         class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
       >
-        <span class="material-symbols-outlined text-[20px]">upload_file</span>
-        <span>Upload Scans</span>
-      </a>
-      <a
-        routerLink="/dashboard/all-images"
-        routerLinkActive="!bg-primary/10 !text-primary"
-        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
-      >
-        <span class="material-symbols-outlined text-[20px]">collections</span>
-        <span>All Scans</span>
-      </a>
-    }
-
-    <a
-      routerLink="/dashboard/reports"
-      routerLinkActive="!bg-primary/10 !text-primary"
-      class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
-    >
-      <span class="material-symbols-outlined text-[20px]">clinical_notes</span>
-      <span>Reports</span>
-    </a>
-
-    @if (profileQuery.data()?.role?.toLowerCase() === 'doctor') {
-      <a
-        routerLink="/dashboard/patients"
-        routerLinkActive="!bg-primary/10 !text-primary"
-        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
-      >
-        <span class="material-symbols-outlined text-[20px]">groups</span>
-        <span>Patient Records</span>
-      </a>
-    }
-
-    @if (profileQuery.data()?.role?.toLowerCase() === 'admin') {
-      <a
-        routerLink="/dashboard/analytics"
-        routerLinkActive="!bg-primary/10 !text-primary"
-        class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
-      >
-        <span class="material-symbols-outlined text-[20px]">analytics</span>
-        <span>Analytics</span>
+        <span class="material-symbols-outlined text-[20px]">{{ item.icon }}</span>
+        <span>{{ item.label }}</span>
       </a>
     }
   </nav>
+
 
   <div class="p-4 border-t border-slate-100">
     <div class="flex items-center gap-3 p-2">

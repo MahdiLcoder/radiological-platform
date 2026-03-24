@@ -47,12 +47,13 @@ export class AuthService {
     return this.http.patch(`${this.apiUrl}/users/${id}/`, profileData);
   }
 
-  getUsers(role?: string, isActive?: boolean): Observable<any[]> {
-    let params: any = {};
+  getUsers(role?: string, isActive?: boolean, page: number = 1, page_size: number = 10): Observable<any> {
+    const params: any = { page, page_size };
     if (role) params.role = role;
     if (isActive !== undefined) params.is_active = isActive;
-    return this.http.get<any[]>(`${this.apiUrl}/users/`, { params });
+    return this.http.get<any>(`${this.apiUrl}/users/`, { params });
   }
+
 
   getStats(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/stats/`);

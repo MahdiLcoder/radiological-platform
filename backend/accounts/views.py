@@ -31,9 +31,18 @@ class MeView(generics.RetrieveAPIView):
         return self.request.user
 
 
+from rest_framework.pagination import PageNumberPagination
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
 class UserListView(generics.ListAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated, IsAdmin]
+    pagination_class = StandardResultsSetPagination
+
 
     def get_queryset(self):
         qs = User.objects.all().order_by('-date_joined')

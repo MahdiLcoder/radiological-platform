@@ -36,6 +36,11 @@ export const routes: Routes = [
         path: 'admin/invite',
         loadComponent: () => import('./pages/admin-invite/admin-invite').then((m) => m.AdminInvite),
       },
+      {
+        path: 'admin/users',
+        loadComponent: () => import('./pages/admin-users/admin-users').then((m) => m.AdminUsers),
+      },
+
 
       {
         path: 'aivalidation/:id',
