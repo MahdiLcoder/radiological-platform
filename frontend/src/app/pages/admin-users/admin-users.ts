@@ -21,17 +21,28 @@ export class AdminUsers {
 
   // Modal State
   isEditModalOpen = signal(false);
+  isDeleteModalOpen = signal(false);
+  isSuccessModalOpen = signal(false);
+  
   editingUser = signal<any>(null);
+  userToDelete = signal<any>(null);
+  successMessage = signal('');
 
   // Pagination State
   currentPage = signal(1);
   pageSize = signal(10);
 
-  // Users Query
+  // Queries
+  profileQuery = injectQuery(() => ({
+    queryKey: ['current_profile'],
+    queryFn: () => lastValueFrom(this.authService.getProfile()),
+  }));
+
   usersQuery = injectQuery(() => ({
     queryKey: ['admin_users', this.currentPage()],
     queryFn: () => lastValueFrom(this.authService.getUsers(undefined, undefined, this.currentPage(), this.pageSize())),
   }));
+
 
   nextPage() {
     const data = this.usersQuery.data();
@@ -54,6 +65,7 @@ export class AdminUsers {
     onSuccess: () => {
       this.queryClient.invalidateQueries({ queryKey: ['admin_users'] });
       this.closeEditModal();
+      this.showSuccess('User profile has been updated successfully.');
     },
   }));
 
@@ -61,13 +73,36 @@ export class AdminUsers {
     mutationFn: (id: number | string) => lastValueFrom(this.authService.deleteUser(id)),
     onSuccess: () => {
       this.queryClient.invalidateQueries({ queryKey: ['admin_users'] });
+      this.closeDeleteModal();
+      this.showSuccess('User has been removed from the system.');
     },
   }));
 
   deleteUser(user: any) {
-    if (confirm(`Are you sure you want to delete ${user.first_name || user.username}?`)) {
+    this.userToDelete.set(user);
+    this.isDeleteModalOpen.set(true);
+  }
+
+  confirmDelete() {
+    const user = this.userToDelete();
+    if (user) {
       this.deleteUserMutation.mutate(user.id);
     }
+  }
+
+  closeDeleteModal() {
+    this.isDeleteModalOpen.set(false);
+    this.userToDelete.set(null);
+  }
+
+  showSuccess(message: string) {
+    this.successMessage.set(message);
+    this.isSuccessModalOpen.set(true);
+    setTimeout(() => this.closeSuccessModal(), 3000);
+  }
+
+  closeSuccessModal() {
+    this.isSuccessModalOpen.set(false);
   }
 
   openEditModal(user: any) {
@@ -80,16 +115,18 @@ export class AdminUsers {
     this.editingUser.set(null);
   }
 
+
   saveEdit() {
     const user = this.editingUser();
     if (user) {
-      const { id, first_name, last_name, email, role, department, medical_license_number, years_of_experience, clinic } = user;
+      const { id, first_name, last_name, email, role, department, medical_license_number, years_of_experience, clinic, is_active } = user;
       this.updateUserMutation.mutate({
         id,
-        payload: { first_name, last_name, email, role, department, medical_license_number, years_of_experience, clinic }
+        payload: { first_name, last_name, email, role, department, medical_license_number, years_of_experience, clinic, is_active }
       });
     }
   }
+
 
   formatDate(dateStr: string) {
     if (!dateStr) return 'N/A';

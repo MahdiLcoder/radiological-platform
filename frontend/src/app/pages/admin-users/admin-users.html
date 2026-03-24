@@ -75,14 +75,21 @@
                   </div>
                 </td>
                 <td class="px-6 py-4 text-sm text-slate-500">{{ formatDate(user.date_joined) }}</td>
-                <td class="px-6 py-4 text-right space-x-2">
-                  <button (click)="openEditModal(user)" class="p-2 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all" title="Edit User">
-                    <span class="material-symbols-outlined text-[18px]">edit</span>
-                  </button>
-                  <button (click)="deleteUser(user)" class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Delete User">
-                    <span class="material-symbols-outlined text-[18px]">delete</span>
-                  </button>
+                <td class="px-6 py-4 text-right">
+                  @if (profileQuery.data()?.id === user.id) {
+                    <span class="px-3 py-1 bg-slate-100 text-slate-500 text-[10px] font-bold rounded-full uppercase tracking-wider">You</span>
+                  } @else {
+                    <div class="flex justify-end gap-2">
+                      <button (click)="openEditModal(user)" class="p-2 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all" title="Edit User">
+                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                      </button>
+                      <button (click)="deleteUser(user)" class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Delete User">
+                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                      </button>
+                    </div>
+                  }
                 </td>
+
               </tr>
             } @empty {
               <tr>
@@ -204,9 +211,20 @@
               <input type="number" [(ngModel)]="editingUser().years_of_experience" class="bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
             </div>
           }
+
+          <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200 mt-2">
+            <div class="flex flex-col gap-0.5">
+              <span class="text-sm font-bold text-slate-900">Account Status</span>
+              <span class="text-xs text-slate-500">Enable or disable system access</span>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" [(ngModel)]="editingUser().is_active" class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+            </label>
+          </div>
         </div>
 
-        <div class="flex gap-3 pt-4">
+        <div class="flex gap-3 pt-4 border-t border-slate-100">
           <button (click)="closeEditModal()" class="flex-1 px-4 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-100 transition-colors">Cancel</button>
           <button (click)="saveEdit()" [disabled]="updateUserMutation.isPending()" class="flex-1 bg-primary hover:bg-primary/90 text-white px-4 py-2.5 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/20 disabled:opacity-50 flex items-center justify-center gap-2">
             @if (updateUserMutation.isPending()) {
@@ -218,4 +236,44 @@
       </div>
     </div>
   }
+
+  <!-- Delete Confirmation Modal -->
+  @if (isDeleteModalOpen()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+      <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl border border-slate-200 p-8 flex flex-col items-center text-center gap-6 animate-in zoom-in-95 duration-200">
+        <div class="size-16 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-2">
+          <span class="material-symbols-outlined text-3xl">delete_forever</span>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-slate-900">Delete Professional?</h3>
+          <p class="text-slate-500 text-sm mt-2">
+            Are you sure you want to remove <span class="font-bold text-slate-900">{{ userToDelete()?.first_name || userToDelete()?.username }}</span>? This action cannot be undone.
+          </p>
+        </div>
+        <div class="flex w-full gap-3 mt-2">
+          <button (click)="closeDeleteModal()" class="flex-1 px-4 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-100 transition-colors">Cancel</button>
+          <button (click)="confirmDelete()" [disabled]="deleteUserMutation.isPending()" class="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-lg text-sm font-bold transition-all shadow-lg shadow-red-200 disabled:opacity-50 flex items-center justify-center gap-2">
+            @if (deleteUserMutation.isPending()) {
+              <div class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+            }
+            {{ deleteUserMutation.isPending() ? 'Deleting...' : 'Delete' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Success Notification Modal -->
+  @if (isSuccessModalOpen()) {
+    <div class="fixed top-8 left-1/2 -translate-x-1/2 z-[60] animate-in slide-in-from-top-full duration-300">
+      <div class="bg-emerald-600 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3">
+        <span class="material-symbols-outlined text-[20px]">check_circle</span>
+        <span class="text-sm font-bold">{{ successMessage() }}</span>
+        <button (click)="closeSuccessModal()" class="hover:bg-white/20 rounded-full p-1 transition-colors">
+          <span class="material-symbols-outlined text-[16px]">close</span>
+        </button>
+      </div>
+    </div>
+  }
 </div>
+
