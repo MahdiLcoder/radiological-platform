@@ -49,12 +49,23 @@ export class AdminInvite {
     mutationFn: (data: any) => {
       const password = this.generatePassword();
       this.generatedPassword.set(password);
+      
+      // Clean up the payload: remove null or empty string values
+      const cleanedData = Object.entries(data).reduce((acc: any, [key, value]) => {
+        if (value !== null && value !== '') {
+          acc[key] = value;
+        }
+        return acc;
+      }, {});
+
       const payload = {
-        ...data,
+        ...cleanedData,
+        username: data.username,
         password: password
       };
       return lastValueFrom(this.authService.register(payload));
     },
+
     onSuccess: () => {
       this.isSuccessModalOpen.set(true);
     },

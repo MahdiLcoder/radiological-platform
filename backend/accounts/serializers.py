@@ -8,11 +8,12 @@ User = get_user_model()
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
 
-    department = serializers.CharField(required=False, allow_blank=True)
-    medical_license_number = serializers.CharField(required=False, allow_blank=True)
-    years_of_experience = serializers.IntegerField(required=False)
-    specialty = serializers.CharField(required=False, allow_blank=True)
-    clinic = serializers.CharField(required=False, allow_blank=True)
+    department = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    medical_license_number = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    years_of_experience = serializers.IntegerField(required=False, allow_null=True)
+    specialty = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    clinic = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+
 
     class Meta:
         model = User
