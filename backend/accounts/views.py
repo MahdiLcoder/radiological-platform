@@ -141,6 +141,8 @@ class UserDetailView(APIView):
         return Response({"detail": "User deleted successfully."}, status=status.HTTP_200_OK)
 
 
+from datetime import datetime, timedelta
+
 class SystemStatsView(APIView):
     permission_classes = [permissions.IsAuthenticated, IsAdmin]
 
@@ -149,6 +151,35 @@ class SystemStatsView(APIView):
 
         role_counts = user_qs.values('role').annotate(count=Count('id'))
         by_role = {item['role']: item['count'] for item in role_counts}
+
+        # Modality distribution (Replacement for item_frequencies which uses mapReduce)
+        pipeline_modality = [
+            {"$group": {"_id": "$modality", "count": {"$sum": 1}}}
+        ]
+        modality_dist_raw = list(RadiologyImage.objects.aggregate(pipeline_modality))
+        modality_dist = {item['_id']: item['count'] for item in modality_dist_raw if item['_id']}
+        
+        # Scans trend (Last 7 days)
+        now = datetime.utcnow()
+        scans_trend = []
+        for i in range(6, -1, -1):
+            day = now - timedelta(days=i)
+            start = day.replace(hour=0, minute=0, second=0, microsecond=0)
+            end = day.replace(hour=23, minute=59, second=59, microsecond=999999)
+            count = RadiologyImage.objects(uploaded_at__gte=start, uploaded_at__lte=end).count()
+            scans_trend.append({"date": day.strftime("%Y-%m-%d"), "count": count})
+
+        # Top findings from AI (Replacement for item_frequencies which uses mapReduce)
+        pipeline_findings = [
+            {"$group": {"_id": "$top_finding", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}},
+            {"$limit": 5}
+        ]
+        findings_raw = list(AiPredictions.objects.aggregate(pipeline_findings))
+        top_findings = [
+            {"name": item['_id'], "value": item['count']} 
+            for item in findings_raw if item['_id']
+        ]
 
         stats = {
             "users": {
@@ -161,7 +192,14 @@ class SystemStatsView(APIView):
                     "doctor": by_role.get('doctor', 0),
                 },
             },
-            "images": {"total": RadiologyImage.objects.count()},
+            "images": {
+                "total": RadiologyImage.objects.count(),
+                "by_modality": modality_dist,
+                "trend": scans_trend
+            },
+            "findings": {
+                "top": top_findings
+            },
             "inferences": {"total": AiPredictions.objects.count()},
             "diagnoses": {"total": Diagnosis.objects.count()},
             "reports": {"total": Report.objects.count()},
