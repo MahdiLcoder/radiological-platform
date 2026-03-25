@@ -20,7 +20,7 @@ User = get_user_model()
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated, IsAdmin]
 
 
 class MeView(generics.RetrieveAPIView):
@@ -56,7 +56,7 @@ class UserListView(generics.ListAPIView):
 
 
 class UserDetailView(APIView):
-    permission_classes = [permissions.IsAuthenticated, (IsAdmin | IsRadiologist | IsDoctor)]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_user(self, pk):
         try:

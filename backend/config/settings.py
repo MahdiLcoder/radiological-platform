@@ -27,7 +27,14 @@ INSTALLED_APPS = [
     'diagnosis',
     'reports',
     'patients',
+    'anymail'
 ]
+
+EMAIL_BACKEND = "anymail.backends.resend.EmailBackend"
+ANYMAIL = {
+    "RESEND_API_KEY": os.environ.get("RESEND_API_KEY"),
+}
+DEFAULT_FROM_EMAIL = os.getenv("RESEND_FROM_EMAIL", "Radiological Platform <onboarding@resend.dev>")
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -96,3 +103,25 @@ cloudinary.config(
     api_key=os.getenv('CLOUDINARY_API_KEY'),
     api_secret=os.getenv('CLOUDINARY_API_SECRET')
 )
+
+# Basic logging to surface email sending issues in dev
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'config.email_utils': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}

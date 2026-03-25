@@ -11,6 +11,7 @@ djangorestframework==3.16.1
 djangorestframework_simplejwt==5.5.1
 djongo==1.2.31
 dnspython==2.8.0
+django-anymail[resend]==14.0
 flatbuffers==25.12.19
 gast==0.7.0
 google-pasta==0.2.0
@@ -46,3 +47,4 @@ typing_extensions==4.15.0
 urllib3==2.6.3
 wheel==0.46.3
 wrapt==2.1.2
+resend==2.6.0

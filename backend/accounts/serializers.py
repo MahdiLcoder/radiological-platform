@@ -32,7 +32,14 @@ class RegisterSerializer(serializers.ModelSerializer):
         specialty = validated_data.pop('specialty', None)
         clinic = validated_data.pop('clinic', None)
 
+        temp_password = validated_data.get('password')
         user = User.objects.create_user(**validated_data)
+
+        # Send welcome email if created by an admin
+        request = self.context.get('request')
+        if request and request.user.is_authenticated and request.user.role == UserRole.ADMIN:
+            from config.email_utils import send_welcome_email
+            send_welcome_email(user, temp_password)
 
         if user.role == UserRole.ADMIN:
             AdminProfile.objects(user_id=user.id).update_one(

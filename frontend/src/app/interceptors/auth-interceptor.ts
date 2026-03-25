@@ -12,7 +12,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   const accessToken = auth.getAccessToken();
   const isAuthRequest = req.url.includes('/api/auth/login/') || 
-                        req.url.includes('/api/auth/register/') ||
                         req.url.includes('/api/auth/refresh/');
 
   if (isAuthRequest) {
