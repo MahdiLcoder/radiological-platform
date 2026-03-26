@@ -1,21 +1,9 @@
 <!-- Main Content -->
 <main class="flex-1 flex flex-col overflow-hidden bg-slate-50">
   @if (patientQuery.isPending()) {
-    <div class="flex-1 flex flex-col items-center justify-center bg-white/50 backdrop-blur-sm">
-      <div class="size-16 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
-      <p class="text-slate-500 font-bold text-lg animate-pulse">Loading patient records...</p>
-    </div>
+    <app-loading-state message="Loading patient records..."></app-loading-state>
   } @else if (patientQuery.isError()) {
-    <div class="flex-1 flex flex-col items-center justify-center p-8 text-center">
-      <div class="size-20 bg-red-50 rounded-full flex items-center justify-center mb-4">
-        <span class="material-symbols-outlined text-red-500 text-5xl">error</span>
-      </div>
-      <h3 class="text-2xl font-black text-slate-900 mb-2">Failed to load patient</h3>
-      <p class="text-slate-500 max-w-md mb-8">We couldn't retrieve the patient details. Please check the ID or try again later.</p>
-      <button (click)="patientQuery.refetch()" class="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
-        Try Again
-      </button>
-    </div>
+    <app-error-state message="Failed to load patient" actionText="Try Again" (retry)="patientQuery.refetch()"></app-error-state>
   } @else if (patientQuery.data(); as patient) {
     
     <!-- Scrollable Area -->
@@ -104,9 +92,12 @@
                   </div>
                 </div>
               } @empty {
-                <div class="col-span-2 py-12 text-center text-slate-400 font-medium">
-                  <span class="material-symbols-outlined text-4xl block mb-2 opacity-20">inventory_2</span>
-                  No active diagnoses found.
+                <div class="col-span-2 py-12 text-center">
+                  <app-empty-state
+                    icon="inventory_2"
+                    title="No active diagnoses"
+                    description="Validated findings will appear here once available."
+                  ></app-empty-state>
                 </div>
               }
             </div>

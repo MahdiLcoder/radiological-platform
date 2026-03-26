@@ -1,10 +1,9 @@
 <!-- Main Content -->
 <main class="flex-1 overflow-y-auto px-8 py-10 bg-slate-50/50">
     @if (profileQuery.isPending()) {
-        <div class="w-full flex flex-col items-center justify-center py-24">
-            <div class="size-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-            <p class="mt-4 text-slate-500 font-bold">Loading your profile...</p>
-        </div>
+        <app-loading-state message="Loading your profile..."></app-loading-state>
+    } @else if (profileQuery.isError()) {
+        <app-error-state message="Failed to load profile" (retry)="profileQuery.refetch()"></app-error-state>
     } @else if (profileQuery.data(); as profile) {
         <div class="w-full">
             <header class="mb-8">
@@ -261,4 +260,3 @@
         </div>
     }
 </main>
-

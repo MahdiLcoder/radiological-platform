@@ -1,13 +1,10 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 import { roleActivateChildGuard, roleActivateGuard, roleGuard } from './guards/role.guard';
-import { loginRedirectActivateGuard, loginRedirectGuard } from './guards/login-redirect.guard';
 
 export const routes: Routes = [
   {
     path: '',
-    canMatch: [loginRedirectGuard],
-    canActivate: [loginRedirectActivateGuard],
     loadComponent: () => import('./pages/login/login').then((m) => m.Login),
   },
   {
@@ -15,6 +12,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./layout/layout').then((m) => m.Layout),
     children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        loadComponent: () => import('./pages/loading/loading').then((m) => m.LoadingComponent),
+      },
       {
         path: 'radiologist',
         data: { roles: ['radiologist'] },
@@ -66,13 +68,13 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/admin-users/admin-users').then((m) => m.AdminUsers),
       },
 
-
       {
         path: 'aivalidation/:id',
-        data: { roles: ['radiologist'] },
+        data: { roles: ['radiologist', 'doctor'] },
         canMatch: [roleGuard],
         canActivate: [roleActivateGuard],
-        loadComponent: () => import('./pages/aivalidation/aivalidation').then((m) => m.Aivalidation),
+        loadComponent: () =>
+          import('./pages/aivalidation/aivalidation').then((m) => m.Aivalidation),
       },
       {
         path: 'patients',
@@ -80,15 +82,18 @@ export const routes: Routes = [
       },
       {
         path: 'create-patient',
-        loadComponent: () => import('./pages/create-patient/create-patient').then((m) => m.CreatePatient),
+        loadComponent: () =>
+          import('./pages/create-patient/create-patient').then((m) => m.CreatePatient),
       },
       {
         path: 'patient-detail/:id',
-        loadComponent: () => import('./pages/patient-detail/patient-detail').then((m) => m.PatientDetail),
+        loadComponent: () =>
+          import('./pages/patient-detail/patient-detail').then((m) => m.PatientDetail),
       },
       {
         path: 'edit-patient/:id',
-        loadComponent: () => import('./pages/create-patient/create-patient').then((m) => m.CreatePatient),
+        loadComponent: () =>
+          import('./pages/create-patient/create-patient').then((m) => m.CreatePatient),
       },
       {
         path: 'edit-profile',

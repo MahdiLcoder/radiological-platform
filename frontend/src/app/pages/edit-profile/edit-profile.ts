@@ -5,11 +5,13 @@ import { AuthService } from '../../services/authService';
 import { injectQuery, injectMutation, QueryClient } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { LoadingStateComponent } from '../../components/loading-state/loading-state';
+import { ErrorStateComponent } from '../../components/error-state/error-state';
 
 @Component({
   selector: 'app-edit-profile',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, LoadingStateComponent, ErrorStateComponent],
   templateUrl: './edit-profile.html',
   styleUrl: './edit-profile.css'
 })
