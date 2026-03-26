@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
+import { roleActivateChildGuard, roleActivateGuard, roleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./pages/login/login').then((m) => m.Login) },
@@ -10,10 +11,18 @@ export const routes: Routes = [
     children: [
       {
         path: 'radiologist',
+        data: { roles: ['radiologist'] },
+        canMatch: [roleGuard],
+        canActivate: [roleActivateGuard],
+        canActivateChild: [roleActivateChildGuard],
         loadComponent: () => import('./pages/radiologist/radiologist').then((m) => m.Radiologist),
       },
       {
         path: 'doctor',
+        data: { roles: ['doctor'] },
+        canMatch: [roleGuard],
+        canActivate: [roleActivateGuard],
+        canActivateChild: [roleActivateChildGuard],
         loadComponent: () => import('./pages/doctor/doctor').then((m) => m.Doctor),
       },
       {
@@ -30,20 +39,33 @@ export const routes: Routes = [
       },
       {
         path: 'admin',
+        data: { roles: ['admin'] },
+        canMatch: [roleGuard],
+        canActivate: [roleActivateGuard],
+        canActivateChild: [roleActivateChildGuard],
         loadComponent: () => import('./pages/admin/admin').then((m) => m.Admin),
       },
       {
         path: 'admin/invite',
+        data: { roles: ['admin'] },
+        canMatch: [roleGuard],
+        canActivate: [roleActivateGuard],
         loadComponent: () => import('./pages/admin-invite/admin-invite').then((m) => m.AdminInvite),
       },
       {
         path: 'admin/users',
+        data: { roles: ['admin'] },
+        canMatch: [roleGuard],
+        canActivate: [roleActivateGuard],
         loadComponent: () => import('./pages/admin-users/admin-users').then((m) => m.AdminUsers),
       },
 
 
       {
         path: 'aivalidation/:id',
+        data: { roles: ['radiologist'] },
+        canMatch: [roleGuard],
+        canActivate: [roleActivateGuard],
         loadComponent: () => import('./pages/aivalidation/aivalidation').then((m) => m.Aivalidation),
       },
       {
