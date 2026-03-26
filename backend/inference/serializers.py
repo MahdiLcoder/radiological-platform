@@ -58,6 +58,7 @@ class AiPredictionsSerializer(serializers.Serializer):
                     "patient": patient_data,
                     "modality": instance.image.modality,
                     "status": instance.image.status,
+                    "file_path": instance.image.file_path,
                 }
         except me.DoesNotExist:
             pass

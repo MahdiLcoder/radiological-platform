@@ -14,6 +14,7 @@ export interface AnalysisResult {
     };
     modality: string;
     status: string;
+    file_path?: string;
   };
   model_name: string;
   predictions: Record<string, number>;
