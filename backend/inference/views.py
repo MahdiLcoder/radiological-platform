@@ -1,6 +1,5 @@
 import os
 import io
-import logging
 
 import requests
 import numpy as np
@@ -12,7 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import NotFound, APIException
+from rest_framework.exceptions import NotFound
 
 from accounts.permissions import IsRadiologist, IsDoctor, IsAdmin
 from images.models import RadiologyImage
@@ -20,7 +19,6 @@ from .models import AiPredictions
 from .serializers import AiPredictionsSerializer
 
 logger = logging.getLogger(__name__)
-
 from .model_loader import get_model, MODEL_FILES
 
 CLASS_LABELS = {
@@ -43,71 +41,62 @@ class RunAiPredictionView(APIView):
     permission_classes = [IsAuthenticated, IsRadiologist]
 
     def post(self, request, image_id):
-        try:
-            image = RadiologyImage.objects(id=ObjectId(image_id)).first()
-            if not image:
-                raise NotFound("Image not found.")
+        if not ObjectId.is_valid(image_id):
+            raise NotFound("Image not found.")
 
-            modality = image.modality
-            if modality not in MODEL_FILES:
-                return Response(
-                    {"detail": f"No model available for modality: {modality}"},
-                    status=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                )
+        image = RadiologyImage.objects(id=ObjectId(image_id)).first()
+        if not image:
+            raise NotFound("Image not found.")
 
-            model = get_model(modality)
-            labels = CLASS_LABELS[modality]
-            model_name = MODEL_FILES[modality].replace('.keras', '')
+        modality = image.modality
+        if modality not in MODEL_FILES:
+            return Response(
+                {"detail": f"No model available for modality: {modality}"},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            )
 
-            img_array   = prepare_image(image.file_path)
-            predictions = model.predict(img_array, verbose=0)[0]
+        model = get_model(modality)
+        labels = CLASS_LABELS[modality]
+        model_name = MODEL_FILES[modality].replace('.keras', '')
 
-            top_index      = int(np.argmax(predictions))
-            top_label      = labels[top_index]
-            top_confidence = float(predictions[top_index])
+        img_array   = prepare_image(image.file_path)
+        predictions = model.predict(img_array, verbose=0)[0]
 
-            predictions_dict = {
-                labels[i]: float(predictions[i])
-                for i in range(len(labels))
-            }
+        top_index      = int(np.argmax(predictions))
+        top_label      = labels[top_index]
+        top_confidence = float(predictions[top_index])
 
-            serializer = AiPredictionsSerializer(data={
-                "image_id":    str(image_id),
-                "model_name":  model_name,
-                "predictions": predictions_dict,
-                "top_finding": top_label,
-                "confidence":  top_confidence,
-            }, context={"request": request})
-            serializer.is_valid(raise_exception=True)
-            
-            pred = serializer.save()
+        predictions_dict = {
+            labels[i]: float(predictions[i])
+            for i in range(len(labels))
+        }
 
-            image.status = "analyzed"
-            image.save()
+        serializer = AiPredictionsSerializer(data={
+            "image_id":    str(image_id),
+            "model_name":  model_name,
+            "predictions": predictions_dict,
+            "top_finding": top_label,
+            "confidence":  top_confidence,
+        }, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        
+        pred = serializer.save()
 
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        image.status = "analyzed"
+        image.save()
 
-        except NotFound:
-            raise
-        except Exception as e:
-            logger.error(f"Error in RunAiPredictionView: {e}", exc_info=True)
-            raise APIException("Something went wrong.")
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class AiPredictionsView(APIView):
     permission_classes = [IsAuthenticated, (IsDoctor | IsAdmin | IsRadiologist)]
 
     def get(self, request, image_id):
-        try:
-            result = AiPredictions.objects(image=ObjectId(image_id)).first()
-            if not result:
-                raise NotFound("No inference result found for this image.")
+        if not ObjectId.is_valid(image_id):
+            raise NotFound("No inference result found for this image.")
 
-            return Response(AiPredictionsSerializer(result).data, status=status.HTTP_200_OK)
+        result = AiPredictions.objects(image=ObjectId(image_id)).first()
+        if not result:
+            raise NotFound("No inference result found for this image.")
 
-        except NotFound:
-            raise
-        except Exception as e:
-            logger.error(f"Error in AiPredictionsView: {e}", exc_info=True)
-            raise APIException("Something went wrong.")
-
+        return Response(AiPredictionsSerializer(result).data, status=status.HTTP_200_OK)

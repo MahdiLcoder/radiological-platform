@@ -1,12 +1,11 @@
 import datetime
-import logging
 from bson import ObjectId
 from django.http import HttpResponse
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import NotFound, APIException, PermissionDenied
+from rest_framework.exceptions import NotFound, PermissionDenied
 from mongoengine.queryset.visitor import Q
 
 from accounts.permissions import IsRadiologist, IsDoctor, IsAdmin
@@ -17,7 +16,16 @@ from .models import Report
 from .serializers import ReportSerializer
 
 
-logger = logging.getLogger(__name__)
+class ReportListQuerySerializer(serializers.Serializer):
+    modality = serializers.CharField(required=False, allow_blank=True, default="")
+    search = serializers.CharField(required=False, allow_blank=True, default="")
+    date_range = serializers.ChoiceField(
+        required=False,
+        choices=["", "Last 7 Days", "Last 30 Days"],
+        default="",
+    )
+    page = serializers.IntegerField(min_value=1, default=1)
+    page_size = serializers.IntegerField(min_value=1, max_value=100, default=10)
 
 
 class GenerateReportView(APIView):
@@ -45,126 +53,117 @@ class ReportListView(APIView):
     permission_classes = [IsAuthenticated, (IsDoctor | IsRadiologist | IsAdmin)]
 
     def get(self, request):
-        try:
-            modality = request.query_params.get('modality', '')
-            search = request.query_params.get('search', '').lower().strip()
-            date_range = request.query_params.get('date_range', '')
-            page = int(request.query_params.get('page', 1))
-            page_size = int(request.query_params.get('page_size', 10))
+        params = ReportListQuerySerializer(data=request.query_params)
+        params.is_valid(raise_exception=True)
+        modality = params.validated_data["modality"]
+        search = params.validated_data["search"].lower().strip()
+        date_range = params.validated_data["date_range"]
+        page = params.validated_data["page"]
+        page_size = params.validated_data["page_size"]
 
-            reports = Report.objects.all()
+        reports = Report.objects.all()
 
-            # Doctors only see reports for their own patients
-            if hasattr(request.user, 'role') and request.user.role == 'doctor':
-                doctor_patients = Patient.objects(doctor_id=request.user.id)
-                patient_ids = [p.id for p in doctor_patients]
-                doctor_images = RadiologyImage.objects(patient__in=patient_ids)
-                image_ids = [img.id for img in doctor_images]
-                reports = reports.filter(image__in=image_ids)
-            elif hasattr(request.user, 'role') and request.user.role == 'radiologist':
-                reports = reports.filter(generated_by=request.user.id)
+        # Doctors only see reports for their own patients
+        if hasattr(request.user, 'role') and request.user.role == 'doctor':
+            doctor_patients = Patient.objects(doctor_id=request.user.id)
+            patient_ids = [p.id for p in doctor_patients]
+            doctor_images = RadiologyImage.objects(patient__in=patient_ids)
+            image_ids = [img.id for img in doctor_images]
+            reports = reports.filter(image__in=image_ids)
+        elif hasattr(request.user, 'role') and request.user.role == 'radiologist':
+            reports = reports.filter(generated_by=request.user.id)
 
-            if date_range == 'Last 7 Days':
-                threshold = datetime.datetime.utcnow() - datetime.timedelta(days=7)
-                reports = reports.filter(generated_at__gte=threshold)
-            elif date_range == 'Last 30 Days':
-                threshold = datetime.datetime.utcnow() - datetime.timedelta(days=30)
-                reports = reports.filter(generated_at__gte=threshold)
+        if date_range == 'Last 7 Days':
+            threshold = datetime.datetime.utcnow() - datetime.timedelta(days=7)
+            reports = reports.filter(generated_at__gte=threshold)
+        elif date_range == 'Last 30 Days':
+            threshold = datetime.datetime.utcnow() - datetime.timedelta(days=30)
+            reports = reports.filter(generated_at__gte=threshold)
 
-            if modality or search:
-                image_qs = RadiologyImage.objects.all()
-                if modality and modality != 'All Modalities':
-                    image_qs = image_qs.filter(modality__iexact=modality)
+        if modality or search:
+            image_qs = RadiologyImage.objects.all()
+            if modality and modality != 'All Modalities':
+                image_qs = image_qs.filter(modality__iexact=modality)
+            
+            if search:
+                matching_patients = Patient.objects(
+                    Q(first_name__icontains=search) | 
+                    Q(last_name__icontains=search)
+                )
+                patient_ids = [p.id for p in matching_patients]
                 
-                if search:
-                    matching_patients = Patient.objects(
-                        Q(first_name__icontains=search) | 
-                        Q(last_name__icontains=search)
-                    )
-                    patient_ids = [p.id for p in matching_patients]
-                    
-                    try:
-                        obj_id = ObjectId(search)
-                        image_qs = image_qs.filter(Q(patient__in=patient_ids) | Q(id=obj_id))
-                    except Exception:
-                        image_qs = image_qs.filter(patient__in=patient_ids)
+                if ObjectId.is_valid(search):
+                    obj_id = ObjectId(search)
+                    image_qs = image_qs.filter(Q(patient__in=patient_ids) | Q(id=obj_id))
+                else:
+                    image_qs = image_qs.filter(patient__in=patient_ids)
 
-                matching_images = [img.id for img in image_qs]
-                reports = reports.filter(image__in=matching_images)
+            matching_images = [img.id for img in image_qs]
+            reports = reports.filter(image__in=matching_images)
 
-            total = reports.count()
-            skip = (page - 1) * page_size
-            reports_paginated = reports.skip(skip).limit(page_size)
+        total = reports.count()
+        skip = (page - 1) * page_size
+        reports_paginated = reports.skip(skip).limit(page_size)
 
-            serializer = ReportSerializer(reports_paginated, many=True, context={'request': request})
-            return Response({
-                'count': total,
-                'page': page,
-                'page_size': page_size,
-                'total_pages': max(1, (total + page_size - 1) // page_size),
-                'results': serializer.data
-            }, status=status.HTTP_200_OK)
-        except Exception as e:
-            logger.error(f"Error fetching reports: {e}", exc_info=True)
-            raise APIException("Failed to fetch reports")
+        serializer = ReportSerializer(reports_paginated, many=True, context={'request': request})
+        return Response({
+            'count': total,
+            'page': page,
+            'page_size': page_size,
+            'total_pages': max(1, (total + page_size - 1) // page_size),
+            'results': serializer.data
+        }, status=status.HTTP_200_OK)
 
 
 class ReportDetailView(APIView):
     permission_classes = [IsAuthenticated, (IsDoctor | IsRadiologist | IsAdmin)]
 
     def get(self, request, pk):
-        try:
-            report = Report.objects(id=pk).first()
-            if not report:
-                raise NotFound("Report not found")
+        if not ObjectId.is_valid(pk):
+            raise NotFound("Report not found")
+
+        report = Report.objects(id=pk).first()
+        if not report:
+            raise NotFound("Report not found")
+            
+        if hasattr(request.user, 'role') and request.user.role == 'doctor':
+            if not report.image or not report.image.patient or report.image.patient.doctor_id != request.user.id:
+                raise PermissionDenied("You do not have permission to access this report.")
+        elif hasattr(request.user, 'role') and request.user.role == 'radiologist':
+            if report.generated_by != request.user.id:
+                raise PermissionDenied("You do not have permission to access this report.")
                 
-            if hasattr(request.user, 'role') and request.user.role == 'doctor':
-                if not report.image or not report.image.patient or report.image.patient.doctor_id != request.user.id:
-                    raise PermissionDenied("You do not have permission to access this report.")
-            elif hasattr(request.user, 'role') and request.user.role == 'radiologist':
-                if report.generated_by != request.user.id:
-                    raise PermissionDenied("You do not have permission to access this report.")
-                    
-            serializer = ReportSerializer(report, context={'request': request})
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except NotFound:
-            raise
-        except Exception as e:
-            logger.error(f"Error fetching report {pk}: {e}", exc_info=True)
-            raise APIException("Failed to fetch report")
+        serializer = ReportSerializer(report, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ReportDownloadView(APIView):
     permission_classes = [IsAuthenticated, (IsDoctor | IsRadiologist | IsAdmin)]
 
     def get(self, request, pk):
-        try:
-            report = Report.objects(id=pk).first()
-            if not report:
-                raise NotFound("Report not found")
+        if not ObjectId.is_valid(pk):
+            raise NotFound("Report not found")
 
-            if hasattr(request.user, 'role') and request.user.role == 'doctor':
-                if not report.image or not report.image.patient or report.image.patient.doctor_id != request.user.id:
-                    raise PermissionDenied("You do not have permission to download this report.")
-            elif hasattr(request.user, 'role') and request.user.role == 'radiologist':
-                if report.generated_by != request.user.id:
-                    raise PermissionDenied("You do not have permission to download this report.")
+        report = Report.objects(id=pk).first()
+        if not report:
+            raise NotFound("Report not found")
 
-            if not report.pdf_data:
-                return Response(
-                    {"error": "PDF not generated for this report"},
-                    status=status.HTTP_404_NOT_FOUND
-                )
+        if hasattr(request.user, 'role') and request.user.role == 'doctor':
+            if not report.image or not report.image.patient or report.image.patient.doctor_id != request.user.id:
+                raise PermissionDenied("You do not have permission to download this report.")
+        elif hasattr(request.user, 'role') and request.user.role == 'radiologist':
+            if report.generated_by != request.user.id:
+                raise PermissionDenied("You do not have permission to download this report.")
 
-            response = HttpResponse(bytes(report.pdf_data), content_type='application/pdf')
-            response['Content-Disposition'] = f'attachment; filename="report_{pk}.pdf"'
-            return response
+        if not report.pdf_data:
+            return Response(
+                {"error": "PDF not generated for this report"},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
-        except NotFound:
-            raise
-        except Exception as e:
-            logger.error(f"Error downloading report {pk}: {e}", exc_info=True)
-            raise APIException("Failed to download report")
+        response = HttpResponse(bytes(report.pdf_data), content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="report_{pk}.pdf"'
+        return response
 
 
 class ReportByImageView(APIView):
@@ -172,26 +171,23 @@ class ReportByImageView(APIView):
     permission_classes = [IsAuthenticated, (IsDoctor | IsRadiologist | IsAdmin)]
 
     def get(self, request, image_id):
-        try:
-            image = RadiologyImage.objects(id=image_id).first()
-            if not image:
-                raise NotFound("Image not found")
+        if not ObjectId.is_valid(image_id):
+            raise NotFound("Image not found")
 
-            if hasattr(request.user, 'role') and request.user.role == 'doctor':
-                if not image.patient or image.patient.doctor_id != request.user.id:
-                    raise PermissionDenied("You do not have permission to access this report.")
-            elif hasattr(request.user, 'role') and request.user.role == 'radiologist':
-                if image.uploaded_by_id != request.user.id:
-                    raise PermissionDenied("You do not have permission to access this report.")
+        image = RadiologyImage.objects(id=image_id).first()
+        if not image:
+            raise NotFound("Image not found")
 
-            report = Report.objects(image=image).first()
-            if not report:
-                raise NotFound("No report found for this image")
+        if hasattr(request.user, 'role') and request.user.role == 'doctor':
+            if not image.patient or image.patient.doctor_id != request.user.id:
+                raise PermissionDenied("You do not have permission to access this report.")
+        elif hasattr(request.user, 'role') and request.user.role == 'radiologist':
+            if image.uploaded_by_id != request.user.id:
+                raise PermissionDenied("You do not have permission to access this report.")
 
-            serializer = ReportSerializer(report, context={'request': request})
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except NotFound:
-            raise
-        except Exception as e:
-            logger.error(f"Error finding report for image {image_id}: {e}", exc_info=True)
-            raise APIException("Failed to fetch report")
+        report = Report.objects(image=image).first()
+        if not report:
+            raise NotFound("No report found for this image")
+
+        serializer = ReportSerializer(report, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
