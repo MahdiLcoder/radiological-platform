@@ -1,5 +1,6 @@
 import os
 import io
+import logging
 
 import requests
 import numpy as np
