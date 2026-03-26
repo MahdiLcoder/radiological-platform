@@ -5,13 +5,16 @@ import { WelcomeSection } from '../../components/welcome-section/welcome-section
 import { FiltersSection, FilterField } from '../../components/filters-section/filters-section';
 import { ReportCard, Report } from '../../components/report-card/report-card';
 import { ReportService, ReportApiItem } from '../../services/reportService';
+import { LoadingStateComponent } from '../../components/loading-state/loading-state';
+import { ErrorStateComponent } from '../../components/error-state/error-state';
+import { EmptyStateComponent } from '../../components/empty-state/empty-state';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, WelcomeSection, ReportCard],
+  imports: [CommonModule, FormsModule, WelcomeSection, ReportCard, LoadingStateComponent, ErrorStateComponent, EmptyStateComponent],
   templateUrl: './reports.html',
   styleUrl: './reports.css',
 })

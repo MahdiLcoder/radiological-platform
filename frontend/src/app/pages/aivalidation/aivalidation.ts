@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { injectQuery, injectMutation } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
+import { LoadingStateComponent } from '../../components/loading-state/loading-state';
+import { ErrorStateComponent } from '../../components/error-state/error-state';
+import { EmptyStateComponent } from '../../components/empty-state/empty-state';
 import { AnalysisService, AnalysisResult } from '../../services/analysisService';
 import { ReportService } from '../../services/reportService';
 import { AuthService } from '../../services/authService';
@@ -11,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-aivalidation',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LoadingStateComponent, ErrorStateComponent, EmptyStateComponent],
   templateUrl: './aivalidation.html',
   styleUrl: './aivalidation.css',
 })

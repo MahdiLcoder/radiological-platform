@@ -1,5 +1,5 @@
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-  @for (stat of stats; track stat.title) {
+  @for (stat of stats(); track stat.title) {
     <div
       class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between"
     >

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, effect, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxEchartsDirective } from 'ngx-echarts';
 import { WorklistItem } from '../worklist-table/worklist-table';
@@ -10,29 +10,30 @@ import { WorklistItem } from '../worklist-table/worklist-table';
   templateUrl: './radiology-charts.html',
   styleUrl: './radiology-charts.css'
 })
-export class RadiologyCharts implements OnChanges {
-  @Input() data: WorklistItem[] = [];
+export class RadiologyCharts {
+  readonly data = input<WorklistItem[]>([]);
 
   modalityOptions: any = {};
   statusOptions: any = {};
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['data'] && this.data) {
-      this.initCharts();
-    }
+  constructor() {
+    effect(() => {
+      const currentData = this.data();
+      if (!currentData || currentData.length === 0) {
+        this.setDefaultOptions();
+        return;
+      }
+      this.initCharts(currentData);
+    });
   }
 
-  private initCharts() {
-    if (!this.data || this.data.length === 0) {
-      this.setDefaultOptions();
-      return;
-    }
+  private initCharts(data: WorklistItem[]) {
 
     // Modern color palette
     const bgColors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#6366f1'];
 
     // Modality Chart Data
-    const modalityCount = this.data.reduce((acc: any, item) => {
+    const modalityCount = data.reduce((acc: any, item) => {
       const mod = item.modality || 'Unknown';
       acc[mod] = (acc[mod] || 0) + 1;
       return acc;
@@ -95,7 +96,7 @@ export class RadiologyCharts implements OnChanges {
     };
 
     // Status Chart Data
-    const statusCount = this.data.reduce((acc: any, item) => {
+    const statusCount = data.reduce((acc: any, item) => {
       const st = item.aiStatus || 'Pending';
       acc[st] = (acc[st] || 0) + 1;
       return acc;

@@ -1,6 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { injectQuery, injectMutation, QueryClient } from '@tanstack/angular-query-experimental';
@@ -127,8 +126,6 @@ export class AdminUsers {
       });
     }
   }
-
-
 
   formatDate(dateStr: string) {
     if (!dateStr) return 'N/A';

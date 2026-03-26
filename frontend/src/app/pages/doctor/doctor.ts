@@ -4,6 +4,9 @@ import { CommonModule } from '@angular/common';
 import { WelcomeSection } from '../../components/welcome-section/welcome-section';
 import { StatsSummary, StatItem } from '../../components/stats-summary/stats-summary';
 import { ReportCard, Report } from '../../components/report-card/report-card';
+import { LoadingStateComponent } from '../../components/loading-state/loading-state';
+import { ErrorStateComponent } from '../../components/error-state/error-state';
+import { EmptyStateComponent } from '../../components/empty-state/empty-state';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 import { PatientService, Patient } from '../../services/patientService';
@@ -12,7 +15,7 @@ import { ReportService, ReportApiItem } from '../../services/reportService';
 @Component({
   selector: 'app-doctor',
   standalone: true,
-  imports: [CommonModule, RouterModule, WelcomeSection, StatsSummary, ReportCard],
+  imports: [CommonModule, RouterModule, WelcomeSection, StatsSummary, ReportCard, LoadingStateComponent, ErrorStateComponent, EmptyStateComponent],
   templateUrl: './doctor.html',
   styleUrl: './doctor.css',
 })

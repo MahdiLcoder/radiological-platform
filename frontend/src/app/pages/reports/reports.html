@@ -66,19 +66,12 @@
     
     <!-- Loading State -->
     @if (reportsQuery.isPending()) {
-      <div class="flex flex-col items-center justify-center py-20">
-        <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p class="text-slate-500 font-medium">Loading reports…</p>
-      </div>
+      <app-loading-state message="Loading reports..."></app-loading-state>
     }
 
     <!-- Error State -->
     @if (reportsQuery.isError()) {
-      <div class="flex flex-col items-center justify-center py-20 px-4 bg-red-50 border border-dashed border-red-200 rounded-2xl">
-        <span class="material-symbols-outlined text-4xl text-red-400 mb-4">error</span>
-        <h3 class="text-lg font-bold text-red-700 mb-1">Failed to load reports</h3>
-        <p class="text-red-500 text-sm">Check your connection or try again later.</p>
-      </div>
+      <app-error-state message="Failed to load reports" (retry)="reportsQuery.refetch()"></app-error-state>
     }
 
     <!-- Reports Grid -->
@@ -91,13 +84,11 @@
         </div>
       } @else {
         <!-- Empty State -->
-        <div class="flex flex-col items-center justify-center py-20 px-4 bg-white border border-dashed border-slate-200 rounded-2xl mt-8">
-          <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6">
-            <span class="material-symbols-outlined text-4xl text-slate-400">file_copy</span>
-          </div>
-          <h3 class="text-xl font-bold text-slate-900 mb-2">No reports yet</h3>
-          <p class="text-slate-500 text-center max-w-sm">Reports will appear here after AI validation is completed for a patient's medical image.</p>
-        </div>
+        <app-empty-state
+          icon="file_copy"
+          title="No reports yet"
+          description="Reports will appear here after AI validation is completed for a patient's medical image."
+        ></app-empty-state>
       }
     }
     

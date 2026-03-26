@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 export interface StatItem {
   title: string;
@@ -19,5 +19,5 @@ export interface StatItem {
   styleUrl: './stats-summary.css',
 })
 export class StatsSummary {
-  @Input() stats: StatItem[] = [];
+  readonly stats = input<StatItem[]>([]);
 }

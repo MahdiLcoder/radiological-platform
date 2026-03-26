@@ -7,7 +7,7 @@
       <span class="material-symbols-outlined text-slate-400 text-sm">pie_chart</span>
     </div>
     <div class="flex-1 min-h-[300px] w-full mt-4 flex items-center justify-center">
-      @if (data && data.length > 0) {
+      @if (data() && data().length > 0) {
         <div echarts [options]="modalityOptions" class="w-full h-[300px]"></div>
       } @else {
         <div class="text-slate-400 text-sm font-medium italic">No scan data available</div>
@@ -22,7 +22,7 @@
       <span class="material-symbols-outlined text-slate-400 text-sm">bar_chart</span>
     </div>
     <div class="flex-1 min-h-[300px] w-full mt-4 flex items-center justify-center">
-      @if (data && data.length > 0) {
+      @if (data() && data().length > 0) {
         <div echarts [options]="statusOptions" class="w-full h-[300px]"></div>
       } @else {
         <div class="text-slate-400 text-sm font-medium italic">No status data available</div>

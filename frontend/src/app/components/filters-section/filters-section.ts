@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 export interface FilterField {
   label: string;
@@ -15,7 +15,7 @@ export interface FilterField {
   styleUrl: './filters-section.css'
 })
 export class FiltersSection {
-  @Input() filters: FilterField[] = [];
-  @Input() buttonText: string = 'Apply Filters';
-  @Input() buttonIcon: string = 'filter_list';
+  readonly filters = input<FilterField[]>([]);
+  readonly buttonText = input('Apply Filters');
+  readonly buttonIcon = input('filter_list');
 }

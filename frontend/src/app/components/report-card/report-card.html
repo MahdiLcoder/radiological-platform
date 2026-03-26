@@ -2,32 +2,32 @@
   <div class="p-5 flex-1">
     <div class="flex justify-between items-start mb-4">
       <div class="flex flex-wrap gap-2">
-        <span class="text-[10px] font-bold px-2 py-1 rounded-lg uppercase tracking-wider" [class]="modalityClass">{{ report.modality }}</span>
-        <span class="text-[10px] font-bold px-2 py-1 rounded-lg uppercase tracking-wider" [class]="statusClass">{{ report.status }}</span>
+        <span class="text-[10px] font-bold px-2 py-1 rounded-lg uppercase tracking-wider" [class]="modalityClass">{{ report().modality }}</span>
+        <span class="text-[10px] font-bold px-2 py-1 rounded-lg uppercase tracking-wider" [class]="statusClass">{{ report().status }}</span>
       </div>
       <button (click)="download()" class="text-slate-400 hover:text-primary transition-colors">
         <span class="material-symbols-outlined">download</span>
       </button>
     </div>
     <div class="mb-4">
-      <h3 class="text-lg font-bold text-slate-900">{{ report.patientName }}</h3>
-      <p class="text-slate-500 text-sm font-medium">ID: {{ report.id }}</p>
+      <h3 class="text-lg font-bold text-slate-900">{{ report().patientName }}</h3>
+      <p class="text-slate-500 text-sm font-medium">ID: {{ report().id }}</p>
     </div>
     <div class="bg-slate-50 rounded-lg p-4 mb-5 border border-slate-100">
       <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Final Diagnosis</p>
-      <p class="text-sm text-slate-700 leading-relaxed font-medium">"{{ report.diagnosis }}"</p>
+      <p class="text-sm text-slate-700 leading-relaxed font-medium">"{{ report().diagnosis }}"</p>
     </div>
     <div class="space-y-3 pt-2 border-t border-slate-100">
       <div class="flex items-center gap-2 text-slate-600">
         <span class="material-symbols-outlined text-sm">person</span>
-        <span class="text-xs">{{ report.doctor }}</span>
+        <span class="text-xs">{{ report().doctor }}</span>
       </div>
       <div class="flex items-center gap-2 text-slate-600">
         <span class="material-symbols-outlined text-sm">calendar_today</span>
-        <span class="text-xs">{{ report.date }}</span>
+        <span class="text-xs">{{ report().date }}</span>
       </div>
       
-      @if (report.validated) {
+      @if (report().validated) {
         <div class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
           <span class="material-symbols-outlined text-xs">check_circle</span>
           Validated &amp; Approved

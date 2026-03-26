@@ -7,7 +7,7 @@
         <tr
           class="bg-slate-50 border-b border-slate-200"
         >
-          @for (col of columns; track col; let last = $last) {
+          @for (col of columns(); track col; let last = $last) {
             <th
               class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 {{ last ? 'text-right' : '' }}"
             >
@@ -17,7 +17,7 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-200">
-              @for (item of data; track item.id) {
+              @for (item of data(); track item.id) {
                 <tr 
                   class="transition-colors {{ item.patient.isEmergency ? 'bg-red-50/30 hover:bg-red-50/50' : 'hover:bg-slate-50/50' }}"
                 >
@@ -95,24 +95,24 @@
       </tbody>
     </table>
   </div>
-  @if (!hideFooter) {
+  @if (!hideFooter()) {
     <div
       class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between"
     >
       <p class="text-xs font-medium text-slate-500">
-        Showing {{ data.length }} {{ totalItems !== undefined ? 'of ' + totalItems : '' }} entries
+        Showing {{ data().length }} {{ totalItems() !== undefined ? 'of ' + totalItems() : '' }} entries
       </p>
       <div class="flex gap-2">
         <button
           class="p-1 rounded bg-white border border-slate-200 text-slate-500 hover:text-primary disabled:opacity-50"
-          [disabled]="currentPage === 1 || !currentPage"
+          [disabled]="currentPage() === 1 || !currentPage()"
           (click)="prevPage.emit()"
         >
           <span class="material-symbols-outlined text-sm leading-none">chevron_left</span>
         </button>
         <button
           class="p-1 rounded bg-white border border-slate-200 text-slate-500 hover:text-primary disabled:opacity-50"
-          [disabled]="currentPage === totalPages || !currentPage"
+          [disabled]="currentPage() === totalPages() || !currentPage()"
           (click)="nextPage.emit()"
         >
           <span class="material-symbols-outlined text-sm leading-none">chevron_right</span>

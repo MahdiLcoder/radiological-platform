@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PaginatedResponse } from '../models/pagination';
 
@@ -31,8 +31,7 @@ export interface Patient {
 })
 export class PatientService {
   private apiUrl: string = 'http://localhost:8000/api/patients';
-
-  constructor(private http: HttpClient) { }
+  private http = inject(HttpClient);
 
   getAll(params: any = {}): Observable<PaginatedResponse<Patient[]>> {
     let httpParams = new HttpParams();

@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { ReportService } from '../../services/reportService';
 
 export interface Report {
@@ -20,16 +20,18 @@ export interface Report {
   styleUrl: './report-card.css'
 })
 export class ReportCard {
-  @Input({ required: true }) report!: Report;
+  readonly report = input.required<Report>();
   private reportService = inject(ReportService);
 
   download() {
-    const id = this.report.reportId ?? this.report.id;
+    const currentReport = this.report();
+    const id = currentReport.reportId ?? currentReport.id;
     this.reportService.downloadReport(id);
   }
 
   get modalityClass(): string {
-    switch (this.report.modality) {
+    const currentReport = this.report();
+    switch (currentReport.modality) {
       case 'MRI':
         return 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300';
       case 'X-Ray':
@@ -42,7 +44,8 @@ export class ReportCard {
   }
 
   get statusClass(): string {
-    switch (this.report.status) {
+    const currentReport = this.report();
+    switch (currentReport.status) {
       case 'Critical':
         return 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400';
       case 'Moderate':

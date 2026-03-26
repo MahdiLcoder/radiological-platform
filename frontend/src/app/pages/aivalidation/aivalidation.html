@@ -119,10 +119,7 @@
 
     <div class="p-6 space-y-6 flex-1">
       @if (predictionQuery.isLoading()) {
-        <div class="py-12 flex flex-col items-center justify-center space-y-4">
-          <div class="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-          <p class="text-slate-500 font-medium">Retrieving AI insights...</p>
-        </div>
+        <app-loading-state message="Retrieving AI insights..."></app-loading-state>
       }
 
       @if (predictionQuery.data(); as result) {
@@ -283,10 +280,11 @@
         }
         } <!-- end isRadiologist/validated check -->
       } @else if (!predictionQuery.isLoading()) {
-          <div class="py-12 flex flex-col items-center text-center space-y-4 px-6">
-              <span class="material-symbols-outlined text-4xl text-slate-200">error</span>
-              <p class="text-slate-500 text-sm italic">No AI prediction data found for this scan. You may need to trigger analysis first.</p>
-          </div>
+          <app-empty-state
+            icon="error"
+            title="No AI prediction found"
+            description="No AI prediction data found for this scan. You may need to trigger analysis first."
+          ></app-empty-state>
       }
     </div>
   </aside>

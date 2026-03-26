@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -8,9 +8,9 @@ import { RouterLink } from '@angular/router';
   styleUrl: './welcome-section.css',
 })
 export class WelcomeSection {
-  @Input() title: string = '';
-  @Input() subtitle: string = '';
-  @Input() buttonText: string = '';
-  @Input() buttonIcon: string = '';
-  @Input() buttonLink: string = '';
+  readonly title = input('');
+  readonly subtitle = input('');
+  readonly buttonText = input('');
+  readonly buttonIcon = input('');
+  readonly buttonLink = input('');
 }
