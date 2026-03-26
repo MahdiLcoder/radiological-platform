@@ -5,7 +5,7 @@
 
 .confidence-gauge:hover {
   transform: scale(1.05);
-  box-shadow: 0 10px 25px -5px rgba(54, 169, 226, 0.2);
+  box-shadow: 0 10px 25px -5px rgba(8, 145, 178, 0.2);
 }
 
 /* Re-use animations from upload.css if needed, or define here for isolation */

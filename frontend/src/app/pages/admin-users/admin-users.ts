@@ -31,6 +31,10 @@ export class AdminUsers {
   currentPage = signal(1);
   pageSize = signal(10);
 
+  // Filter State
+  searchTerm = signal('');
+  selectedRole = signal('');
+
   // Queries
   profileQuery = injectQuery(() => ({
     queryKey: ['current_profile'],
@@ -38,9 +42,13 @@ export class AdminUsers {
   }));
 
   usersQuery = injectQuery(() => ({
-    queryKey: ['admin_users', this.currentPage()],
-    queryFn: () => lastValueFrom(this.authService.getUsers(undefined, this.currentPage(), this.pageSize())),
-
+    queryKey: ['admin_users', this.currentPage(), this.selectedRole(), this.searchTerm()],
+    queryFn: () => lastValueFrom(this.authService.getUsers(
+      this.selectedRole() || undefined,
+      this.currentPage(),
+      this.pageSize(),
+      this.searchTerm() || undefined
+    )),
   }));
 
 
@@ -55,6 +63,10 @@ export class AdminUsers {
     if (this.currentPage() > 1) {
       this.currentPage.update(p => p - 1);
     }
+  }
+
+  onFilterChange() {
+    this.currentPage.set(1);
   }
 
 

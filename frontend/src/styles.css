@@ -3,8 +3,23 @@
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-primary: #36a9e2;
-  --color-background-light: #f8fafc;
+  /* Primary – teal #0891B2 */
+  --color-primary: #0891B2;
+  --color-primary-light: #22b5d8;
+  --color-primary-dark: #0e7490;
+
+  /* Secondary – slate #64748B */
+  --color-secondary: #64748B;
+  --color-secondary-light: #94a3b8;
+  --color-secondary-dark: #475569;
+
+  /* Tertiary – amber #BC7527 */
+  --color-tertiary: #BC7527;
+  --color-tertiary-light: #d4924a;
+  --color-tertiary-dark: #9a5f1e;
+
+  /* Neutral backgrounds */
+  --color-background-light: #F8FAFC;
   --color-background-dark: #0f172a;
   --color-charcoal: #1e293b;
 
@@ -13,11 +28,11 @@
 }
 
 .medical-grid {
-  background-image: radial-gradient(circle at 2px 2px, rgba(54, 169, 226, 0.05) 1px, transparent 0);
+  background-image: radial-gradient(circle at 2px 2px, rgba(8, 145, 178, 0.05) 1px, transparent 0);
   background-size: 24px 24px;
 }
 
 .medical-gradient {
-  background: radial-gradient(circle at top right, rgba(54, 169, 226, 0.08), transparent),
-              radial-gradient(circle at bottom left, rgba(54, 169, 226, 0.03), transparent);
+  background: radial-gradient(circle at top right, rgba(8, 145, 178, 0.08), transparent),
+              radial-gradient(circle at bottom left, rgba(8, 145, 178, 0.03), transparent);
 }

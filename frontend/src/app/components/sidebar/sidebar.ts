@@ -14,7 +14,7 @@ export class Sidebar {
   private authService = inject(AuthService);
 
   private navItems = [
-    { label: 'Dashboard', icon: 'dashboard', link: '/dashboard', roles: ['admin', 'radiologist', 'doctor'], exact: true },
+    { label: 'Dashboard', icon: 'dashboard', link: '/dashboard/', roles: ['admin', 'radiologist', 'doctor'], exact: true },
     { label: 'Staff Management', icon: 'badge', link: '/dashboard/admin/users', roles: ['admin'] },
     { label: 'Upload Scans', icon: 'upload_file', link: '/dashboard/upload', roles: ['radiologist'] },
     { label: 'All Scans', icon: 'collections', link: '/dashboard/all-images', roles: ['radiologist'] },

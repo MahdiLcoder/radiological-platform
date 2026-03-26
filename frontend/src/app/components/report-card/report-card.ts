@@ -1,5 +1,8 @@
 import { Component, inject, input } from '@angular/core';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { lastValueFrom } from 'rxjs';
 import { ReportService } from '../../services/reportService';
+import { AnalysisService } from '../../services/analysisService';
 
 export interface Report {
   id: string;
@@ -11,6 +14,7 @@ export interface Report {
   date: string;
   validated: boolean;
   reportId?: string;
+  imageId?: string;
 }
 
 @Component({
@@ -22,6 +26,15 @@ export interface Report {
 export class ReportCard {
   readonly report = input.required<Report>();
   private reportService = inject(ReportService);
+  private analysisService = inject(AnalysisService);
+
+  imageQuery = injectQuery(() => ({
+    queryKey: ['reportImage', this.report().imageId],
+    queryFn: () => this.report().imageId
+      ? lastValueFrom(this.analysisService.getImageDetail(this.report().imageId!))
+      : Promise.resolve(null),
+    enabled: !!this.report().imageId,
+  }));
 
   download() {
     const currentReport = this.report();
@@ -29,31 +42,37 @@ export class ReportCard {
     this.reportService.downloadReport(id);
   }
 
-  get modalityClass(): string {
-    const currentReport = this.report();
-    switch (currentReport.modality) {
-      case 'MRI':
-        return 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300';
-      case 'X-Ray':
-        return 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300';
-      case 'CT Scan':
-        return 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300';
+  get initials(): string {
+    const doctor = this.report().doctor;
+    if (!doctor || doctor.includes('#')) return 'RA'; // Fallback for "Radiologist #30"
+    return doctor.split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  }
+
+  get statusBadgeClass(): string {
+    const status = this.report().status;
+    switch (status) {
+      case 'Critical':
+        return 'bg-red-50 text-red-700 border-red-100';
+      case 'Moderate':
+        return 'bg-amber-50 text-amber-700 border-amber-100';
+      case 'Normal':
+        return 'bg-emerald-50 text-emerald-700 border-emerald-100';
       default:
-        return 'bg-slate-100 dark:bg-slate-900/30 text-slate-700 dark:text-slate-300';
+        return 'bg-slate-50 text-slate-700 border-slate-100';
     }
   }
 
-  get statusClass(): string {
-    const currentReport = this.report();
-    switch (currentReport.status) {
-      case 'Critical':
-        return 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400';
-      case 'Moderate':
-        return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-500';
-      case 'Normal':
-        return 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400';
-      default:
-        return 'bg-slate-100 dark:bg-slate-900/30 text-slate-700 dark:text-slate-300';
-    }
+  get modalityBadgeClass(): string {
+    return 'bg-primary/5 text-primary border-primary/10';
+  }
+
+  get doctorDisplayName(): string {
+    const doctor = this.report().doctor;
+    if (doctor.includes('#')) return 'Dr. AI Assistant';
+    return doctor;
   }
 }

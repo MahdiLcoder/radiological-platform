@@ -44,9 +44,10 @@ export class AuthService {
     return this.http.patch(`${this.apiUrl}/users/${id}/`, profileData);
   }
 
-  getUsers(role?: string, page: number = 1, page_size: number = 10): Observable<any> {
+  getUsers(role?: string, page: number = 1, page_size: number = 10, search?: string): Observable<any> {
     const params: any = { page, page_size };
     if (role) params.role = role;
+    if (search) params.search = search;
     return this.http.get<any>(`${this.apiUrl}/users/`, { params });
   }
 

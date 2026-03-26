@@ -67,6 +67,7 @@ export class Reports {
         : '—',
       validated: true,
       reportId: item.id,
+      imageId: item.image?.id,
     }));
   });
 

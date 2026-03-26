@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.db.models import Count
+from django.db.models import Count, Q
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -13,6 +13,7 @@ from images.models import RadiologyImage
 from inference.models import AiPredictions
 from diagnosis.models import Diagnosis
 from reports.models import Report
+from rest_framework.pagination import PageNumberPagination
 
 User = get_user_model()
 
@@ -31,13 +32,12 @@ class MeView(generics.RetrieveAPIView):
         return self.request.user
 
 
-from rest_framework.pagination import PageNumberPagination
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 100
-
+    
 class UserListView(generics.ListAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated, IsAdmin]
@@ -50,6 +50,15 @@ class UserListView(generics.ListAPIView):
         role = self.request.query_params.get('role')
         if role:
             qs = qs.filter(role=role)
+
+        search = self.request.query_params.get('search')
+        if search:
+            qs = qs.filter(
+                Q(username__icontains=search) |
+                Q(first_name__icontains=search) |
+                Q(last_name__icontains=search) |
+                Q(email__icontains=search)
+            )
 
         return qs
 

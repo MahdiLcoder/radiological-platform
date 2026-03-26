@@ -23,6 +23,34 @@
     </button>
   </div>
 
+  <!-- Filters Section -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+    <div class="relative group md:col-span-3">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-[20px]">search</span>
+      <input 
+        type="text" 
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event); onFilterChange()"
+        placeholder="Search professionals by name, email or username..." 
+        class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/10 focus:border-primary outline-none transition-all"
+      />
+    </div>
+    <div class="relative group">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-[20px]">filter_list</span>
+      <select 
+        [ngModel]="selectedRole()"
+        (ngModelChange)="selectedRole.set($event); onFilterChange()"
+        class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/10 focus:border-primary outline-none transition-all appearance-none cursor-pointer"
+      >
+        <option value="">All Roles</option>
+        <option value="admin">Admin</option>
+        <option value="radiologist">Radiologist</option>
+        <option value="doctor">Doctor</option>
+      </select>
+      <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[18px]">expand_more</span>
+    </div>
+  </div>
+
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
     <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
       <h3 class="font-bold text-slate-900">Registered Professionals</h3>
