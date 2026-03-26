@@ -1,5 +1,7 @@
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from rest_framework import serializers
+
+from config.email_utils import send_welcome_email
 from .models import AdminProfile, RadiologistProfile, DoctorProfile, UserRole
 
 User = get_user_model()
@@ -38,7 +40,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         # Send welcome email if created by an admin
         request = self.context.get('request')
         if request and request.user.is_authenticated and request.user.role == UserRole.ADMIN:
-            from config.email_utils import send_welcome_email
             send_welcome_email(user, temp_password)
 
         if user.role == UserRole.ADMIN:

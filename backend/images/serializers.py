@@ -1,8 +1,10 @@
+import logging
+import cloudinary.uploader
 from rest_framework import serializers
 from rest_framework.exceptions import APIException
+
+from patients.models import Patient
 from .models import RadiologyImage, MODALITY_CHOICES
-import cloudinary.uploader
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -35,8 +37,6 @@ class RadiologyImageSerializer(serializers.Serializer):
                 resource_type='image'
             )
             image_url = upload_result["secure_url"]
-
-            from patients.models import Patient
 
             # Find patient record
             patient = Patient.objects(id=patient_id).first()

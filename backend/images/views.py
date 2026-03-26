@@ -1,13 +1,16 @@
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.exceptions import NotFound, APIException
-from .serializers import RadiologyImageSerializer
-from .models import RadiologyImage
-from accounts.permissions import IsRadiologist, IsAdmin, IsDoctor
 import logging
 from bson import ObjectId
+from mongoengine.queryset.visitor import Q
+from rest_framework import status
+from rest_framework.exceptions import NotFound, APIException, PermissionDenied
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from accounts.permissions import IsRadiologist, IsAdmin, IsDoctor
+from patients.models import Patient
+from .models import RadiologyImage
+from .serializers import RadiologyImageSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -46,8 +49,6 @@ class ImageListView(APIView):
                 images = images.filter(status__iexact=status_filter)
 
             if search:
-                from mongoengine.queryset.visitor import Q
-                from patients.models import Patient
                 matching_patients = Patient.objects(
                     Q(first_name__icontains=search) | 
                     Q(last_name__icontains=search)
@@ -55,7 +56,6 @@ class ImageListView(APIView):
                 patient_ids = [p.id for p in matching_patients]
                 
                 try:
-                    from bson import ObjectId
                     obj_id = ObjectId(search)
                     images = images.filter(Q(patient__in=patient_ids) | Q(id=obj_id))
                 except Exception:
@@ -103,11 +103,9 @@ class ImageDetailView(APIView):
                 raise NotFound("Image not found!")
                 
             if hasattr(request.user, 'role') and request.user.role == 'doctor':
-                from rest_framework.exceptions import PermissionDenied
                 if not image.patient or image.patient.doctor_id != request.user.id:
                     raise PermissionDenied("You do not have permission to access this image.")
             elif hasattr(request.user, 'role') and request.user.role == 'radiologist':
-                from rest_framework.exceptions import PermissionDenied
                 if image.uploaded_by_id != request.user.id:
                     raise PermissionDenied("You do not have permission to access this image.")
                     

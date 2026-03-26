@@ -2,6 +2,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import PermissionDenied
 
 from accounts.permissions import IsRadiologist, IsDoctor, IsAdmin
 
@@ -63,7 +64,6 @@ class DiagnosisRetrieveUpdateView(APIView):
             )
 
         if hasattr(request.user, 'role') and request.user.role == 'doctor':
-            from rest_framework.exceptions import PermissionDenied
             if not img.patient or img.patient.doctor_id != request.user.id:
                 raise PermissionDenied("You do not have permission to view diagnoses for this patient.")
 
@@ -93,7 +93,6 @@ class DiagnosisRetrieveUpdateView(APIView):
             )
 
         if hasattr(request.user, 'role') and request.user.role == 'radiologist':
-            from rest_framework.exceptions import PermissionDenied
             if diagnosis.image and diagnosis.image.uploaded_by_id != request.user.id:
                 raise PermissionDenied("You do not have permission to modify a diagnosis for this image.")
 

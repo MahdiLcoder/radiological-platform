@@ -1,5 +1,6 @@
 import datetime
 from bson import ObjectId
+import mongoengine as me
 from rest_framework import serializers
 from .models import AiPredictions
 from images.models import RadiologyImage
@@ -38,8 +39,6 @@ class AiPredictionsSerializer(serializers.Serializer):
         return result
 
     def to_representation(self, instance):
-        import mongoengine as me
-        
         image_data = None
         try:
             if instance.image:
@@ -77,4 +76,3 @@ class AiPredictionsSerializer(serializers.Serializer):
             } if instance.analyzed_by else None,
             "analyzed_at": instance.analyzed_at.isoformat() if instance.analyzed_at else None,
         }
-

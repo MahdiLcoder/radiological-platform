@@ -1,16 +1,17 @@
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from bson import ObjectId
+from mongoengine.queryset.visitor import Q
 from rest_framework import status
 from rest_framework.exceptions import NotFound, APIException
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
+from diagnosis.models import Diagnosis
+from images.models import RadiologyImage
+from reports.models import Report
 from accounts.permissions import IsDoctor, IsAdmin
 from .models import Patient
 from .serializers import PatientSerializer
-
-from images.models import RadiologyImage
-from diagnosis.models import Diagnosis
-from reports.models import Report
 
 
 class PatientListCreateView(APIView):
@@ -30,9 +31,7 @@ class PatientListCreateView(APIView):
                 patients = Patient.objects(doctor_id=request.user.id)
 
             if search:
-                from mongoengine.queryset.visitor import Q
                 try:
-                    from bson import ObjectId
                     obj_id = ObjectId(search)
                     patients = patients.filter(
                         Q(first_name__icontains=search) | 
@@ -48,8 +47,6 @@ class PatientListCreateView(APIView):
             if tab == 'RECENT':
                 patients = patients.order_by('-created_at')
             elif tab == 'PRIORITY':
-                from diagnosis.models import Diagnosis
-                from images.models import RadiologyImage
                 diags = Diagnosis.objects.all()
                 images_with_diags = [d.image.id for d in diags if getattr(d, 'image', None)]
                 all_images = RadiologyImage.objects(id__in=images_with_diags)

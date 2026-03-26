@@ -1,15 +1,20 @@
+import datetime
 import logging
+from bson import ObjectId
 from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import NotFound, APIException
+from rest_framework.exceptions import NotFound, APIException, PermissionDenied
+from mongoengine.queryset.visitor import Q
+
 from accounts.permissions import IsRadiologist, IsDoctor, IsAdmin
-from .models import Report
-from .serializers import ReportSerializer
 from diagnosis.models import Diagnosis
 from images.models import RadiologyImage
+from patients.models import Patient
+from .models import Report
+from .serializers import ReportSerializer
 
 
 logger = logging.getLogger(__name__)
@@ -51,8 +56,6 @@ class ReportListView(APIView):
 
             # Doctors only see reports for their own patients
             if hasattr(request.user, 'role') and request.user.role == 'doctor':
-                from patients.models import Patient
-                from images.models import RadiologyImage
                 doctor_patients = Patient.objects(doctor_id=request.user.id)
                 patient_ids = [p.id for p in doctor_patients]
                 doctor_images = RadiologyImage.objects(patient__in=patient_ids)
@@ -62,19 +65,13 @@ class ReportListView(APIView):
                 reports = reports.filter(generated_by=request.user.id)
 
             if date_range == 'Last 7 Days':
-                import datetime
                 threshold = datetime.datetime.utcnow() - datetime.timedelta(days=7)
                 reports = reports.filter(generated_at__gte=threshold)
             elif date_range == 'Last 30 Days':
-                import datetime
                 threshold = datetime.datetime.utcnow() - datetime.timedelta(days=30)
                 reports = reports.filter(generated_at__gte=threshold)
 
             if modality or search:
-                from images.models import RadiologyImage
-                from patients.models import Patient
-                from mongoengine.queryset.visitor import Q
-
                 image_qs = RadiologyImage.objects.all()
                 if modality and modality != 'All Modalities':
                     image_qs = image_qs.filter(modality__iexact=modality)
@@ -87,7 +84,6 @@ class ReportListView(APIView):
                     patient_ids = [p.id for p in matching_patients]
                     
                     try:
-                        from bson import ObjectId
                         obj_id = ObjectId(search)
                         image_qs = image_qs.filter(Q(patient__in=patient_ids) | Q(id=obj_id))
                     except Exception:
@@ -123,11 +119,9 @@ class ReportDetailView(APIView):
                 raise NotFound("Report not found")
                 
             if hasattr(request.user, 'role') and request.user.role == 'doctor':
-                from rest_framework.exceptions import PermissionDenied
                 if not report.image or not report.image.patient or report.image.patient.doctor_id != request.user.id:
                     raise PermissionDenied("You do not have permission to access this report.")
             elif hasattr(request.user, 'role') and request.user.role == 'radiologist':
-                from rest_framework.exceptions import PermissionDenied
                 if report.generated_by != request.user.id:
                     raise PermissionDenied("You do not have permission to access this report.")
                     
@@ -150,11 +144,9 @@ class ReportDownloadView(APIView):
                 raise NotFound("Report not found")
 
             if hasattr(request.user, 'role') and request.user.role == 'doctor':
-                from rest_framework.exceptions import PermissionDenied
                 if not report.image or not report.image.patient or report.image.patient.doctor_id != request.user.id:
                     raise PermissionDenied("You do not have permission to download this report.")
             elif hasattr(request.user, 'role') and request.user.role == 'radiologist':
-                from rest_framework.exceptions import PermissionDenied
                 if report.generated_by != request.user.id:
                     raise PermissionDenied("You do not have permission to download this report.")
 
@@ -186,11 +178,9 @@ class ReportByImageView(APIView):
                 raise NotFound("Image not found")
 
             if hasattr(request.user, 'role') and request.user.role == 'doctor':
-                from rest_framework.exceptions import PermissionDenied
                 if not image.patient or image.patient.doctor_id != request.user.id:
                     raise PermissionDenied("You do not have permission to access this report.")
             elif hasattr(request.user, 'role') and request.user.role == 'radiologist':
-                from rest_framework.exceptions import PermissionDenied
                 if image.uploaded_by_id != request.user.id:
                     raise PermissionDenied("You do not have permission to access this report.")
 
