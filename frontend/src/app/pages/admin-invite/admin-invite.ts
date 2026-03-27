@@ -72,7 +72,19 @@ export class AdminInvite {
       this.isSuccessModalOpen.set(true);
     },
     onError: (error: any) => {
-      this.errorMessage.set(error.error?.detail || error.message || 'An unexpected error occurred');
+      const detail = error.error?.detail || error.error?.message;
+      let message = 'An unexpected error occurred';
+      
+      if (typeof detail === 'string') {
+        message = detail;
+      } else if (typeof detail === 'object' && detail !== null) {
+        // Collect all error strings from the object
+        message = Object.values(detail).flat().join(' ');
+      } else {
+        message = error.message || message;
+      }
+      
+      this.errorMessage.set(message);
       this.isErrorModalOpen.set(true);
     }
   }));
