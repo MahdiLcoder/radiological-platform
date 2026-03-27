@@ -29,113 +29,75 @@
     }
   </section>
 
-  <!-- Clinical Filter Console (Dashboard Compact) -->
-  <div class="clinical-filter-console mt-6 animate-in fade-in slide-in-from-left-4 duration-700 delay-300">
-    <div class="console-group">
-      <div class="console-input-wrapper group">
-        <span class="material-symbols-outlined absolute left-3 text-slate-400 group-focus-within:text-primary transition-colors text-xl">manage_search</span>
-        <input
-          class="console-input !w-96"
-          placeholder="Quick-search clinical records (Name, MRN, UID)..."
-          type="text"
-        />
-      </div>
-    </div>
-    <div class="console-group">
-       <div class="flex items-center gap-2 px-4 py-2 bg-primary/5 rounded-xl border border-primary/10">
-          <div class="size-2 bg-primary rounded-full animate-pulse"></div>
-          <span class="text-[9px] font-black text-primary uppercase tracking-widest">Live Node: PACS-CENTRAL</span>
-       </div>
-       <button class="console-reset-btn"><span class="material-symbols-outlined">refresh</span></button>
-    </div>
-  </div>
-
   <div class="dashboard-main-grid mt-10">
-    <!-- Left Column: Diagnostic Insight Cards -->
-    <section class="diagnostic-cards-section lg:col-span-8 space-y-6">
-      <header class="section-toolbar">
-         <div class="flex flex-col">
-            <h2 class="text-lg font-black text-slate-900 tracking-tight">Validated Clinical Insights</h2>
-            <p class="text-xs text-slate-500 font-medium">Pending physician-level review</p>
-         </div>
-         <a routerLink="/dashboard/reports" class="action-link-btn group">
-            <span>Insight Repository</span>
-            <span class="material-symbols-outlined transition-transform group-hover:translate-x-1">clinical_notes</span>
-         </a>
-      </header>
-  
-      @if (reportsQuery.isPending()) {
-        <div class="reports-grid">
-          @for (n of [1, 2, 3, 4]; track n) {
-            <div class="bg-white rounded-3xl border border-slate-100 h-52 animate-pulse shadow-sm"></div>
-          }
-        </div>
-      } @else if (recentReports().length === 0) {
-        <div class="p-20 text-center bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl italic text-slate-400">
-          "Zero validated diagnostic insights currently in worklist."
-        </div>
-      } @else {
-        <div class="reports-grid">
-          @for (report of recentReports().slice(0, 4); track report.id) {
-            <app-report-card [report]="report"></app-report-card>
-          }
-        </div>
-      }
-    </section>
+    <!-- Full Width Content Column -->
+    <section class="lg:col-span-12 space-y-12 pb-10">
+      <!-- Top: Verified Admissions Table -->
+      <section class="clinical-table-area space-y-6">
+        <header class="section-toolbar">
+           <div class="flex flex-col">
+              <h2 class="text-lg font-black text-slate-900 tracking-tight">Verified Admissions</h2>
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Recent Clinical Syncs</p>
+           </div>
+           <a routerLink="/dashboard/patients" class="action-link-btn group !p-2">
+              <span class="material-symbols-outlined transition-transform group-hover:rotate-12">manage_accounts</span>
+           </a>
+        </header>
 
-    <!-- Right Column: Verified Admissions -->
-    <section class="clinical-list-section lg:col-span-4 space-y-6">
-      <header class="section-toolbar">
-         <div class="flex flex-col">
-            <h2 class="text-lg font-black text-slate-900 tracking-tight">Verified Admissions</h2>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Recent Clinical Syncs</p>
-         </div>
-         <a routerLink="/dashboard/patients" class="action-link-btn group !p-2">
-            <span class="material-symbols-outlined transition-transform group-hover:rotate-12">manage_accounts</span>
-         </a>
-      </header>
-  
-      @if (patientsQuery.isPending()) {
-         <div class="p-10 flex flex-col items-center justify-center gap-4 bg-white/50 rounded-[2.5rem] border border-slate-100">
-            <div class="w-8 h-8 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div>
-            <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Syncing...</p>
-         </div>
-      } @else if (patientsQuery.isError()) {
-         <div class="p-10 text-center bg-rose-50/30 border border-rose-100 rounded-3xl">
-            <span class="material-symbols-outlined text-rose-500 text-3xl mb-2">gpp_maybe</span>
-            <button (click)="patientsQuery.refetch()" class="action-link-btn !mx-auto !text-[8px]">RETRY SYNC</button>
-         </div>
-      } @else if (recentPatients().length === 0) {
-         <div class="p-10 text-center bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem]">
-            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Registry Empty</p>
-         </div>
-      } @else {
-         <div class="flex flex-col gap-3">
-            @for (patient of recentPatients().slice(0, 5); track patient.id) {
-               <div class="clinical-compact-card group animate-in slide-in-from-right-4 duration-300">
-                  <div class="flex items-center gap-3">
-                     <div class="size-11 rounded-2xl bg-slate-100 flex items-center justify-center font-black text-slate-500 text-[10px] shadow-inner group-hover:bg-primary/10 group-hover:text-primary transition-all">
-                        {{ getInitials(patient.first_name, patient.last_name) }}
-                     </div>
-                     <div class="flex-1 min-w-0">
-                        <h4 class="text-xs font-black text-slate-900 truncate tracking-tight">
-                           {{ patient.first_name }} {{ patient.last_name }}
-                        </h4>
-                        <div class="flex items-center gap-2 mt-0.5">
-                           <span class="text-[9px] font-bold text-slate-400 uppercase">{{ calculateAge(patient.date_of_birth) }}Y • {{ patient.gender }}</span>
-                        </div>
-                     </div>
-                     <button
-                       [routerLink]="['/dashboard/patient-detail', patient.id]"
-                       class="size-8 rounded-xl bg-slate-50 hover:bg-slate-900 hover:text-white flex items-center justify-center transition-all"
-                     >
-                       <span class="material-symbols-outlined text-sm">visibility</span>
-                     </button>
-                  </div>
-               </div>
+        @if (patientsQuery.isPending()) {
+           <div class="p-10 flex flex-col items-center justify-center gap-4 bg-white/50 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-black/[0.02]">
+              <div class="w-8 h-8 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div>
+              <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Syncing Registry...</p>
+           </div>
+        } @else if (patientsQuery.isError()) {
+           <div class="p-10 text-center bg-rose-50/30 border border-rose-100 rounded-3xl">
+              <span class="material-symbols-outlined text-rose-500 text-3xl mb-2">gpp_maybe</span>
+              <button (click)="patientsQuery.refetch()" class="action-link-btn !mx-auto !text-[8px]">RETRY SYNC</button>
+           </div>
+        } @else if (worklistData().length === 0) {
+           <div class="p-10 text-center bg-white/50 border-2 border-dashed border-slate-200 rounded-[2.5rem] shadow-xl shadow-black/[0.01]">
+              <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Registry Empty</p>
+           </div>
+        } @else {
+           <app-worklist-table 
+             [columns]="tableColumns" 
+             [data]="worklistData()"
+             [hideFooter]="true"
+            ></app-worklist-table>
+        }
+      </section>
+
+      <!-- Bottom: Diagnostic Insight Cards -->
+      <section class="diagnostic-cards-section space-y-6">
+        <header class="section-toolbar">
+           <div class="flex flex-col">
+              <h2 class="text-lg font-black text-slate-900 tracking-tight">Validated Clinical Insights</h2>
+              <p class="text-xs text-slate-500 font-medium">Pending physician-level review</p>
+           </div>
+           <a routerLink="/dashboard/reports" class="action-link-btn group">
+              <span>Insight Repository</span>
+              <span class="material-symbols-outlined transition-transform group-hover:translate-x-1">clinical_notes</span>
+           </a>
+        </header>
+    
+        @if (reportsQuery.isPending()) {
+          <div class="reports-grid">
+            @for (n of [1, 2, 3, 4]; track n) {
+              <div class="bg-white rounded-3xl border border-slate-100 h-52 animate-pulse shadow-sm"></div>
             }
-         </div>
-      }
+          </div>
+        } @else if (recentReports().length === 0) {
+          <div class="p-20 text-center bg-white/50 border-2 border-dashed border-slate-200 rounded-3xl italic text-slate-400">
+            "Zero validated diagnostic insights currently in worklist."
+          </div>
+        } @else {
+          <div class="reports-grid">
+            @for (report of recentReports().slice(0, 4); track report.id) {
+              <app-report-card [report]="report"></app-report-card>
+            }
+          </div>
+        }
+      </section>
     </section>
   </div>
 </div>

@@ -1,129 +1,41 @@
-@reference "../../../styles.css";
 :host {
   display: block;
 }
 
-.clinical-list-container {
-  @apply flex flex-col w-full;
+/* Custom horizontal scrollbar for the table */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 6px;
 }
 
-.list-header {
-  @apply select-none;
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-/* Row Card Styling */
-.clinical-row-card {
-  @apply flex flex-col md:flex-row items-stretch px-6 py-4 bg-white border border-slate-200 rounded-2xl shadow-sm transition-all relative overflow-hidden;
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
 }
 
-.clinical-row-card:hover {
-  @apply border-primary/30 shadow-md translate-x-1;
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
 }
 
-.clinical-row-card.is-emergency {
-  @apply border-rose-100 bg-rose-50/10;
+/* Ensure the table takes full width but allows overflow */
+table {
+  min-width: 800px;
 }
 
-.clinical-row-card.is-emergency::before {
-  content: '';
-  @apply absolute left-0 top-0 bottom-0 w-1 bg-rose-500 rounded-full my-4;
+/* Subtle row animation on enter */
+tr {
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
-/* Patient Avatar & Details */
-.patient-avatar-box {
-  @apply relative size-10 rounded-xl bg-slate-100 flex items-center justify-center font-black text-slate-500 text-xs shadow-inner;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.avatar-ring {
-  @apply absolute inset-0 rounded-xl border-2 border-primary/10 group-hover:border-primary/30 transition-colors pointer-events-none;
-}
-
-.is-emergency .patient-avatar-box {
-  @apply bg-rose-100 text-rose-600;
-}
-
-.emergency-blip {
-  @apply size-2 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.6)];
-}
-
-/* Modality Pill Variants */
-.modality-pill {
-  @apply flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all;
-}
-
-.modality-pill.variant-x-r { @apply bg-blue-50 text-blue-600 border-blue-100; }
-.modality-pill.variant-ct  { @apply bg-purple-50 text-purple-600 border-purple-100; }
-.modality-pill.variant-mri { @apply bg-indigo-50 text-indigo-600 border-indigo-100; }
-
-/* Status Glossy Effects */
-.status-glossy {
-  @apply relative flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border overflow-hidden;
-}
-
-.glow-orb {
-  @apply absolute -left-1 size-3 rounded-full blur-[4px] opacity-60;
-}
-
-.status-pending { @apply bg-amber-50 text-amber-600 border-amber-100; }
-.status-pending .glow-orb { @apply bg-amber-400; }
-
-.status-analyzed { @apply bg-primary/5 text-primary border-primary/10; }
-.status-analyzed .glow-orb { @apply bg-primary; }
-
-.status-validated { @apply bg-emerald-50 text-emerald-600 border-emerald-100; }
-.status-validated .glow-orb { @apply bg-emerald-400; }
-
-/* Action Buttons Premium */
-.action-btn-premium {
-  @apply flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all border;
-}
-
-.action-btn-premium.btn-primary {
-  @apply bg-primary text-white border-primary shadow-lg shadow-primary/20 hover:bg-primary-dark;
-}
-
-.action-btn-premium.btn-outline {
-  @apply bg-white text-slate-600 border-slate-200 hover:bg-slate-50;
-}
-
-.action-btn-premium.btn-danger {
-  @apply bg-rose-500 text-white border-rose-500 shadow-lg shadow-rose-200 hover:bg-rose-600;
-}
-
-.action-btn-premium span {
-  @apply text-[18px];
-}
-
-/* Empty State Modern */
-.empty-clinical-state {
-  @apply py-20 bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl text-center flex flex-col items-center gap-4;
-}
-
-.empty-icon-wrapper {
-  @apply size-16 rounded-full bg-slate-200/50 flex items-center justify-center text-slate-400;
-}
-
-.empty-icon-wrapper span { @apply text-4xl; }
-
-/* Footer & Pagination */
-.clinical-list-footer {
-  @apply flex items-center justify-between py-4 border-t border-slate-100;
-}
-
-.step-btn {
-  @apply size-10 rounded-xl bg-white border border-slate-200 text-slate-500 flex items-center justify-center transition-all hover:bg-primary hover:text-white hover:border-primary disabled:opacity-30 disabled:pointer-events-none;
-}
-
-.page-token {
-  @apply px-4 py-2 bg-slate-100 rounded-xl text-[10px] font-black text-slate-900 uppercase tracking-widest;
-}
-
-@media (max-w-768px) {
-  .clinical-row-card {
-    @apply gap-4 flex-col;
-  }
-  
-  .column-actions {
-    @apply w-full pt-4 border-t border-slate-50;
-  }
+/* Ensure buttons don't wrap */
+button {
+  white-space: nowrap;
 }

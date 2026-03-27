@@ -4,12 +4,15 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { PatientService } from '../../services/patientService';
 import { ReportService } from '../../services/reportService';
+import { LoadingStateComponent } from '../../components/loading-state/loading-state';
+import { ErrorStateComponent } from '../../components/error-state/error-state';
+import { EmptyStateComponent } from '../../components/empty-state/empty-state';
 import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-patient-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, LoadingStateComponent, ErrorStateComponent, EmptyStateComponent],
   templateUrl: './patient-detail.html',
   styleUrl: './patient-detail.css'
 })
@@ -27,9 +30,6 @@ export class PatientDetail {
     enabled: !!this.patientId
   }));
 
-  getInitials(firstName: string = '', lastName: string = ''): string {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
-  }
 
   calculateAge(dob: string | undefined): number {
     if (!dob) return 0;

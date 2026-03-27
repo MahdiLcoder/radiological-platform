@@ -7,16 +7,19 @@ import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 
 import { WelcomeSection } from '../../components/welcome-section/welcome-section';
+import { WorklistTable, WorklistItem } from '../../components/worklist-table/worklist-table';
 
 @Component({
   selector: 'app-patients',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, WelcomeSection],
+  imports: [CommonModule, FormsModule, WelcomeSection, WorklistTable],
   templateUrl: './patients.html',
   styleUrl: './patients.css',
 })
 export class Patients {
   private patientService = inject(PatientService);
+
+  tableColumns: string[] = ['Patient Identity', 'Registry Reference', 'Clinical Demographics', 'Creation Date', 'Actions'];
 
   searchQuery = signal('');
   activeTab = signal<'ALL'|'RECENT'|'PRIORITY'>('ALL');
@@ -34,9 +37,38 @@ export class Patients {
     ),
   }));
 
-  filteredPatients = computed<Patient[]>(() => {
+  worklistData = computed<WorklistItem[]>(() => {
     const data: any = this.patientsQuery.data();
-    return data?.results || [];
+    const results = data?.results || [];
+    
+    return results.map((patient: Patient) => {
+      const initials = this.getInitials(patient.first_name, patient.last_name);
+      const name = `${patient.first_name} ${patient.last_name}`;
+      const age = this.calculateAge(patient.date_of_birth);
+      const gender = patient.gender === 'M' ? 'Male' : (patient.gender === 'F' ? 'Female' : 'Other');
+      const createdAt = new Date(patient.created_at || Date.now());
+      
+      return {
+        id: patient.id || 'N/A',
+        patient: {
+          initials,
+          name,
+          id: (patient.id || 'N/A').substring(0, 12).toUpperCase(),
+          isEmergency: false
+        },
+        modality: `REF-${(patient.id?.substring(0, 6) || 'NA').toUpperCase()}`,
+        uploadDate: {
+          time: createdAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+          date: createdAt.toLocaleDateString([], {month: 'short', day: 'numeric', year: 'numeric'})
+        },
+        aiStatus: `${gender} • ${age}Y`,
+        action: {
+          type: 'view',
+          text: 'Browse Scans',
+          link: ['/dashboard/patient-detail', patient.id]
+        }
+      };
+    });
   });
 
   totalPages = computed(() => (this.patientsQuery.data() as any)?.total_pages || 1);
@@ -58,12 +90,12 @@ export class Patients {
     this.currentPage.set(1);
   }
 
-  getInitials(firstName: string, lastName: string): string {
+  private getInitials(firstName: string, lastName: string): string {
     if (!firstName || !lastName) return 'P';
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   }
 
-  calculateAge(dobString: string | undefined): number | string {
+  private calculateAge(dobString: string | undefined): number | string {
     if (!dobString) return 'N/A';
     try {
       const dob = new Date(dobString);

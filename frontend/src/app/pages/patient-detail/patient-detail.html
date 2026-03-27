@@ -1,144 +1,162 @@
-<div class="patient-detail-container animate-in fade-in slide-in-from-bottom-4 duration-500">
+<!-- Main Content -->
+<main class="flex-1 flex flex-col overflow-hidden bg-slate-50/30">
   @if (patientQuery.isPending()) {
-    <div class="p-32 flex flex-col items-center justify-center gap-4 bg-white/50 rounded-3xl border border-slate-100 italic">
-      <div class="w-12 h-12 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div>
-      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">Retrieving Master Clinical Records...</p>
-    </div>
+    <app-loading-state message="Retrieving clinical records..."></app-loading-state>
   } @else if (patientQuery.isError()) {
-    <div class="p-20 text-center bg-rose-50/20 border border-dashed border-rose-200 rounded-3xl">
-      <span class="material-symbols-outlined text-rose-500 text-6xl mb-4">person_off</span>
-      <h3 class="text-xl font-black text-slate-900 tracking-tight">Protocol: Sync Failure</h3>
-      <p class="text-slate-500 font-medium mt-2">The clinical profile could not be located in the Master Registry.</p>
-      <button (click)="patientQuery.refetch()" class="mt-8 action-btn-pax mx-auto">Restart Sync Protocol</button>
-    </div>
+    <app-error-state 
+      message="Database connection error" 
+      actionText="Refresh Connection" 
+      (retry)="patientQuery.refetch()">
+    </app-error-state>
   } @else if (patientQuery.data(); as patient) {
     
-    <!-- Premium Clinical Patient Header -->
-    <header class="clinical-hero-header">
-       <div class="hero-bg-accent"></div>
-       <div class="flex flex-col lg:flex-row gap-8 items-start lg:items-center relative z-10">
-          <div class="patient-profile-orb">
-             <div class="orb-ring"></div>
-             <span class="material-symbols-outlined text-primary text-5xl">{{ patient.gender === 'F' ? 'female' : 'male' }}</span>
-          </div>
+    <div class="patient-detail-layout h-full overflow-y-auto pb-24">
+      
+      <!-- Patient Summary Header -->
+      <section class="clinical-profile-header">
+        <div class="flex flex-col lg:flex-row gap-12 items-start">
           
-          <div class="flex-1 space-y-2">
-             <div class="flex items-center gap-4 flex-wrap">
-                <h2 class="text-3xl font-black text-slate-900 tracking-tight">{{ patient.first_name }} {{ patient.last_name }}</h2>
-                <div class="px-3 py-1 bg-primary/5 border border-primary/10 rounded-full text-[9px] font-black text-primary uppercase tracking-[0.2em]">Verified Profile</div>
-             </div>
-             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.1em]">MASTER INDEX ID: <span class="text-slate-900 font-mono tracking-tighter">{{ patient.id | uppercase }}</span></p>
-             
-             <div class="flex gap-6 mt-6 items-center flex-wrap">
-                <div class="clinical-stat-chip">
-                   <span class="stat-prefix">BIOMETRY</span>
-                   <span class="stat-value">{{ calculateAge(patient.date_of_birth) }}Y • {{ patient.gender === 'M' ? 'MALE' : (patient.gender === 'F' ? 'FEMALE' : 'O') }}</span>
-                </div>
-                <div class="clinical-stat-chip">
-                   <span class="stat-prefix">ATTENDING</span>
-                   <span class="stat-value">{{ patient.doctor?.username || 'NOT ASSIGNED' }}</span>
-                </div>
-                <div class="clinical-stat-chip">
-                   <span class="stat-prefix">LAST SESSION</span>
-                   <span class="stat-value">{{ (patient.last_visit | date:'dd MMM yyyy') || 'INITIAL_REG' }}</span>
-                </div>
-             </div>
+          <!-- Modern Avatar (Human Designed) -->
+          <div class="size-28 rounded-3xl bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-slate-400 text-5xl">
+              {{ patient.gender === 'F' ? 'person_female' : 'person' }}
+            </span>
           </div>
 
-          <div class="flex gap-2 self-start lg:self-center">
-             <button class="step-btn !size-11 hover:!bg-primary/5 hover:!text-primary" title="Modify Context"><span class="material-symbols-outlined">edit_note</span></button>
-             <button class="step-btn !size-11 hover:!bg-slate-50 hover:!text-slate-900" title="Export Ledger"><span class="material-symbols-outlined">ios_share</span></button>
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="space-y-1.5">
+                <div class="flex items-center gap-4 flex-wrap">
+                  <h2 class="text-4xl font-black text-slate-900 tracking-tight">
+                    {{ patient.first_name }} {{ patient.last_name }}
+                  </h2>
+                  <div class="status-badge badge-validated">
+                    Clinical Record Validated
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-[11px] font-black uppercase tracking-widest text-slate-400">Record System ID:</span>
+                  <span class="font-mono text-primary font-bold text-sm bg-primary/5 px-2 py-0.5 rounded">
+                    {{ (patient.id && patient.id.length > 16 ? patient.id.substring(0, 16) + '...' : (patient.id || 'N/A')) | uppercase }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Summary Stats -->
+            <div class="stats-container">
+              <div class="stat-item">
+                <span class="stat-label">Demographics</span>
+                <span class="stat-value">{{ calculateAge(patient.date_of_birth) }} Years • {{ patient.gender === 'M' ? 'Male' : 'Female' }}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Primary Physician</span>
+                <span class="stat-value text-primary">{{ patient.doctor?.username || 'Dr. Vance' }}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Total Imaging Studies</span>
+                <span class="stat-value">{{ patient.stats?.total_scans || 0 }} Scans</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Active Pathologies</span>
+                <span class="stat-value text-rose-600">{{ patient.stats?.active_diagnoses || 0 }} Identified</span>
+              </div>
+            </div>
           </div>
-       </div>
-    </header>
+        </div>
+      </section>
 
-    <!-- Contextual Work Areas -->
-    <div class="clinical-content-grid mt-10">
-      <!-- Left: Clinical Findings Ledger -->
-      <section class="clinical-section lg:col-span-8">
-         <header class="section-toolbar mb-6">
-            <div class="flex flex-col">
-               <h3 class="text-lg font-black text-slate-900 tracking-tight">Validated Clinical Findings</h3>
-               <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Registry of AI-Assisted Interpretations</p>
-            </div>
-            <div class="px-4 py-1.5 bg-amber-50 rounded-full text-[9px] font-black text-amber-600 uppercase tracking-widest border border-amber-100">
-               {{ patient.active_diagnoses_list?.length || 0 }} Active Records
-            </div>
-         </header>
+      <!-- Grid Content -->
+      <div class="detail-grid">
+        
+        <!-- Findings Column (Master) -->
+        <div class="main-column">
+          <div class="clinical-section-header">
+            <h3 class="section-title">
+              <span class="material-symbols-outlined text-slate-400">assignment_ind</span>
+              Clinical Assertions
+            </h3>
+          </div>
 
-         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-4">
             @for (diagnosis of patient.active_diagnoses_list || []; track diagnosis.id) {
-               <div class="clinical-finding-card group animate-in slide-in-from-bottom-2 duration-300" [class.is-critical]="diagnosis.severity === 'high'">
-                  <div class="finding-accent"></div>
-                  <div class="finding-icon-box" [class]="diagnosis.severity === 'high' ? 'text-rose-600 bg-rose-50' : 'text-slate-400 bg-slate-100'">
-                     <span class="material-symbols-outlined text-xl">{{ diagnosis.severity === 'high' ? 'emergency' : 'fact_check' }}</span>
+              <div class="clinical-list-item">
+                <div class="finding-icon-box"
+                     [ngClass]="diagnosis.severity === 'high' ? 'border-rose-100 bg-rose-50 text-rose-500' : 'border-slate-100 bg-slate-50 text-slate-400'">
+                  <span class="material-symbols-outlined text-2xl">
+                    {{ diagnosis.severity === 'high' ? 'warning' : 'stethoscope' }}
+                  </span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <h4 class="font-black text-slate-900 text-lg tracking-tight truncate">{{ diagnosis.final_finding }}</h4>
+                      <div class="flex items-center gap-2 mt-0.5">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-primary px-2 py-0.5 bg-primary/5 rounded">AI Assisted Analysis</span>
+                      </div>
+                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">
+                      {{ diagnosis.validated_at | date:'MMM dd, yyyy' }}
+                    </span>
                   </div>
-                  <div class="flex-1">
-                     <h4 class="text-sm font-extrabold text-slate-900 mb-1 group-hover:text-primary transition-colors">{{ diagnosis.final_finding }}</h4>
-                     <p class="text-[11px] text-slate-500 leading-relaxed font-medium">{{ diagnosis.clinical_notes || 'No accompanying observations documented for this interpretation.' }}</p>
-                     <div class="mt-4 flex items-center justify-between">
-                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">{{ diagnosis.validated_at | date:'dd MMM yyyy • HH:mm' }}</span>
-                        @if (diagnosis.severity === 'high') {
-                           <div class="text-[8px] font-black text-rose-600 uppercase tracking-widest animate-pulse">Critical Priority</div>
-                        }
-                     </div>
-                  </div>
-               </div>
+                  <p class="text-sm text-slate-500 mt-3 leading-relaxed">
+                    {{ diagnosis.clinical_notes || 'No extensive notes provided for this clinical finding calculation.' }}
+                  </p>
+                </div>
+              </div>
             } @empty {
-               <div class="col-span-2 py-24 text-center bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem] flex flex-col items-center gap-4">
-                  <div class="size-20 rounded-full bg-slate-200/50 flex items-center justify-center text-slate-400">
-                     <span class="material-symbols-outlined text-5xl">inventory_2</span>
-                  </div>
-                  <h4 class="text-lg font-black text-slate-900 tracking-tight">Zero Finding History</h4>
-                  <p class="text-sm text-slate-500 font-medium max-w-xs mx-auto">The clinical finding repository currently holds no validated records for this subject ID.</p>
-               </div>
+              <app-empty-state
+                icon="folder_off"
+                title="No active assertions"
+                description="Final clinical findings will appear here after validation."
+              ></app-empty-state>
             }
-         </div>
-      </section>
+          </div>
+        </div>
 
-      <!-- Right: PACS Repository Index -->
-      <section class="clinical-section lg:col-span-4">
-         <header class="section-toolbar mb-6">
-            <div class="flex flex-col">
-               <h3 class="text-lg font-black text-slate-900 tracking-tight">PACS Registry</h3>
-               <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Digital Imaging Archives</p>
-            </div>
-         </header>
+        <!-- Studies Column (Detail) -->
+        <div class="side-column">
+          <div class="clinical-section-header">
+            <h3 class="section-title">
+              <span class="material-symbols-outlined text-slate-400">biotech</span>
+              Imaging Studies
+            </h3>
+            <button class="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors">History</button>
+          </div>
 
-         <div class="flex flex-col gap-3">
+          <div class="space-y-5">
             @for (scan of patient.recent_scans || []; track scan.id) {
-               <div class="pacs-mini-card group animate-in slide-in-from-right-4 duration-300">
-                  <div class="flex gap-4 items-center">
-                     <div class="size-14 rounded-2xl bg-slate-900 flex items-center justify-center shadow-lg group-hover:bg-primary transition-all overflow-hidden relative">
-                        <div class="absolute inset-0 opacity-20 bg-gradient-to-br from-white/30 to-transparent"></div>
-                        <span class="material-symbols-outlined text-white/50 group-hover:text-white transition-all text-2xl relative z-10">radiology</span>
-                     </div>
-                     <div class="flex-1 min-w-0">
-                        <h5 class="text-xs font-black text-slate-900 uppercase tracking-widest mb-0.5">{{ scan.modality }} Study</h5>
-                        <p class="text-[9px] text-slate-400 font-mono tracking-tight">BATCH_REF#{{ scan.id?.substring(0, 8) | uppercase }}</p>
-                        <div class="mt-2 status-glossy !px-3 !py-1 !text-[8px]" [class.status-validated]="scan.status === 'validated'" [class.status-pending]="scan.status !== 'validated'">
-                           <div class="glow-orb"></div>
-                           {{ scan.status | uppercase }}
-                        </div>
-                     </div>
+              <div class="study-card">
+                <div class="flex items-center gap-4">
+                  <div class="size-14 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 text-xs font-black">
+                    {{ scan.modality }}
                   </div>
-                  <div class="flex gap-2 mt-4 pt-4 border-t border-slate-50">
-                     <button (click)="viewScan(scan.id)" class="action-btn-pax !bg-transparent !border-slate-200 !text-slate-500 hover:!bg-primary hover:!text-white hover:!border-primary flex-1 !text-[8px]">
-                        EXPLORE ARCHIVE
-                     </button>
-                     <button (click)="downloadScanReport(scan.id)" class="action-btn-pax !bg-transparent !border-slate-200 !text-slate-500 hover:!bg-slate-900 hover:!text-white hover:!border-slate-900 p-2">
-                        <span class="material-symbols-outlined text-sm">print</span>
-                     </button>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-black text-slate-900">{{ scan.modality }} Exploration</p>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
+                      {{ scan.uploaded_at | date:'MMM dd, yyyy' }}
+                    </p>
                   </div>
-               </div>
+                </div>
+                
+                <div class="flex gap-2">
+                  <button (click)="viewScan(scan.id)" class="btn-primary-clinical flex-1">
+                    <span class="material-symbols-outlined text-sm">visibility</span> View Study
+                  </button>
+                  <button (click)="downloadScanReport(scan.id)" class="btn-secondary-clinical flex-1">
+                    <span class="material-symbols-outlined text-sm">download</span> Report
+                  </button>
+                </div>
+              </div>
             } @empty {
-               <div class="py-20 text-center bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem]">
-                  <span class="material-symbols-outlined text-slate-300 text-5xl mb-4">cloud_off</span>
-                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Repository Isolated</p>
-               </div>
+              <div class="p-12 text-center bg-white rounded-3xl border border-slate-200 border-dashed">
+                <p class="text-sm text-slate-400 font-medium italic">No imaging data recorded</p>
+              </div>
             }
-         </div>
-      </section>
+          </div>
+        </div>
+
+      </div>
     </div>
   }
-</div>
+</main>

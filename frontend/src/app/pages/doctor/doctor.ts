@@ -8,17 +8,20 @@ import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 import { PatientService, Patient } from '../../services/patientService';
 import { ReportService, ReportApiItem } from '../../services/reportService';
+import { WorklistTable, WorklistItem } from '../../components/worklist-table/worklist-table';
 
 @Component({
   selector: 'app-doctor',
   standalone: true,
-  imports: [CommonModule, RouterModule, WelcomeSection, StatsSummary, ReportCard],
+  imports: [CommonModule, RouterModule, WelcomeSection, StatsSummary, ReportCard, WorklistTable],
   templateUrl: './doctor.html',
   styleUrl: './doctor.css',
 })
 export class Doctor {
   private patientService = inject(PatientService);
   private reportService = inject(ReportService);
+
+  tableColumns: string[] = ['Patient', 'Reference', 'Demographics', 'Last Sync', 'Details'];
 
   // ── Queries ──────────────────────────────────────────────────────
   patientsQuery = injectQuery(() => ({
@@ -70,10 +73,39 @@ export class Doctor {
     ];
   });
 
-  // ── Recent patients ───────────────────────────────────────────────
-  recentPatients = computed<Patient[]>(() => {
+  // ── Admissions Table Data ─────────────────────────────────────────
+  worklistData = computed<WorklistItem[]>(() => {
     const data: any = this.patientsQuery.data();
-    return data?.results ?? [];
+    const results = data?.results ?? [];
+    
+    return results.map((patient: Patient) => {
+      const initials = this.getInitials(patient.first_name, patient.last_name);
+      const name = `${patient.first_name} ${patient.last_name}`;
+      const age = this.calculateAge(patient.date_of_birth);
+      const gender = patient.gender === 'M' ? 'M' : (patient.gender === 'F' ? 'F' : 'O');
+      const createdAt = new Date(patient.created_at || new Date());
+      
+      return {
+        id: patient.id || 'N/A',
+        patient: {
+          initials,
+          name,
+          id: (patient.id || 'N/A').substring(0, 8).toUpperCase(),
+          isEmergency: false
+        },
+        modality: `REF-${(patient.id?.substring(0, 6) || 'NA').toUpperCase()}`,
+        uploadDate: {
+          time: createdAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+          date: createdAt.toLocaleDateString([], {month: 'short', day: 'numeric'})
+        },
+        aiStatus: `${gender} • ${age}Y`,
+        action: {
+          type: 'view',
+          text: 'Open File',
+          link: ['/dashboard/patient-detail', patient.id]
+        }
+      };
+    });
   });
 
   // ── Recent reports mapped to ReportCard format ────────────────────
@@ -95,11 +127,11 @@ export class Doctor {
     }));
   });
 
-  getInitials(firstName: string, lastName: string): string {
+  private getInitials(firstName: string, lastName: string): string {
     return `${firstName?.charAt(0) ?? ''}${lastName?.charAt(0) ?? ''}`.toUpperCase() || 'P';
   }
 
-  calculateAge(dob: string | undefined): number | string {
+  private calculateAge(dob: string | undefined): number | string {
     if (!dob) return 'N/A';
     const today = new Date();
     const birth = new Date(dob);

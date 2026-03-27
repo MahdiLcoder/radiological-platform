@@ -1,42 +1,68 @@
 @reference "../../../styles.css";
-.patient-detail-container {
-  @apply flex flex-col max-w-[1400px] mx-auto;
+
+.patient-detail-layout {
+  @apply w-full p-10 space-y-12 bg-slate-50/50;
 }
 
-
-/* Content Grid Layout */
-.clinical-content-grid {
-  @apply grid grid-cols-1 lg:grid-cols-12 gap-8;
+/* Professional Clinical Header */
+.clinical-profile-header {
+  @apply relative overflow-hidden rounded-3xl bg-white border border-slate-200 p-10 shadow-sm transition-all;
 }
 
-/* Local Component Styling */
-
-.clinical-finding-card {
-  @apply relative flex gap-5 p-6 bg-white border border-slate-200 rounded-3xl shadow-sm transition-all overflow-hidden hover:shadow-md hover:translate-x-1;
+.clinical-section-header {
+  @apply flex items-center justify-between mb-8 px-2 border-b border-slate-100 pb-4;
 }
 
-.clinical-finding-card.is-critical {
-  @apply border-rose-100 bg-rose-50/10;
+.section-title {
+  @apply text-xl font-black text-slate-900 flex items-center gap-3 tracking-tight;
 }
 
-.finding-accent {
-  @apply absolute top-0 left-0 bottom-0 w-1 opacity-20;
+.detail-grid {
+  @apply grid grid-cols-1 lg:grid-cols-12 gap-10;
 }
 
-.is-critical .finding-accent { @apply bg-rose-500 opacity-100; }
+.main-column {
+  @apply lg:col-span-8 space-y-8;
+}
+
+.side-column {
+  @apply lg:col-span-4 space-y-8;
+}
+
+/* Human-Centric Card Designs */
+.clinical-list-item {
+  @apply flex items-center gap-6 p-6 bg-white border border-slate-200 rounded-2xl shadow-sm transition-all hover:border-primary/30 hover:shadow-md;
+}
 
 .finding-icon-box {
-  @apply size-10 rounded-xl flex items-center justify-center border border-slate-100 shadow-inner flex-shrink-0;
+  @apply size-12 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 border border-slate-100 text-slate-400 font-black;
 }
 
-/* PACS Mini Card Index */
-.pacs-mini-card {
-  @apply flex flex-col p-6 bg-white border border-slate-200 rounded-3xl shadow-sm transition-all hover:border-primary/20 hover:shadow-md;
+.study-card {
+  @apply flex flex-col gap-5 p-6 bg-white border border-slate-200 rounded-2xl shadow-sm transition-all hover:bg-slate-50/50;
 }
 
-
-.step-btn {
-  @apply size-10 rounded-xl bg-white border border-slate-200 text-slate-400 flex items-center justify-center transition-all;
+.stats-container {
+  @apply grid grid-cols-1 md:grid-cols-4 gap-10 mt-10 pt-10 border-t border-slate-100;
 }
 
-/* Global Class Overrides (from styles.css tokens if needed) */
+.stat-item {
+  @apply flex flex-col gap-1.5;
+}
+
+.stat-label {
+  @apply text-[11px] font-black text-slate-400 uppercase tracking-widest;
+}
+
+.stat-value {
+  @apply text-base font-bold text-slate-800 tracking-tight;
+}
+
+/* Action Button Overrides */
+.btn-primary-clinical {
+  @apply flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-[11px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 transition-all hover:brightness-110 active:scale-95;
+}
+
+.btn-secondary-clinical {
+  @apply flex items-center justify-center gap-2 px-5 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all hover:bg-slate-200 active:scale-95;
+}

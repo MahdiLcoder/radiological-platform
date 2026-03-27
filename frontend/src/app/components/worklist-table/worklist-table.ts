@@ -1,6 +1,5 @@
 import { Component, input, output } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { CommonModule, LowerCasePipe, SlicePipe } from '@angular/common';
 
 export interface WorklistItem {
   id: string;
@@ -19,14 +18,14 @@ export interface WorklistItem {
   action: {
     type: 'analyze' | 'view' | 'critical';
     text: string;
+    link?: any[];
   };
 }
-
 
 @Component({
   selector: 'app-worklist-table',
   standalone: true,
-  imports: [CommonModule, RouterModule, LowerCasePipe, SlicePipe],
+  imports: [RouterModule],
   templateUrl: './worklist-table.html',
   styleUrl: './worklist-table.css',
 })

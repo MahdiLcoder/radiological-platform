@@ -13,6 +13,7 @@
   flex-direction: column;
   min-width: 0;
   overflow: hidden;
+  margin-left: 18rem; /* offset for the fixed sidebar (w-72) */
 }
 
 .page-container {

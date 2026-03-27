@@ -1,125 +1,126 @@
-<div class="clinical-list-container animate-in fade-in zoom-in-95 duration-500">
-  <!-- List Header (Desktop only) -->
-  <div class="list-header hidden md:flex items-center px-6 py-3 border-b border-slate-100 mb-2">
-    @for (col of columns(); track col; let last = $last) {
-      <div 
-        [class.flex-1]="!last" 
-        [class.w-40]="last"
-        [class.text-right]="last"
-        class="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-2"
-      >
-        {{ col }}
-      </div>
-    }
+<div class="bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-black/[0.02] overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-700">
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-slate-50/50 border-b border-slate-100">
+          @for (col of columns(); track col; let last = $last) {
+            <th
+              class="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 {{ last ? 'text-right' : '' }}"
+            >
+              {{ col }}
+            </th>
+          }
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-50">
+              @for (item of data(); track item.id) {
+                <tr 
+                  class="group transition-all duration-300 {{ item.patient.isEmergency ? 'bg-rose-50/30' : 'hover:bg-slate-50/50' }}"
+                >
+                  <td class="px-8 py-6">
+                    <div class="flex items-center gap-4">
+                      <div
+                        class="h-10 w-10 rounded-2xl flex items-center justify-center font-black text-xs bg-slate-100 text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-colors duration-300"
+                      >
+                        {{ item.patient.initials }}
+                      </div>
+                      <div class="flex flex-col">
+                        <div class="flex items-center gap-2">
+                          <a 
+                            [routerLink]="item.action.link || ['/dashboard/aivalidation', item.id]"
+                            class="text-sm font-black text-slate-900 leading-none group-hover:text-primary transition-colors cursor-pointer"
+                          >
+                            {{ item.patient.name }}
+                          </a>
+                          @if (item.patient.isEmergency) {
+                            <div class="flex items-center gap-1 px-1.5 py-0.5 rounded bg-rose-500 text-[8px] font-black text-white uppercase tracking-tighter">
+                               <span class="material-symbols-outlined text-[10px]">emergency</span>
+                               Stat
+                            </div>
+                          }
+                        </div>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1.5 opacity-60">
+                          Registry ID: {{ item.patient.id }}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-8 py-6">
+                    <span
+                      class="inline-flex items-center rounded-xl px-3 py-1.5 text-[10px] font-black ring-1 ring-inset uppercase tracking-widest {{ getModalityClass(item.modality) }}"
+                    >
+                      {{ item.modality }}
+                    </span>
+                  </td>
+                  <td class="px-8 py-6">
+                    <div class="flex flex-col">
+                      <p class="text-xs font-black text-slate-700 tracking-tight">{{ item.uploadDate.time }}</p>
+                      <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-0.5">{{ item.uploadDate.date }}</p>
+                    </div>
+                  </td>
+                  <td class="px-8 py-6">
+                    <span
+                      class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[9px] font-black ring-1 ring-inset {{ getStatusBadgeClass(item.aiStatus) }}"
+                    >
+                      <span class="h-1.5 w-1.5 rounded-full {{ getStatusDotClass(item.aiStatus) }}"></span>
+                      {{ item.aiStatus }}
+                    </span>
+                  </td>
+                  <td class="px-8 py-6 text-right">
+                    <div class="flex justify-end">
+                      @if (item.action.type === 'analyze') {
+                        <button [routerLink]="item.action.link || ['/dashboard/aivalidation', item.id]" class="group/btn flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all duration-300 shadow-lg shadow-primary/20 hover:shadow-slate-900/20">
+                          {{ item.action.text }}
+                          <span class="material-symbols-outlined text-sm transition-transform group-hover/btn:translate-x-1">arrow_forward</span>
+                        </button>
+                      } @else if (item.action.type === 'view') {
+                        <button [routerLink]="item.action.link || ['/dashboard/aivalidation', item.id]" class="px-5 py-2.5 bg-slate-50 hover:bg-slate-900 text-slate-500 hover:text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border border-slate-100">
+                          {{ item.action.text }}
+                        </button>
+                      } @else if (item.action.type === 'critical') {
+                        <button [routerLink]="item.action.link || ['/dashboard/aivalidation', item.id]" class="px-5 py-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 shadow-lg shadow-rose-500/20">
+                          {{ item.action.text }}
+                        </button>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5" class="px-8 py-20 text-center text-slate-500">
+                    <div class="flex flex-col items-center gap-4 opacity-40">
+                      <span class="material-symbols-outlined text-5xl">inventory_2</span>
+                      <p class="text-xs font-black uppercase tracking-[0.2em]">Clinical Ledger Empty</p>
+                    </div>
+                  </td>
+                </tr>
+              }
+      </tbody>
+    </table>
   </div>
-
-  <!-- List Items -->
-  <div class="list-body flex flex-col gap-3">
-    @for (item of data(); track item.id) {
-      <div 
-        class="clinical-row-card group animate-in slide-in-from-bottom-2 duration-300"
-        [class.is-emergency]="item.patient.isEmergency"
-      >
-        <!-- Patient Column -->
-        <div class="column-patient flex-1 flex items-center gap-4">
-          <div class="patient-avatar-box">
-             <div class="avatar-ring"></div>
-             <span class="initials">{{ item.patient.initials }}</span>
-          </div>
-          <div class="patient-details">
-             <div class="flex items-center gap-2">
-                <h4 class="name text-sm font-extrabold text-slate-900 group-hover:text-primary transition-colors">{{ item.patient.name }}</h4>
-                @if (item.patient.isEmergency) {
-                   <div class="emergency-blip"></div>
-                }
-             </div>
-             <p class="mrn font-mono text-[10px] text-slate-400">MRN: {{ item.patient.id }}</p>
-          </div>
-        </div>
-
-        <!-- Modality Column -->
-        <div class="column-modality flex-1 flex items-center">
-           <div class="modality-pill" [class]="'variant-' + (item.modality | lowercase | slice:0:3)">
-              <span class="material-symbols-outlined text-sm">radiology</span>
-              {{ item.modality }}
-           </div>
-        </div>
-
-        <!-- Timeline Column -->
-        <div class="column-timeline flex-1 flex flex-col justify-center">
-           <div class="flex items-center gap-2 text-slate-600 font-bold text-xs">
-              <span class="material-symbols-outlined text-[16px] text-slate-300">schedule</span>
-              {{ item.uploadDate.time }}
-           </div>
-           <p class="text-[10px] text-slate-400 font-medium pl-[22px]">{{ item.uploadDate.date }}</p>
-        </div>
-
-        <!-- Status Column -->
-        <div class="column-status flex-1 flex items-center">
-           <div class="status-glossy" [class]="getStatusBadgeClass(item.aiStatus)">
-              <div class="glow-orb"></div>
-              {{ item.aiStatus }}
-           </div>
-        </div>
-
-        <!-- Actions Column -->
-        <div class="column-actions w-40 flex justify-end items-center gap-2">
-           @if (item.action.type === 'analyze') {
-             <button [routerLink]="['/dashboard/aivalidation', item.id]" class="action-btn-premium btn-primary">
-                {{ item.action.text }}
-                <span class="material-symbols-outlined">auto_awesome</span>
-             </button>
-           } @else if (item.action.type === 'view') {
-             <button [routerLink]="['/dashboard/aivalidation', item.id]" class="action-btn-premium btn-outline">
-                {{ item.action.text }}
-                <span class="material-symbols-outlined">visibility</span>
-             </button>
-           } @else if (item.action.type === 'critical') {
-             <button [routerLink]="['/dashboard/aivalidation', item.id]" class="action-btn-premium btn-danger">
-                {{ item.action.text }}
-                <span class="material-symbols-outlined">emergency_home</span>
-             </button>
-           }
-        </div>
-      </div>
-    } @empty {
-      <div class="empty-clinical-state animate-in fade-in duration-500">
-         <div class="empty-icon-wrapper">
-            <span class="material-symbols-outlined">clinical_notes</span>
-         </div>
-         <h4 class="text-lg font-bold text-slate-900">Zero Clinical Matches</h4>
-         <p class="text-sm text-slate-500 max-w-xs mx-auto">The imaging repository found no studies matching your query.</p>
-      </div>
-    }
-  </div>
-
   @if (!hideFooter()) {
-    <footer class="clinical-list-footer mt-6">
-      <div class="registry-stats text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-         Index Registry: <span class="text-slate-800">{{ data().length }}</span> Results
-      </div>
-      
-      <div class="pagination-stepper flex items-center gap-4">
-        <button 
-          class="step-btn" 
+    <div
+      class="px-8 py-5 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between"
+    >
+      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+        Registry Ledger: <span class="text-slate-900 font-black">{{ data().length }}</span> {{ totalItems() !== undefined ? 'of ' + totalItems() : '' }} records mapped
+      </p>
+      <div class="flex gap-3">
+        <button
+          class="size-9 rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-primary hover:border-primary/30 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-all"
           [disabled]="currentPage() === 1 || !currentPage()"
           (click)="prevPage.emit()"
         >
-          <span class="material-symbols-outlined">arrow_back</span>
+          <span class="material-symbols-outlined text-lg">chevron_left</span>
         </button>
-        
-        <div class="page-token">
-           {{ currentPage() }} / {{ totalPages() || 1 }}
-        </div>
-
-        <button 
-          class="step-btn" 
+        <button
+          class="size-9 rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-primary hover:border-primary/30 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-all"
           [disabled]="currentPage() === totalPages() || !currentPage()"
           (click)="nextPage.emit()"
         >
-          <span class="material-symbols-outlined">arrow_forward</span>
+          <span class="material-symbols-outlined text-lg">chevron_right</span>
         </button>
       </div>
-    </footer>
+    </div>
   }
 </div>
