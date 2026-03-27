@@ -27,34 +27,61 @@ export class Admin {
     return {
       tooltip: {
         trigger: 'axis',
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        borderWidth: 0,
-        textStyle: { color: '#1e293b' },
-        extraCssText: 'shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);'
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        borderColor: '#e2e8f0',
+        borderWidth: 1,
+        textStyle: { color: '#0f172a', fontSize: 12, fontWeight: 'bold' },
+        padding: [10, 15],
+        borderRadius: 8,
+        shadowBlur: 10,
+        shadowColor: 'rgba(0, 0, 0, 0.05)',
+        axisPointer: { type: 'shadow', shadowStyle: { color: 'rgba(30, 64, 175, 0.03)' } }
       },
-      grid: { left: '3%', right: '4%', bottom: '3%', top: '10%', containLabel: true },
+      grid: { left: '3%', right: '4%', bottom: '3%', top: '15%', containLabel: true },
       xAxis: {
         type: 'category',
         data: data.map((d: any) => d.date.split('-').slice(1).join('/')),
-        axisLine: { lineStyle: { color: '#94a3b8' } },
-        axisTick: { show: false }
+        axisLine: { lineStyle: { color: '#e2e8f0' } },
+        axisTick: { show: false },
+        axisLabel: { color: '#64748b', fontSize: 10, fontWeight: 'bold', margin: 15 }
       },
       yAxis: {
         type: 'value',
         axisLine: { show: false },
         axisTick: { show: false },
-        splitLine: { lineStyle: { type: 'dashed', color: '#e2e8f0' } }
+        splitLine: { lineStyle: { type: 'dashed', color: '#f1f5f9' } },
+        axisLabel: { color: '#94a3b8', fontSize: 10 }
       },
       series: [
         {
           name: 'Scans',
-          type: 'bar',
+          type: 'line',
+          smooth: true,
+          showSymbol: false,
           data: data.map((d: any) => d.count as number),
           itemStyle: {
-            color: '#3b82f6',
-            borderRadius: [4, 4, 0, 0]
+            color: '#1e40af',
           },
-          barWidth: '60%'
+          lineStyle: {
+            width: 3,
+            color: '#1e40af',
+            shadowBlur: 10,
+            shadowColor: 'rgba(30, 64, 175, 0.3)'
+          },
+          areaStyle: {
+            color: {
+              type: 'linear',
+              x: 0, y: 0, x2: 0, y2: 1,
+              colorStops: [
+                { offset: 0, color: 'rgba(30, 64, 175, 0.15)' },
+                { offset: 1, color: 'rgba(30, 64, 175, 0.01)' }
+              ]
+            }
+          },
+          emphasis: { 
+            scale: true,
+            lineStyle: { width: 4 }
+          }
         }
       ]
     };
@@ -63,16 +90,28 @@ export class Admin {
   modalityOptions = computed<EChartsOption>(() => {
     const dist = this.statsQuery.data()?.images?.by_modality || {};
     return {
-      tooltip: { trigger: 'item', backgroundColor: 'rgba(255, 255, 255, 0.9)', textStyle: { color: '#1e293b' } },
-      color: ['#0d9488', '#2563eb', '#8b5cf6', '#06b6d4'],
+      tooltip: { 
+        trigger: 'item', 
+        backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+        borderColor: '#e2e8f0',
+        borderWidth: 1,
+        borderRadius: 8,
+        textStyle: { color: '#0f172a', fontWeight: 'bold' },
+        padding: 12
+      },
+      color: ['#0d9488', '#1e40af', '#6366f1', '#06b6d4'],
       series: [
         {
           type: 'pie',
-          radius: ['40%', '70%'],
+          radius: ['55%', '85%'],
+          center: ['50%', '50%'],
           avoidLabelOverlap: false,
-          itemStyle: { borderRadius: 8, borderColor: '#fff', borderWidth: 2 },
+          itemStyle: { borderRadius: 10, borderColor: '#fff', borderWidth: 4 },
           label: { show: false },
-          emphasis: { label: { show: true, fontSize: 14, fontWeight: 'bold' } },
+          emphasis: { 
+            scale: true,
+            label: { show: true, fontSize: 16, fontWeight: 900, color: '#1e40af' } 
+          },
           data: Object.entries(dist).map(([name, value]) => ({ name, value: value as number }))
         }
       ]
@@ -88,18 +127,34 @@ export class Admin {
       'pending': 'Pending'
     };
     return {
-      tooltip: { trigger: 'item' },
-      color: ['#10b981', '#3b82f6', '#ef4444', '#f59e0b'],
+      tooltip: { 
+        trigger: 'item',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        borderRadius: 8,
+        textStyle: { color: '#0f172a', fontWeight: 'bold' }
+      },
+      color: ['#10b981', '#1e40af', '#ef4444', '#f59e0b'],
+      legend: {
+        bottom: '0%',
+        left: 'center',
+        icon: 'circle',
+        itemWidth: 8,
+        itemHeight: 8,
+        textStyle: { color: '#64748b', fontSize: 10, fontWeight: 'bold' }
+      },
       series: [
         {
           type: 'pie',
-          radius: '70%',
+          radius: ['40%', '70%'],
+          center: ['50%', '45%'],
+          itemStyle: { borderRadius: 8, borderColor: '#fff', borderWidth: 2 },
           data: Object.entries(dist).map(([name, value]) => ({ 
             name: labels[name] || name, 
             value: value as number 
           })),
+          label: { show: false },
           emphasis: {
-            itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0, 0, 0, 0.5)' }
+            itemStyle: { shadowBlur: 15, shadowOffsetX: 0, shadowColor: 'rgba(0, 0, 0, 0.1)' }
           }
         }
       ]
@@ -118,20 +173,30 @@ export class Admin {
           max: 100,
           splitNumber: 5,
           radius: '100%',
-          center: ['50%', '70%'],
-          progress: { show: true, width: 12, itemStyle: { color: '#3b82f6' } },
+          center: ['50%', '75%'],
+          progress: { 
+            show: true, 
+            width: 14, 
+            itemStyle: { 
+              color: {
+                type: 'linear',
+                x: 0, y: 0, x2: 1, y2: 0,
+                colorStops: [{ offset: 0, color: '#3b82f6' }, { offset: 1, color: '#1e40af' }]
+              }
+            } 
+          },
           pointer: { show: false },
-          axisLine: { lineStyle: { width: 12, color: [[1, '#e2e8f0']] } },
+          axisLine: { lineStyle: { width: 14, color: [[1, '#f1f5f9']] } },
           axisTick: { show: false },
           splitLine: { show: false },
           axisLabel: { show: false },
           detail: {
             valueAnimation: true,
             formatter: '{value}%',
-            fontSize: 24,
-            fontWeight: 'bold',
-            offsetCenter: [0, -10],
-            color: '#1e293b'
+            fontSize: 28,
+            fontWeight: 900,
+            offsetCenter: [0, -5],
+            color: '#1e40af'
           },
           data: [{ value: parseFloat(avg.toFixed(1)) }]
         }
@@ -142,9 +207,10 @@ export class Admin {
 
   getModalityColor(modality: string): string {
     const colors: Record<string, string> = {
-      'X-Ray': 'bg-teal-500',
-      'CT': 'bg-blue-600',
-      'MRI': 'bg-violet-500'
+      'X-Ray': 'bg-[#0d9488]',
+      'CT': 'bg-[#1e40af]',
+      'MRI': 'bg-[#6366f1]',
+      'CT Scan': 'bg-[#1e40af]'
     };
     return colors[modality] || 'bg-slate-400';
   }
