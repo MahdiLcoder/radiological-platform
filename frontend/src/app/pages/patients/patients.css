@@ -1,0 +1,39 @@
+.patients-page {
+  @apply flex flex-col max-width-[1400px] mx-auto;
+}
+
+.header-search-box {
+  @apply relative;
+}
+
+
+.filter-tabs-pills {
+  @apply flex gap-2 p-1 bg-slate-100 rounded-2xl;
+}
+
+.tab-pill {
+  @apply flex items-center gap-2 px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all hover:text-slate-700;
+}
+
+.tab-pill.is-active {
+  @apply bg-white text-primary shadow-sm shadow-black/[0.03];
+}
+
+.clinical-list-area {
+  @apply flex flex-col gap-4;
+}
+
+
+
+/* Pagination Styles */
+.clinical-pager {
+  @apply flex items-center justify-between;
+}
+
+.step-btn {
+  @apply size-10 rounded-xl bg-white border border-slate-200 text-slate-400 flex items-center justify-center transition-all hover:bg-primary hover:text-white hover:border-primary disabled:opacity-30 disabled:pointer-events-none;
+}
+
+.page-indicator {
+  @apply px-5 py-2.5 bg-slate-100 rounded-xl text-[9px] font-black text-slate-900 uppercase tracking-widest;
+}

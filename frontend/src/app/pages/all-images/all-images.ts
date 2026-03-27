@@ -8,10 +8,12 @@ import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 import { AnalysisService } from '../../services/analysisService';
 
+import { WelcomeSection } from '../../components/welcome-section/welcome-section';
+
 @Component({
   selector: 'app-all-images',
   standalone: true,
-  imports: [WorklistTable, RouterModule, FormsModule, LoadingStateComponent, ErrorStateComponent],
+  imports: [WorklistTable, RouterModule, FormsModule, LoadingStateComponent, ErrorStateComponent, WelcomeSection],
   templateUrl: './all-images.html',
   styleUrl: './all-images.css',
 })

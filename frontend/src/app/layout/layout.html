@@ -1,11 +1,15 @@
-<div class="app-shell flex h-screen w-full overflow-hidden bg-[var(--color-background-light)] text-slate-900">
-  <app-sidebar class="shrink-0"></app-sidebar>
+<div class="app-shell">
+  <!-- Global Sidebar -->
+  <app-sidebar></app-sidebar>
 
-  <div class="main flex flex-1 flex-col overflow-hidden min-w-0">
-    <app-header class="shrink-0"></app-header>
+  <!-- Main Viewport -->
+  <div class="main-content">
+    <!-- Global Header -->
+    <app-header></app-header>
 
-    <main class="content flex-1 overflow-y-auto overflow-x-hidden p-6">
-      <router-outlet></router-outlet> 
+    <!-- Page Content -->
+    <main class="page-container">
+      <router-outlet></router-outlet>
     </main>
   </div>
 </div>

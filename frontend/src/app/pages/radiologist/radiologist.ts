@@ -27,6 +27,11 @@ export class Radiologist {
     queryFn: () => lastValueFrom(this.analysisService.getAllImages({ page_size: 5 })),
   }));
 
+  findingsQuery = injectQuery(() => ({
+    queryKey: ['recent_findings_feed'],
+    queryFn: () => lastValueFrom(this.analysisService.getAllFindings({ page_size: 5 })),
+  }));
+
   summaryStats = computed<StatItem[]>(() => {
     const rawData: any = this.imagesQuery.data();
     const stats = rawData?.stats || { pending: 0, analyzed: 0, total: 0 };

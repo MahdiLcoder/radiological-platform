@@ -1,27 +1,30 @@
 :host {
-  display: block;
+  @apply sticky top-0 left-0 right-0 z-40;
 }
 
-.header-host {
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 2rem;
-  z-index: 10;
+.header-main-h-16 {
+  @apply h-16 bg-white/80 backdrop-blur-md border-b border-slate-100 transition-all;
 }
 
-.material-symbols-outlined {
-  font-family: 'Material Symbols Outlined';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  direction: ltr;
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-  -webkit-font-smoothing: antialiased;
+/* Clinical System Status Pill */
+.clinical-system-status {
+  @apply flex items-center gap-2 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-full;
+}
+
+.status-orb-pulse {
+  @apply size-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.4)];
+}
+
+/* Tool Buttons Premium */
+.tool-btn-premium {
+  @apply relative size-10 flex items-center justify-center rounded-xl bg-white border border-slate-100 text-slate-400 transition-all hover:bg-primary/5 hover:text-primary hover:border-primary/20 hover:shadow-sm;
+}
+
+.notification-blip {
+  @apply absolute top-2 right-2 size-2 bg-rose-500 rounded-full border-2 border-white;
+}
+
+/* Header Professional Identity */
+.header-professional-info {
+  @apply select-none;
 }

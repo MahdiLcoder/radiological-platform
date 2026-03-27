@@ -1,1 +1,36 @@
-/* Doctor dashboard — no extra styles needed; Tailwind handles everything */
+.dashboard-sections {
+  @apply flex flex-col max-width-[1400px] mx-auto;
+}
+
+.metrics-area {
+  @apply mt-[-1rem]; /* Tighten spacing with welcome-section */
+}
+
+.dashboard-main-grid {
+  @apply grid grid-cols-1 lg:grid-cols-12 gap-8;
+}
+
+.diagnostic-cards-section {
+  @apply lg:col-span-8;
+}
+
+.clinical-list-section {
+  @apply lg:col-span-4;
+}
+
+.reports-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 gap-6;
+}
+
+.section-toolbar {
+  @apply flex items-end justify-between px-2;
+}
+
+.action-link-btn {
+  @apply flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-widest px-4 py-2 rounded-xl bg-primary/5 border border-primary/10 hover:bg-primary/10 transition-all;
+}
+
+/* Compact Card for Dashboard Admissions */
+.clinical-compact-card {
+  @apply p-4 bg-white border border-slate-200 rounded-[1.5rem] shadow-sm transition-all hover:border-primary/20 hover:shadow-md hover:translate-x-1;
+}

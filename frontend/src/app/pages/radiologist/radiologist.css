@@ -1,0 +1,37 @@
+.radiologist-dashboard {
+  @apply flex flex-col max-width-[1400px] mx-auto;
+}
+
+.metrics-area {
+  @apply mt-[-1rem]; /* Tighten spacing with welcome-section */
+}
+
+.dashboard-main-grid {
+  @apply grid grid-cols-1 lg:grid-cols-12 gap-8;
+}
+
+.worklist-container {
+  @apply lg:col-span-8;
+}
+
+.sidebar-container {
+  @apply lg:col-span-4 flex flex-col gap-8;
+}
+
+.section-toolbar {
+  @apply flex items-end justify-between px-2;
+}
+
+.action-link-btn {
+  @apply flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-widest px-4 py-2 rounded-xl bg-primary/5 border border-primary/10 hover:bg-primary/10 transition-all;
+}
+
+/* Activity Card Styles */
+.activity-card {
+  @apply p-3 bg-white border border-slate-100 rounded-2xl transition-all hover:border-primary/20 hover:shadow-sm;
+}
+
+/* Ensure the chart area looks premium but fits the sidebar better */
+app-radiology-charts {
+  @apply w-full h-[300px] block;
+}

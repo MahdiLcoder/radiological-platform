@@ -1,6 +1,41 @@
-/* Patient Detail Styles */
-:host {
-  display: flex;
-  flex: 1;
-  height: 100%;
+.patient-detail-container {
+  @apply flex flex-col max-width-[1400px] mx-auto;
 }
+
+
+/* Content Grid Layout */
+.clinical-content-grid {
+  @apply grid grid-cols-1 lg:grid-cols-12 gap-8;
+}
+
+/* Local Component Styling */
+
+.clinical-finding-card {
+  @apply relative flex gap-5 p-6 bg-white border border-slate-200 rounded-3xl shadow-sm transition-all overflow-hidden hover:shadow-md hover:translate-x-1;
+}
+
+.clinical-finding-card.is-critical {
+  @apply border-rose-100 bg-rose-50/10;
+}
+
+.finding-accent {
+  @apply absolute top-0 left-0 bottom-0 w-1 opacity-20;
+}
+
+.is-critical .finding-accent { @apply bg-rose-500 opacity-100; }
+
+.finding-icon-box {
+  @apply size-10 rounded-xl flex items-center justify-center border border-slate-100 shadow-inner flex-shrink-0;
+}
+
+/* PACS Mini Card Index */
+.pacs-mini-card {
+  @apply flex flex-col p-6 bg-white border border-slate-200 rounded-3xl shadow-sm transition-all hover:border-primary/20 hover:shadow-md;
+}
+
+
+.step-btn {
+  @apply size-10 rounded-xl bg-white border border-slate-200 text-slate-400 flex items-center justify-center transition-all;
+}
+
+/* Global Class Overrides (from styles.css tokens if needed) */

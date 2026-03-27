@@ -8,10 +8,12 @@ import { FormsModule } from '@angular/forms';
 import { LoadingStateComponent } from '../../components/loading-state/loading-state';
 import { ErrorStateComponent } from '../../components/error-state/error-state';
 
+import { WelcomeSection } from '../../components/welcome-section/welcome-section';
+
 @Component({
   selector: 'app-edit-profile',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, LoadingStateComponent, ErrorStateComponent],
+  imports: [CommonModule, RouterLink, FormsModule, LoadingStateComponent, ErrorStateComponent, WelcomeSection],
   templateUrl: './edit-profile.html',
   styleUrl: './edit-profile.css'
 })

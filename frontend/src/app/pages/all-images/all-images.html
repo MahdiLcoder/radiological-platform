@@ -1,71 +1,90 @@
-<div class="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-    <div>
-      <h3 class="text-2xl font-extrabold tracking-tight text-slate-900">
-        All Imaging Scans
-      </h3>
-      <p class="text-slate-500 text-sm">
-        Complete history of all uploaded clinical imaging across the platform.
-      </p>
+<div class="all-images-page animate-in fade-in slide-in-from-bottom-4 duration-500">
+  <app-welcome-section
+    title="Clinical Imaging Archive"
+    subtitle="Comprehensive database of all radiological studies uploaded and processed by the system."
+    buttonText="Import Scan"
+    buttonIcon="cloud_upload"
+    buttonLink="/dashboard/upload"
+  >
+    <!-- Integrated Search in Welcome area -->
+    <div class="header-search-box group">
+       <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-xl">image_search</span>
+       <input
+         [ngModel]="searchQuery()"
+         (ngModelChange)="searchQuery.set($event); onFilterChange()"
+         class="h-10 bg-white/50 border border-slate-200 rounded-xl pl-10 pr-4 text-xs font-bold text-slate-700 outline-none transition-all placeholder:text-slate-400 focus:ring-4 focus:ring-primary/10 focus:border-primary w-64 lg:w-80"
+         placeholder="Search by Patient MRN, Name..."
+         type="text"
+       />
     </div>
-    <button
-      routerLink="/dashboard/upload"
-      class="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
-    >
-      <span class="material-symbols-outlined text-[20px]">add_circle</span>
-      Upload New Scan
+  </app-welcome-section>
+
+  <!-- Gallery Control Strip -->
+  <div class="filter-strip">
+    <div class="flex items-center gap-4">
+      <div class="filter-group">
+        <label class="compact-label">Modality Protocol</label>
+        <div class="select-box-premium">
+          <select
+            [ngModel]="selectedModality()"
+            (ngModelChange)="selectedModality.set($event); onFilterChange()"
+            class="premium-select"
+          >
+            <option value="">Archive: All Modalities</option>
+            <option value="X-Ray">X-Ray (Radiography)</option>
+            <option value="CT Scan">CT (Tomography)</option>
+            <option value="MRI">MRI (Magnetic Resonance)</option>
+          </select>
+          <span class="material-symbols-outlined select-arrow">expand_more</span>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label class="compact-label">Pipeline Status</label>
+        <div class="select-box-premium">
+          <select
+            [ngModel]="selectedStatus()"
+            (ngModelChange)="selectedStatus.set($event); onFilterChange()"
+            class="premium-select"
+          >
+            <option value="">Status: All Lifecycle</option>
+            <option value="Pending">Queue: Pending</option>
+            <option value="Analyzed">Pipeline: Analyzed</option>
+            <option value="Validated">Session: Validated</option>
+          </select>
+          <span class="material-symbols-outlined select-arrow">expand_more</span>
+        </div>
+      </div>
+    </div>
+
+    <button (click)="imagesQuery.refetch()" class="sync-btn-pax">
+       <span class="material-symbols-outlined">sync</span>
+       Refresh Archive Log
     </button>
   </div>
 
-  <!-- Filter Bar -->
-  <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-wrap gap-4 items-center shadow-sm">
-    <div class="flex-1 min-w-[240px] relative group">
-      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-xl">search</span>
-      <input
-        [ngModel]="searchQuery()"
-        (ngModelChange)="searchQuery.set($event); onFilterChange()"
-        class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 pl-10 pr-4 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
-        placeholder="Search by patient name, patient ID, or modality..."
-        type="text"
-      />
-    </div>
-    <div class="flex gap-2">
-      <select
-        [ngModel]="selectedModality()"
-        (ngModelChange)="selectedModality.set($event); onFilterChange()"
-        class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors text-slate-700 outline-none focus:border-primary cursor-pointer"
-      >
-        <option value="">All Modalities</option>
-        <option value="X-Ray">X-Ray</option>
-        <option value="CT Scan">CT Scan</option>
-        <option value="MRI">MRI</option>
-      </select>
-      <select
-        [ngModel]="selectedStatus()"
-        (ngModelChange)="selectedStatus.set($event); onFilterChange()"
-        class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors text-slate-700 outline-none focus:border-primary cursor-pointer"
-      >
-        <option value="">All Statuses</option>
-        <option value="Pending">Pending</option>
-        <option value="Analyzed">Analyzed</option>
-        <option value="Validated">Validated</option>
-      </select>
-    </div>
+  <div class="min-h-96 mt-6">
+    @if (imagesQuery.isPending()) {
+       <div class="p-32 flex flex-col items-center justify-center gap-4 bg-white/50 rounded-3xl border border-slate-100">
+          <div class="w-10 h-10 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div>
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">Accessing Secure Archive...</p>
+       </div>
+    } @else if (imagesQuery.isError()) {
+       <div class="p-20 text-center bg-rose-50/20 border border-dashed border-rose-200 rounded-3xl">
+          <span class="material-symbols-outlined text-rose-500 text-6xl mb-4">cloud_off</span>
+          <h3 class="text-xl font-extrabold text-slate-900 tracking-tight">Archive Offline</h3>
+          <button (click)="imagesQuery.refetch()" class="mt-8 action-btn-pax mx-auto">Retry Protocol</button>
+       </div>
+    } @else {
+      <app-worklist-table 
+        [columns]="tableColumns" 
+        [data]="worklistData()"
+        [totalItems]="totalItems()"
+        [currentPage]="currentPage()"
+        [totalPages]="totalPages()"
+        (prevPage)="prevPage()"
+        (nextPage)="nextPage()">
+      </app-worklist-table>
+    }
   </div>
-
-  @if (imagesQuery.isPending()) {
-    <app-loading-state message="Loading complete worklist..."></app-loading-state>
-  } @else if (imagesQuery.isError()) {
-    <app-error-state message="Failed to load scans" (retry)="imagesQuery.refetch()"></app-error-state>
-  } @else {
-    <app-worklist-table 
-      [columns]="tableColumns" 
-      [data]="worklistData()"
-      [totalItems]="totalItems()"
-      [currentPage]="currentPage()"
-      [totalPages]="totalPages()"
-      (prevPage)="prevPage()"
-      (nextPage)="nextPage()">
-    </app-worklist-table>
-  }
 </div>

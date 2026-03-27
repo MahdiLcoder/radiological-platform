@@ -3,36 +3,110 @@
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* Primary – teal #0891B2 */
-  --color-primary: #0891B2;
-  --color-primary-light: #22b5d8;
-  --color-primary-dark: #0e7490;
+  /* Medical Premium Palette */
+  --color-primary: #1e40af; /* Deep Medical Blue */
+  --color-primary-light: #3b82f6;
+  --color-primary-dark: #1e3a8a;
 
-  /* Secondary – slate #64748B */
-  --color-secondary: #64748B;
+  --color-secondary: #475569; /* Slate for text and secondary elements */
   --color-secondary-light: #94a3b8;
-  --color-secondary-dark: #475569;
+  --color-secondary-dark: #334155;
 
-  /* Tertiary – amber #BC7527 */
-  --color-tertiary: #BC7527;
-  --color-tertiary-light: #d4924a;
-  --color-tertiary-dark: #9a5f1e;
+  --color-accent: #0ea5e9; /* Light Blue for highlights */
+  
+  /* Neutral backgrounds - PACS inspired */
+  --color-background-light: #f1f5f9;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f8fafc;
+  --color-border-subtle: #e2e8f0;
+  
+  /* Status Colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-info: #3b82f6;
 
-  /* Neutral backgrounds */
-  --color-background-light: #F8FAFC;
-  --color-background-dark: #0f172a;
-  --color-charcoal: #1e293b;
-
-  --font-family-display: "Public Sans", "sans-serif";
-  --font-family-sans: "Public Sans", "sans-serif";
+  --font-family-display: "Inter", "Public Sans", "sans-serif";
+  --font-family-sans: "Inter", "Public Sans", "sans-serif";
+  
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
+
+@layer base {
+  body {
+    @apply bg-[var(--color-background-light)] text-[var(--color-secondary-dark)] antialiased font-sans;
+  }
+}
+
+/* --- Phase 2 Design Tokens (Globalized) --- */
+
+.clinical-hero-header {
+  @apply relative overflow-hidden rounded-[2.5rem] bg-white border border-slate-200 p-10 shadow-sm transition-all;
+}
+
+.hero-bg-accent {
+  @apply absolute inset-0 -z-10 pointer-events-none;
+  background: radial-gradient(circle at 70% 20%, var(--color-primary-light) 0%, transparent 60%);
+  opacity: 0.15;
+}
+
+.patient-profile-orb {
+  @apply relative size-24 rounded-[2rem] bg-primary/10 flex items-center justify-center border border-primary/20 shadow-inner;
+}
+
+.orb-ring {
+  @apply absolute inset-0 rounded-[2rem] border-2 border-primary/10 animate-[ping_3s_infinite] opacity-50;
+}
+
+.clinical-stat-chip {
+  @apply flex flex-col gap-1;
+}
+
+.stat-prefix { @apply text-[9px] font-black text-slate-400 uppercase tracking-widest pl-0.5; }
+.stat-value { @apply text-sm font-black text-slate-800 tracking-tight; }
+
+.clinical-row-card {
+  @apply flex items-center px-6 py-4 bg-white border border-slate-200 rounded-[1.25rem] shadow-sm transition-all hover:shadow-md hover:border-primary/20 hover:scale-[1.002];
+}
+
+.status-glossy {
+  @apply relative flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border overflow-hidden;
+}
+
+.status-validated { @apply bg-emerald-50 text-emerald-600 border-emerald-100; }
+.status-pending { @apply bg-amber-50 text-amber-600 border-amber-100; }
+.status-analyzed { @apply bg-primary/5 text-primary border-primary/10; }
+.glow-orb { @apply absolute -left-1 size-2 rounded-full blur-[2px] opacity-60; }
+.status-validated .glow-orb { @apply bg-emerald-400; }
+.status-pending .glow-orb { @apply bg-amber-400; }
+.section-toolbar {
+  @apply flex items-end justify-between px-2;
+}
+
+.filter-strip {
+  @apply flex items-end justify-between py-4 border-b border-slate-100;
+}
+
+.action-btn-pax {
+  @apply flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-xl shadow-primary/20 hover:brightness-110 disabled:opacity-50 disabled:pointer-events-none;
+}
+
+/* Legacy Support & General Cards */
+.medical-card {
+  @apply bg-white border border-[var(--color-border-subtle)] rounded-xl shadow-sm transition-all hover:shadow-md;
+}
+
+.status-badge {
+  @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border transition-all;
+}
+
+.badge-pending { @apply bg-amber-50 text-amber-600 border-amber-200; }
+.badge-validated { @apply bg-emerald-50 text-emerald-600 border-emerald-200; }
+.badge-processing { @apply bg-blue-50 text-blue-600 border-blue-200; }
 
 .medical-grid {
-  background-image: radial-gradient(circle at 2px 2px, rgba(8, 145, 178, 0.05) 1px, transparent 0);
-  background-size: 24px 24px;
-}
-
-.medical-gradient {
-  background: radial-gradient(circle at top right, rgba(8, 145, 178, 0.08), transparent),
-              radial-gradient(circle at bottom left, rgba(8, 145, 178, 0.03), transparent);
+  background-image: radial-gradient(circle at 2px 2px, rgba(30, 64, 175, 0.03) 1px, transparent 0);
+  background-size: 32px 32px;
 }

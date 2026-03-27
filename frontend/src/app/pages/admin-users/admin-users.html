@@ -1,276 +1,259 @@
-<div class="w-full space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-  <!-- Title Section -->
-  <div class="flex items-center justify-between">
-    <div class="flex flex-col gap-1">
-      <nav class="flex items-center gap-2 text-xs text-slate-500 mb-2">
-        <a class="hover:text-primary transition-colors cursor-pointer" (click)="goBack()">Dashboard</a>
-        <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-        <span class="text-slate-900 font-medium">User Management</span>
-      </nav>
-      <h2 class="text-3xl font-extrabold tracking-tight text-slate-900">
-        Professional Management
-      </h2>
-      <p class="text-slate-500">
-        Register, update, and manage access credentials for medical staff.
-      </p>
-    </div>
-    <button
-      routerLink="/dashboard/admin/invite"
-      class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/20"
-    > 
-      <span class="material-symbols-outlined text-[22px]">person_add</span>
-      <span>Invite New User</span>
-    </button>
+<div class="admin-users-page animate-in fade-in slide-in-from-bottom-4 duration-500">
+  <!-- Interactive Header Stack -->
+  <div class="header-stack mb-8">
+    <nav class="breadcrumb-nav mb-4">
+      <a class="breadcrumb-link" (click)="goBack()">Dashboard</a>
+      <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+      <span class="breadcrumb-current">Management Protocol</span>
+    </nav>
+    
+    <app-welcome-section
+      title="Access Control Registry"
+      subtitle="Manage medical professionals, administrative roles, and institutional security credentials."
+      buttonText="Delegate Access"
+      buttonIcon="person_add"
+      buttonLink="/dashboard/admin/invite"
+    >
+      <!-- Integrated Search in Welcome area -->
+      <div class="header-search-box group">
+         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-xl">manage_search</span>
+         <input
+           [ngModel]="searchTerm()"
+           (ngModelChange)="searchTerm.set($event); onFilterChange()"
+           class="h-10 bg-white/50 border border-slate-200 rounded-xl pl-10 pr-4 text-xs font-bold text-slate-700 outline-none transition-all placeholder:text-slate-400 focus:ring-4 focus:ring-primary/10 focus:border-primary w-64 lg:w-80"
+           placeholder="Search Identities or UUIDs..."
+           type="text"
+         />
+      </div>
+    </app-welcome-section>
   </div>
 
-  <!-- Filters Section -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-    <div class="relative group md:col-span-3">
-      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-[20px]">search</span>
-      <input 
-        type="text" 
-        [ngModel]="searchTerm()"
-        (ngModelChange)="searchTerm.set($event); onFilterChange()"
-        placeholder="Search professionals by name, email or username..." 
-        class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/10 focus:border-primary outline-none transition-all"
-      />
+  <!-- Filtration Console -->
+  <div class="filter-strip">
+    <div class="filter-group">
+      <label class="compact-label">Deployment Role</label>
+      <div class="select-box-premium">
+        <select
+          [ngModel]="selectedRole()"
+          (ngModelChange)="selectedRole.set($event); onFilterChange()"
+          class="premium-select"
+        >
+          <option value="">Status: All Institutional Roles</option>
+          <option value="admin">System Administrator</option>
+          <option value="radiologist">Radiologist Consultant</option>
+          <option value="doctor">Clinical Physician</option>
+        </select>
+        <span class="material-symbols-outlined select-arrow">expand_more</span>
+      </div>
     </div>
-    <div class="relative group">
-      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-[20px]">filter_list</span>
-      <select 
-        [ngModel]="selectedRole()"
-        (ngModelChange)="selectedRole.set($event); onFilterChange()"
-        class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/10 focus:border-primary outline-none transition-all appearance-none cursor-pointer"
-      >
-        <option value="">All Roles</option>
-        <option value="admin">Admin</option>
-        <option value="radiologist">Radiologist</option>
-        <option value="doctor">Doctor</option>
-      </select>
-      <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[18px]">expand_more</span>
+
+    <div class="registry-stats text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+       @if (usersQuery.data(); as users) {
+          Registry Index: <span class="text-slate-900">{{ users.count }}</span> Active Accounts
+       }
     </div>
   </div>
 
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-    <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
-      <h3 class="font-bold text-slate-900">Registered Professionals</h3>
-    </div>
-    <div class="overflow-x-auto">
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="border-b border-slate-100">
-              <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Professional</th>
-              <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Role</th>
-              <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Joined</th>
-              <th class="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100">
-          @if (usersQuery.data(); as users) {
-            @for (user of users.results; track user.id) {
-              <tr class="hover:bg-slate-50/80 transition-colors group">
-                <td class="px-6 py-4">
-                  <div class="flex items-center gap-3">
-                    <div class="size-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
-                      {{ getInitials(user) }}
-                    </div>
-                    <span class="font-semibold text-slate-900">
-                      {{ user.first_name }} {{ user.last_name || user.username }}
-                    </span>
-                  </div>
-                </td>
-                <td class="px-6 py-4">
-                  <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border" [ngClass]="getRoleClass(user.role)">
-                    {{ user.role }}
-                  </span>
-                </td>
-                <td class="px-6 py-4 text-sm text-slate-500">{{ formatDate(user.date_joined) }}</td>
-                <td class="px-6 py-4 text-right">
-                  @if (profileQuery.data()?.id === user.id) {
-                    <span class="px-3 py-1 bg-slate-100 text-slate-500 text-[10px] font-bold rounded-full uppercase tracking-wider">You</span>
-                  } @else {
-                    <div class="flex justify-end gap-2">
-                      <button (click)="openEditModal(user)" class="p-2 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all" title="Edit User">
-                        <span class="material-symbols-outlined text-[18px]">edit</span>
-                      </button>
-                      <button (click)="deleteUser(user)" class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Delete User">
-                        <span class="material-symbols-outlined text-[18px]">delete</span>
-                      </button>
-                    </div>
-                  }
-                </td>
-
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="6" class="px-6 py-10 text-center text-slate-500">No professionals found.</td>
-              </tr>
-            }
-          } @else if (usersQuery.isLoading()) {
-            @for (i of [1,2,3,4,5]; track i) {
-              <tr class="animate-pulse">
-                <td colspan="6" class="px-6 py-4 border-b border-slate-100">
-                  <div class="h-8 bg-slate-100 rounded w-full"></div>
-                </td>
-              </tr>
-            }
-          }
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Footer / Pagination -->
-    <div class="px-6 py-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/50">
-      <div class="text-sm text-slate-500">
+  <!-- Management Interface -->
+  <div class="clinical-list-area mt-6">
+    @if (usersQuery.isLoading()) {
+       <div class="p-20 flex flex-col items-center justify-center gap-4 bg-white/50 rounded-3xl border border-slate-100">
+          <div class="w-10 h-10 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div>
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">Synchronizing Global Directory...</p>
+       </div>
+    } @else {
+      <div class="flex flex-col gap-3">
         @if (usersQuery.data(); as users) {
-          Showing <span class="font-semibold text-slate-900">{{ (currentPage() - 1) * pageSize() + 1 }}</span> 
-          to <span class="font-semibold text-slate-900">{{ (currentPage() - 1) * pageSize() + users.results.length }}</span> 
-          of <span class="font-semibold text-slate-900">{{ users.count }}</span> professionals
-        } @else {
-          Loading professionals...
+          @for (user of users.results; track user.id) {
+            <div class="clinical-row-card group animate-in slide-in-from-left-2 duration-300">
+              <div class="flex-1 flex items-center gap-4">
+                 <div class="size-11 rounded-2xl bg-slate-100 flex items-center justify-center font-black text-slate-500 text-xs shadow-inner border border-slate-200 group-hover:bg-primary/5 group-hover:border-primary/20 transition-all">
+                    {{ getInitials(user) }}
+                 </div>
+                 <div>
+                    <h4 class="text-sm font-extrabold text-slate-900 group-hover:text-primary transition-colors">
+                       {{ user.first_name }} {{ user.last_name || user.username }}
+                    </h4>
+                    @if (profileQuery.data()?.id === user.id) {
+                        <span class="text-[8px] font-black text-primary bg-primary/5 px-2 py-0.5 rounded-full uppercase tracking-widest">Self</span>
+                    }
+                    <p class="font-mono text-[9px] text-slate-400 uppercase tracking-widest mt-0.5">AUTH_ID#{{ user.id | slice:0:12 }}</p>
+                 </div>
+              </div>
+
+              <div class="w-48 flex items-center justify-center">
+                 <div class="status-glossy !text-[9px]" [class.status-pending]="user.role === 'admin'" [class.status-validated]="user.role === 'radiologist'" [class.status-analyzed]="user.role === 'doctor'">
+                    <div class="glow-orb"></div>
+                    {{ user.role | uppercase }}
+                 </div>
+              </div>
+
+              <div class="w-48 flex items-center justify-center gap-2 text-slate-500 font-bold text-xs">
+                 <span class="material-symbols-outlined text-[16px] text-slate-300">verified_user</span>
+                 {{ user.date_joined | date:'dd MMM yyyy' }}
+              </div>
+
+              <div class="w-48 flex justify-end gap-2">
+                @if (profileQuery.data()?.id !== user.id) {
+                   <button (click)="openEditModal(user)" class="step-btn text-slate-400 !bg-transparent !border-transparent hover:!bg-primary/5 hover:!text-primary" title="Modify Credentials">
+                      <span class="material-symbols-outlined">edit_square</span>
+                   </button>
+                   <button (click)="deleteUser(user)" class="step-btn text-slate-400 !bg-transparent !border-transparent hover:!bg-rose-50 hover:!text-rose-600" title="Revoke Privilege">
+                      <span class="material-symbols-outlined">person_cancel</span>
+                   </button>
+                }
+              </div>
+            </div>
+          } @empty {
+             <div class="p-32 text-center bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem] flex flex-col items-center gap-4">
+                <div class="size-20 rounded-full bg-slate-200/50 flex items-center justify-center text-slate-400 mb-2">
+                   <span class="material-symbols-outlined text-5xl">person_remove</span>
+                </div>
+                <h3 class="text-xl font-extrabold text-slate-900 tracking-tight">Zero Registry Hits</h3>
+                <p class="text-sm text-slate-500 font-medium max-w-sm mx-auto">No professional identities matched your administrative query.</p>
+             </div>
+          }
         }
       </div>
-      <div class="flex gap-2">
-        <button 
-          (click)="prevPage()"
-          [disabled]="currentPage() === 1 || usersQuery.isLoading()"
-          class="flex items-center gap-1 px-4 py-2 border border-slate-200 rounded-lg text-sm font-semibold text-slate-600 hover:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xs"
-        >
-          <span class="material-symbols-outlined text-[18px]">chevron_left</span>
-          Previous
-        </button>
-        <button 
-          (click)="nextPage()"
-          [disabled]="!usersQuery.data()?.next || usersQuery.isLoading()"
-          class="flex items-center gap-1 px-4 py-2 border border-slate-200 rounded-lg text-sm font-semibold text-slate-600 hover:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xs"
-        >
-          Next
-          <span class="material-symbols-outlined text-[18px]">chevron_right</span>
-        </button>
-      </div>
-    </div>
+
+      <!-- Clinical Pager -->
+      <footer class="clinical-pager mt-10 pt-6 border-t border-slate-100">
+         <div class="registry-stats text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+            @if (usersQuery.data(); as users) {
+               Index: <span class="text-slate-900">{{ (currentPage() - 1) * pageSize() + 1 }}</span>-
+               <span class="text-slate-900">{{ (currentPage() - 1) * pageSize() + users.results.length }}</span> 
+               OF <span class="text-slate-900">{{ users.count }}</span> PROFESSIONAL ACCOUNTS
+            }
+         </div>
+         
+         <div class="pager-controls flex items-center gap-2">
+            <button class="step-btn" [disabled]="currentPage() === 1 || usersQuery.isLoading()" (click)="prevPage()">
+               <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <div class="page-indicator">BLOCK {{ currentPage() }}</div>
+            <button class="step-btn" [disabled]="!usersQuery.data()?.next || usersQuery.isLoading()" (click)="nextPage()">
+               <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+         </div>
+      </footer>
+    }
   </div>
 
-
-  <!-- Edit User Modal -->
+  <!-- Redesigned Professional Credential Modal -->
   @if (isEditModalOpen()) {
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
-      <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 p-8 flex flex-col gap-6 animate-in zoom-in-95 duration-200">
-        <div class="flex items-center justify-between">
-          <h3 class="text-xl font-bold text-slate-900">Edit Professional</h3>
-          <button (click)="closeEditModal()" class="p-2 hover:bg-slate-100 rounded-lg text-slate-400 transition-colors">
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </div>
+    <div class="modal-overlay animate-in fade-in duration-300">
+      <div class="modal-content animate-in zoom-in-95 slide-in-from-bottom-4 duration-300">
+        <header class="modal-header">
+           <div class="flex items-center gap-3">
+              <div class="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                 <span class="material-symbols-outlined">badge</span>
+              </div>
+              <h3 class="text-lg font-black text-slate-900 tracking-tight">Credential Protocol</h3>
+           </div>
+           <button (click)="closeEditModal()" class="step-btn !bg-transparent !border-transparent hover:!bg-slate-100"><span class="material-symbols-outlined">close</span></button>
+        </header>
 
-        <div class="space-y-4 max-h-[60vh] overflow-y-auto px-1">
+        <div class="modal-body space-y-6">
           <div class="grid grid-cols-2 gap-4">
-            <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-bold text-slate-500 uppercase">First Name</label>
-              <input type="text" [(ngModel)]="editingUser().first_name" class="bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
+            <div class="form-group">
+              <label class="form-label">Given Name</label>
+              <input type="text" [(ngModel)]="editingUser().first_name" class="form-input" />
             </div>
-            <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-bold text-slate-500 uppercase">Last Name</label>
-              <input type="text" [(ngModel)]="editingUser().last_name" class="bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
+            <div class="form-group">
+              <label class="form-label">Family Name</label>
+              <input type="text" [(ngModel)]="editingUser().last_name" class="form-input" />
             </div>
           </div>
 
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-bold text-slate-500 uppercase">Email Address</label>
-            <input type="email" [(ngModel)]="editingUser().email" class="bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
+          <div class="form-group">
+            <label class="form-label">Institutional Directives (Email)</label>
+            <input type="email" [(ngModel)]="editingUser().email" class="form-input" />
           </div>
 
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-bold text-slate-500 uppercase">Professional Role</label>
-            <select [(ngModel)]="editingUser().role" class="bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none">
-              <option value="admin">Admin</option>
-              <option value="radiologist">Radiologist</option>
-              <option value="doctor">Doctor</option>
-            </select>
-          </div>
-
-          <!-- Role Specific Fields -->
-          @if (editingUser().role === 'admin') {
-            <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-bold text-slate-500 uppercase">Department</label>
-              <input type="text" [(ngModel)]="editingUser().department" class="bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="e.g. IT, HR" />
+          <div class="form-group">
+            <label class="form-label">Access Assignment (Role)</label>
+            <div class="select-box-premium w-full">
+                <select [(ngModel)]="editingUser().role" class="premium-select w-full">
+                   <option value="admin">System Administrator</option>
+                   <option value="radiologist">Radiologist Consultant</option>
+                   <option value="doctor">Treating Physician</option>
+                </select>
+                <span class="material-symbols-outlined select-arrow">expand_more</span>
             </div>
-          }
+          </div>
 
           @if (editingUser().role === 'radiologist' || editingUser().role === 'doctor') {
-            <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-bold text-slate-500 uppercase">Medical License Number</label>
-              <input type="text" [(ngModel)]="editingUser().medical_license_number" class="bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
+            <div class="form-group">
+              <label class="form-label">Medical Registration License</label>
+              <input type="text" [(ngModel)]="editingUser().medical_license_number" class="form-input" />
             </div>
           }
 
           @if (editingUser().role === 'doctor') {
-            <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-bold text-slate-500 uppercase">Specialty</label>
-              <input type="text" [(ngModel)]="editingUser().department" class="bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-bold text-slate-500 uppercase">Clinic / Hospital</label>
-              <input type="text" [(ngModel)]="editingUser().clinic" class="bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
+            <div class="grid grid-cols-2 gap-4">
+                <div class="form-group">
+                    <label class="form-label">Clinical Specialty</label>
+                    <input type="text" [(ngModel)]="editingUser().department" class="form-input" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Associated Institution</label>
+                    <input type="text" [(ngModel)]="editingUser().clinic" class="form-input" />
+                </div>
             </div>
           }
 
           @if (editingUser().role === 'radiologist') {
-            <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-bold text-slate-500 uppercase">Years of Experience</label>
-              <input type="number" [(ngModel)]="editingUser().years_of_experience" class="bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" />
+            <div class="form-group">
+              <label class="form-label">Professional Residency Experience (Years)</label>
+              <input type="number" [(ngModel)]="editingUser().years_of_experience" class="form-input" />
             </div>
           }
         </div>
 
-        <div class="flex gap-3 pt-4 border-t border-slate-100">
-
-          <button (click)="closeEditModal()" class="flex-1 px-4 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-100 transition-colors">Cancel</button>
-          <button (click)="saveEdit()" [disabled]="updateUserMutation.isPending()" class="flex-1 bg-primary hover:bg-primary/90 text-white px-4 py-2.5 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/20 disabled:opacity-50 flex items-center justify-center gap-2">
+        <footer class="modal-footer">
+          <button (click)="closeEditModal()" class="action-btn-pax !bg-slate-50 !text-slate-500 !border-slate-200">Discard Changes</button>
+          <button (click)="saveEdit()" [disabled]="updateUserMutation.isPending()" class="action-btn-pax !bg-primary !text-white !border-primary px-8">
             @if (updateUserMutation.isPending()) {
-              <div class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              <span class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
             }
-            {{ updateUserMutation.isPending() ? 'Saving...' : 'Save Changes' }}
+            {{ updateUserMutation.isPending() ? 'Synchronizing...' : 'Update Protocol' }}
           </button>
-        </div>
+        </footer>
       </div>
     </div>
   }
 
   <!-- Delete Confirmation Modal -->
   @if (isDeleteModalOpen()) {
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
-      <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl border border-slate-200 p-8 flex flex-col items-center text-center gap-6 animate-in zoom-in-95 duration-200">
-        <div class="size-16 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-2">
-          <span class="material-symbols-outlined text-3xl">delete_forever</span>
+    <div class="modal-overlay animate-in fade-in duration-300">
+      <div class="modal-content text-center max-w-sm animate-in zoom-in-95 duration-300">
+        <div class="size-20 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-6 border border-rose-100 shadow-sm animate-bounce">
+          <span class="material-symbols-outlined text-4xl">person_remove</span>
         </div>
         <div>
-          <h3 class="text-xl font-bold text-slate-900">Delete Professional?</h3>
-          <p class="text-slate-500 text-sm mt-2">
-            Are you sure you want to remove <span class="font-bold text-slate-900">{{ userToDelete()?.first_name || userToDelete()?.username }}</span>? This action cannot be undone.
+          <h3 class="text-xl font-black text-slate-900 tracking-tight">Access Revocation Protocol</h3>
+          <p class="text-sm text-slate-500 mt-3 leading-relaxed">
+            You are about to permanently revoke system privileges for <span class="font-black text-slate-900">{{ userToDelete()?.first_name || userToDelete()?.username }}</span>. This action is auditable.
           </p>
         </div>
-        <div class="flex w-full gap-3 mt-2">
-          <button (click)="closeDeleteModal()" class="flex-1 px-4 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-100 transition-colors">Cancel</button>
-          <button (click)="confirmDelete()" [disabled]="deleteUserMutation.isPending()" class="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-lg text-sm font-bold transition-all shadow-lg shadow-red-200 disabled:opacity-50 flex items-center justify-center gap-2">
-            @if (deleteUserMutation.isPending()) {
-              <div class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-            }
-            {{ deleteUserMutation.isPending() ? 'Deleting...' : 'Delete' }}
+        <div class="flex w-full gap-3 mt-8">
+          <button (click)="closeDeleteModal()" class="action-btn-pax !bg-slate-50 !text-slate-500 !border-slate-200 flex-1">Abort</button>
+          <button (click)="confirmDelete()" [disabled]="deleteUserMutation.isPending()" class="action-btn-pax !bg-rose-500 !text-white !border-rose-500 flex-1">
+             {{ deleteUserMutation.isPending() ? 'Revoking...' : 'Confirm Revoke' }}
           </button>
         </div>
       </div>
     </div>
   }
 
-  <!-- Success Notification Modal -->
+  <!-- Global Pulse Notification -->
   @if (isSuccessModalOpen()) {
-    <div class="fixed top-8 left-1/2 -translate-x-1/2 z-[60] animate-in slide-in-from-top-full duration-300">
-      <div class="bg-emerald-600 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3">
-        <span class="material-symbols-outlined text-[20px]">check_circle</span>
-        <span class="text-sm font-bold">{{ successMessage() }}</span>
-        <button (click)="closeSuccessModal()" class="hover:bg-white/20 rounded-full p-1 transition-colors">
-          <span class="material-symbols-outlined text-[16px]">close</span>
+    <div class="fixed top-8 left-1/2 -translate-x-1/2 z-[100] animate-in slide-in-from-top-full duration-700">
+      <div class="bg-white border border-primary/20 text-primary py-3.5 pl-5 pr-4 rounded-2xl flex items-center gap-4 shadow-[0_20px_50px_rgba(37,99,235,0.15)] ring-4 ring-primary/5">
+        <div class="size-2 bg-primary rounded-full animate-ping"></div>
+        <span class="text-xs font-black uppercase tracking-[0.2em]">{{ successMessage() }}</span>
+        <button (click)="closeSuccessModal()" class="hover:bg-primary/5 rounded-lg p-1.5 transition-colors">
+          <span class="material-symbols-outlined text-base">close</span>
         </button>
       </div>
     </div>

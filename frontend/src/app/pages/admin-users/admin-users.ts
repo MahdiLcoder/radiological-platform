@@ -6,10 +6,12 @@ import { injectQuery, injectMutation, QueryClient } from '@tanstack/angular-quer
 import { lastValueFrom } from 'rxjs';
 import { AuthService } from '../../services/authService';
 
+import { WelcomeSection } from '../../components/welcome-section/welcome-section';
+
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, WelcomeSection],
   templateUrl: './admin-users.html',
   styleUrl: './admin-users.css',
 })

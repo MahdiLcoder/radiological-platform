@@ -1,33 +1,47 @@
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
-  
+<div class="charts-container animate-in fade-in slide-in-from-bottom-4 duration-500">
   <!-- Modality Distribution Chart -->
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex flex-col hover:shadow-md transition-shadow">
-    <div class="flex items-center justify-between mb-2">
-      <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest">Scans by Modality</h3>
-      <span class="material-symbols-outlined text-slate-400 text-sm">pie_chart</span>
+  <div class="medical-card chart-card">
+    <div class="chart-header">
+      <div class="flex flex-col">
+        <h3 class="chart-title">Volume by Modality</h3>
+        <p class="chart-subtitle">Distribution of imaging types across all patients</p>
+      </div>
+      <div class="chart-icon-box bg-purple-50 text-purple-600">
+        <span class="material-symbols-outlined">pie_chart</span>
+      </div>
     </div>
-    <div class="flex-1 min-h-[300px] w-full mt-4 flex items-center justify-center">
+    <div class="chart-viewport">
       @if (data() && data().length > 0) {
-        <div echarts [options]="modalityOptions" class="w-full h-[300px]"></div>
+        <div echarts [options]="modalityOptions" class="w-full h-full"></div>
       } @else {
-        <div class="text-slate-400 text-sm font-medium italic">No scan data available</div>
+        <div class="chart-empty">
+          <span class="material-symbols-outlined text-4xl mb-2 opacity-20">analytics</span>
+          <p>No volumetric data available</p>
+        </div>
       }
     </div>
   </div>
 
   <!-- Status Distribution Chart -->
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex flex-col hover:shadow-md transition-shadow">
-    <div class="flex items-center justify-between mb-2">
-      <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest">AI Analysis Status</h3>
-      <span class="material-symbols-outlined text-slate-400 text-sm">bar_chart</span>
+  <div class="medical-card chart-card">
+    <div class="chart-header">
+      <div class="flex flex-col">
+        <h3 class="chart-title">Pipeline Efficiency</h3>
+        <p class="chart-subtitle">AI analysis and validation status breakdown</p>
+      </div>
+      <div class="chart-icon-box bg-blue-50 text-blue-600">
+        <span class="material-symbols-outlined">bar_chart</span>
+      </div>
     </div>
-    <div class="flex-1 min-h-[300px] w-full mt-4 flex items-center justify-center">
+    <div class="chart-viewport">
       @if (data() && data().length > 0) {
-        <div echarts [options]="statusOptions" class="w-full h-[300px]"></div>
+        <div echarts [options]="statusOptions" class="w-full h-full"></div>
       } @else {
-        <div class="text-slate-400 text-sm font-medium italic">No status data available</div>
+        <div class="chart-empty">
+          <span class="material-symbols-outlined text-4xl mb-2 opacity-20">query_stats</span>
+          <p>No status pipeline data available</p>
+        </div>
       }
     </div>
   </div>
-
 </div>

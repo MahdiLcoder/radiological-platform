@@ -1,178 +1,154 @@
-<!-- Content Area -->
-<div class="p-8 w-full space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-  <!-- Drag and Drop Zone -->
-  <section
-    class="bg-white rounded-xl border-2 border-dashed border-slate-200 p-12 transition-all hover:border-primary/40 hover:bg-primary/[0.01] group cursor-pointer relative overflow-hidden"
-    (click)="fileInput.click()"
-  >
-    <!-- Image Preview Overlay -->
-    @if (imagePreviewUrl()) {
-      <div class="absolute inset-0 z-0">
-        <img [src]="imagePreviewUrl()" class="w-full h-full object-cover opacity-10 blur-[2px]" alt="Background preview" />
-      </div>
-    }
+<div class="upload-container animate-in fade-in slide-in-from-bottom-4 duration-500">
+  <app-welcome-section
+    title="Clinical Scan Ingestion"
+    subtitle="Import high-resolution radiological imaging studies for automated AI analysis and clinical validation."
+  ></app-welcome-section>
 
-    <div class="flex flex-col items-center text-center space-y-4 relative z-10">
-      <div
-        class="w-20 h-20 rounded-full bg-primary/5 flex items-center justify-center text-primary group-hover:scale-105 transition-transform overflow-hidden"
-      >
-        @if (imagePreviewUrl()) {
-          <img [src]="imagePreviewUrl()" class="w-full h-full object-cover" alt="Scan preview" />
-        } @else {
-          <span class="material-symbols-outlined text-4xl">folder_zip</span>
-        }
-      </div>
-      <div>
-        <h3 class="text-xl font-bold text-slate-900">
-          {{ selectedFiles.length > 0 ? selectedFiles[0].name : 'Drag and drop medical files here' }}
-        </h3>
-        <p class="text-slate-500 text-sm mt-1">
-          Supports DICOM, JPEG, and PNG formats. Maximum file size 500MB.
-        </p>
-      </div>
-      <button
-        class="px-6 py-2.5 bg-primary text-white rounded-lg font-semibold text-sm hover:bg-primary/90 transition-colors shadow-lg shadow-primary/10"
-      >
-        {{ selectedFiles.length > 0 ? 'Change File' : 'Select Files from Local' }}
-      </button>
-      <input
-        #fileInput
-        type="file"
-        class="hidden"
-        (change)="onFileSelected($event)"
-        accept=".dcm,image/jpeg,image/png"
-      />
-    </div>
-  </section>
+  <div class="upload-grid mt-6">
+    <!-- Laboratory Ingestion Zone -->
+    <section
+      class="ingestion-zone group"
+      [class.has-preview]="imagePreviewUrl()"
+      (click)="fileInput.click()"
+    >
+      <div class="zone-scanner-line" @if (analysisMutation.isPending()) { class="scanning" }></div>
+      
+      @if (imagePreviewUrl()) {
+          <img [src]="imagePreviewUrl()" class="preview-backdrop" alt="Clinical scan preview" />
+      }
 
-  <!-- Scan Details Form -->
-  <section class="space-y-6 bg-white rounded-xl p-8 border border-slate-200 shadow-sm">
-    <div class="flex items-center gap-2 border-b border-slate-100 pb-4 mb-6">
-      <span class="material-symbols-outlined text-primary">description</span>
-      <h3 class="text-lg font-bold text-slate-900">Scan Details</h3>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Patient ID -->
-      <div class="space-y-2">
-        <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Patient ID</label>
-        <div class="relative">
-          <span
-            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl"
-            >search</span
-          >
-          <input
-            [(ngModel)]="patientId"
-            class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-10 pr-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400 text-slate-900"
-            placeholder="Search Patient ID..."
-            type="text"
-          />
+      <div class="ingestion-content relative z-10">
+        <div class="focal-orb">
+          <div class="orb-pulse"></div>
+          @if (imagePreviewUrl()) {
+            <img [src]="imagePreviewUrl()" class="size-full object-cover rounded-[2rem] border-2 border-white/50" alt="Scan fragment" />
+          } @else {
+            <span class="material-symbols-outlined text-4xl text-primary drop-shadow-sm">cloud_upload</span>
+          }
         </div>
-      </div>
-
-      <!-- Modality selection -->
-      <div class="space-y-2">
-        <label class="text-xs font-bold uppercase tracking-wider text-slate-400"
-          >Modality selection</label
-        >
-        <div class="relative">
-          <span
-            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl"
-            >medical_services</span
-          >
-          <select
-            [(ngModel)]="modality"
-            class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-10 pr-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none cursor-pointer text-slate-900"
-          >
-            <option value="X-Ray">X-Ray</option>
-            <option value="CT Scan">CT Scan</option>
-            <option value="MRI">MRI</option>
-            <!-- <option value="Ultrasound">Ultrasound</option> -->
-          </select>
-          <span
-            class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-            >expand_more</span
-          >
-        </div>
-      </div>
-    </div>
-
-    <!-- AI Analysis Status -->
-    @if (analysisMutation.isPending()) {
-      <div class="py-12 flex flex-col items-center justify-center space-y-4 animate-in fade-in zoom-in-95 duration-500">
-        <div class="relative">
-          <div class="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-          <div class="absolute inset-0 flex items-center justify-center">
-            <span class="material-symbols-outlined text-primary text-xl">psychology</span>
-          </div>
-        </div>
-        <div class="text-center">
-          <h4 class="font-bold text-slate-900 text-lg">AI Analysis in Progress</h4>
-          <p class="text-sm text-slate-500 max-w-[280px] mt-1 leading-relaxed">
-            Uploading and processing the medical scan... 
-            Please wait a moment.
+        
+        <div class="text-center mt-6">
+          <h3 class="text-2xl font-black text-slate-900 tracking-tight">
+            {{ selectedFiles.length > 0 ? selectedFiles[0].name : 'Initiate Scan Import' }}
+          </h3>
+          <p class="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] mt-2 max-w-xs mx-auto opacity-60">
+            DICOM • HIGH-RES JPEG • PNG <br> MAX PAYLOAD: 500MB
           </p>
         </div>
-      </div>
-    }
 
-    @if (analysisMutation.isSuccess()) {
-        <div class="py-10 bg-emerald-50 rounded-xl border border-emerald-100 flex flex-col items-center text-center space-y-3 animate-in zoom-in-95">
-            <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center">
-                <span class="material-symbols-outlined text-3xl">check_circle</span>
+        <button class="ingestion-trigger mt-10">
+           <span class="material-symbols-outlined">{{ selectedFiles.length > 0 ? 'published_with_changes' : 'add_circle' }}</span>
+           {{ selectedFiles.length > 0 ? 'Modify Sequence' : 'Open Local PACS' }}
+        </button>
+
+        <input
+          #fileInput
+          type="file"
+          class="hidden"
+          (change)="onFileSelected($event)"
+          accept=".dcm,image/jpeg,image/png"
+        />
+      </div>
+    </section>
+
+    <!-- Contextual Control Console -->
+    <section class="control-console">
+      <header class="console-header">
+         <div class="flex items-center gap-3">
+            <div class="size-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center border border-primary/10 shadow-sm">
+               <span class="material-symbols-outlined">clinical_notes</span>
             </div>
             <div>
-                <h4 class="font-bold text-slate-900 text-lg">Analysis Complete</h4>
-                <p class="text-sm text-slate-600">Scan processed successfully. Redirecting to validation page...</p>
+               <h3 class="text-lg font-black text-slate-900 tracking-tight">Ingest Protocol</h3>
+               <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Clinical Study Metadata</p>
             </div>
-        </div>
-    }
+         </div>
+      </header>
 
-    <!-- Action Button -->
-    <div class="pt-4 flex justify-end">
-      @if (!analysisMutation.data()) {
-        <button
-          (click)="startAnalysis()"
-          class="flex items-center gap-2 px-8 py-3 bg-primary text-white rounded-lg font-bold text-base hover:brightness-105 transition-all shadow-xl shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
-          [disabled]="!canStartAnalysis()"
-        >
-          @if (analysisMutation.isPending()) {
-            <div class="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-            Processing...
-          } @else {
-            <span class="material-symbols-outlined">psychology</span>
-            Start AI Analysis
-          }
-        </button>
-      } @else {
-        <button
-          (click)="reset()"
-          class="flex items-center gap-2 px-8 py-3 bg-slate-100 text-slate-600 rounded-lg font-bold text-base hover:bg-slate-200 transition-all"
-        >
-          <span class="material-symbols-outlined">refresh</span>
-          Start New Scan
-        </button>
-      }
-    </div>
-  </section>
-
-  <!-- Uploaded Files Preview (Hidden if analysis started) -->
-  @if (selectedFiles.length > 0 && !analysisMutation.data() && !analysisMutation.isPending()) {
-    <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm space-y-4 animate-in slide-in-from-top-4 duration-300">
-      <h4 class="font-bold text-slate-900">Selected Files ({{ selectedFiles.length }})</h4>
-      <div class="space-y-2">
-        @for (file of selectedFiles; track file.name) {
-          <div class="flex items-center justify-between p-2 bg-slate-50 rounded-lg text-sm">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-slate-400">description</span>
-              <span class="text-slate-700">{{ file.name }}</span>
-            </div>
-            <span class="text-slate-400 text-xs"
-              >{{ (file.size / 1024 / 1024).toFixed(2) }} MB</span
-            >
+      <div class="console-body space-y-6">
+        <!-- Patient Cross-Reference -->
+        <div class="form-group">
+          <label class="form-label">Subject Identification (MRN)</label>
+          <div class="premium-input-box group">
+            <span class="material-symbols-outlined input-icon group-focus-within:text-primary">person_search</span>
+            <input
+              [(ngModel)]="patientId"
+              class="premium-input"
+              placeholder="Assign to Registry ID..."
+              type="text"
+            />
           </div>
-        }
+        </div>
+
+        <!-- Modality Protocol -->
+        <div class="form-group">
+          <label class="form-label">Imaging Modality Protocol</label>
+          <div class="select-box-premium w-full">
+            <select
+              [(ngModel)]="modality"
+              class="premium-select w-full"
+            >
+              <option value="X-Ray">X-Ray (Radiography)</option>
+              <option value="CT Scan">CT (Tomography)</option>
+              <option value="MRI">MRI (Magnetic Resonance)</option>
+            </select>
+            <span class="material-symbols-outlined select-arrow">expand_more</span>
+          </div>
+        </div>
+
+        <!-- Pipeline Feedback Area -->
+        <div class="pipeline-feedback min-h-[140px] flex items-center justify-center">
+           @if (analysisMutation.isPending()) {
+             <div class="pipeline-state-anim animate-in zoom-in-95 duration-500">
+                <div class="state-orb">
+                   <div class="orb-pulse-infinite"></div>
+                   <span class="material-symbols-outlined text-primary text-3xl animate-pulse">psychology</span>
+                </div>
+                <div class="text-center">
+                   <h4 class="text-sm font-black text-slate-900 uppercase tracking-widest">AI Analysis Ingestion</h4>
+                   <p class="text-[10px] text-slate-500 font-medium mt-1">Executing deep diagnostic heuristics...</p>
+                </div>
+             </div>
+           } @else if (analysisMutation.isSuccess()) {
+             <div class="pipeline-state-anim animate-in slide-in-from-bottom-4 duration-500">
+                <div class="state-orb !bg-emerald-50 !border-emerald-100 !text-emerald-500">
+                   <span class="material-symbols-outlined text-3xl">verified</span>
+                </div>
+                <div class="text-center">
+                   <h4 class="text-sm font-black text-emerald-600 uppercase tracking-widest">Protocol Verified</h4>
+                   <p class="text-[10px] text-slate-400 font-bold mt-1">Analysis results committed to registry.</p>
+                </div>
+             </div>
+           } @else {
+              <div class="text-center space-y-2 opacity-30">
+                 <span class="material-symbols-outlined text-4xl">ifl</span>
+                 <p class="text-[9px] font-black uppercase tracking-widest">Pipeline Standby</p>
+              </div>
+           }
+        </div>
       </div>
-    </div>
-  }
+
+      <footer class="console-footer mt-6 pt-6 border-t border-slate-50 flex justify-end">
+        @if (!analysisMutation.data()) {
+          <button
+            (click)="startAnalysis()"
+            class="action-btn-pax !px-10 !py-4 !bg-primary !text-white !border-primary"
+            [disabled]="!canStartAnalysis() || analysisMutation.isPending()"
+          >
+            @if (analysisMutation.isPending()) {
+              <span class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+            } @else {
+              <span class="material-symbols-outlined">rocket_launch</span>
+              <span class="ml-2">Execute Analysis</span>
+            }
+          </button>
+        } @else {
+          <button (click)="reset()" class="action-btn-pax !bg-slate-900 !text-white !border-slate-900 !px-8">
+            <span class="material-symbols-outlined">refresh</span>
+            <span class="ml-2">Cycle Next Ingestion</span>
+          </button>
+        }
+      </footer>
+    </section>
+  </div>
 </div>

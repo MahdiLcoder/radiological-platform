@@ -9,10 +9,12 @@ import { EmptyStateComponent } from '../../components/empty-state/empty-state';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 
+import { WelcomeSection } from '../../components/welcome-section/welcome-section';
+
 @Component({
   selector: 'app-patients',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, LoadingStateComponent, ErrorStateComponent, EmptyStateComponent],
+  imports: [CommonModule, RouterLink, FormsModule, LoadingStateComponent, ErrorStateComponent, EmptyStateComponent, WelcomeSection],
   templateUrl: './patients.html',
   styleUrl: './patients.css',
 })

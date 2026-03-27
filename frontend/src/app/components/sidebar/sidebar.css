@@ -1,28 +1,92 @@
 :host {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  @apply fixed left-0 top-0 bottom-0 w-72 bg-white border-r border-slate-100 z-50;
 }
 
-.sidebar-host {
-  width: 256px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+.sidebar-container {
+  @apply h-full flex flex-col p-6;
 }
 
-.material-symbols-outlined {
-  font-family: 'Material Symbols Outlined';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  direction: ltr;
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-  -webkit-font-smoothing: antialiased;
+/* Premium Logo Orb */
+.logo-section {
+  @apply flex items-center gap-4 px-2;
 }
+
+.logo-orb {
+  @apply relative size-11 rounded-[1.25rem] bg-primary flex items-center justify-center shadow-lg shadow-primary/30;
+}
+
+.logo-pulse {
+  @apply absolute inset-0 rounded-[1.25rem] border-2 border-primary/20 animate-[ping_3s_infinite];
+}
+
+.visiomed-logo {
+  @apply text-lg;
+}
+
+/* Nav Item Refinements */
+.nav-group-label {
+  @apply text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 px-3;
+}
+
+.nav-section {
+  @apply flex-1 flex flex-col gap-2;
+}
+
+.nav-item {
+  @apply relative flex items-center gap-4 px-4 py-3.5 rounded-2xl text-slate-500 transition-all hover:bg-slate-50 hover:text-slate-900;
+}
+
+.nav-item.active {
+  @apply bg-primary/5 text-primary shadow-sm shadow-primary/[0.05];
+}
+
+.nav-active-indicator {
+  @apply absolute left-0 top-0 bottom-0 w-1 bg-primary scale-y-0 transition-transform origin-center rounded-full my-3 opacity-0;
+}
+
+.nav-item.active .nav-active-indicator {
+  @apply scale-y-100 opacity-100;
+}
+
+.nav-icon {
+  @apply text-[22px];
+}
+
+.nav-label {
+  @apply text-[11px] uppercase tracking-wider;
+}
+
+/* Enhanced User Profile Section */
+.profile-section-enhanced {
+  @apply mt-auto pt-6 border-t border-slate-50;
+}
+
+.profile-card-mini {
+  @apply flex items-center gap-4 p-3 rounded-2xl transition-all cursor-pointer hover:bg-slate-50;
+}
+
+.avatar-ring-outer {
+  @apply size-11 rounded-[14px] p-0.5 border border-slate-200 group-hover:border-primary/30 transition-all;
+}
+
+.avatar-image {
+  @apply size-full rounded-[11px] object-cover;
+}
+
+.status-badge-mini {
+  @apply flex items-center gap-1.5 text-[8px] font-black uppercase tracking-widest text-slate-400;
+}
+
+.status-dot { @apply size-1.5 rounded-full bg-slate-300; }
+
+.status-badge-mini.is-radiologist { @apply text-primary; }
+.status-badge-mini.is-radiologist .status-dot { @apply bg-primary animate-pulse; }
+
+.status-badge-mini.is-doctor { @apply text-purple-600; }
+.status-badge-mini.is-doctor .status-dot { @apply bg-purple-600; }
+
+.settings-trigger {
+  @apply size-8 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center transition-all hover:bg-primary/10 hover:text-primary;
+}
+
+.settings-trigger span { @apply text-lg; }

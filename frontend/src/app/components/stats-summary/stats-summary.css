@@ -1,3 +1,59 @@
 :host {
   display: block;
 }
+
+.clinical-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .clinical-metrics-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.metric-card {
+  @apply relative overflow-hidden rounded-2xl bg-white border border-slate-200 p-6 flex flex-col justify-between transition-all shadow-sm;
+}
+
+.metric-card:hover {
+  @apply border-primary/20 shadow-md -translate-y-1;
+}
+
+.metric-accent {
+  @apply absolute top-0 left-0 bottom-0 w-1 opacity-50;
+}
+
+.metric-header {
+  @apply flex items-start gap-4 mb-4;
+}
+
+.icon-orb {
+  @apply size-12 rounded-xl flex items-center justify-center border border-slate-100 shadow-inner;
+}
+
+.metric-label {
+  @apply text-[10px] font-bold text-slate-400 uppercase tracking-widest;
+}
+
+.metric-value {
+  @apply text-3xl font-black tracking-tight;
+}
+
+.trend-pill {
+  @apply flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black border;
+}
+
+.metric-footer {
+  @apply flex flex-col gap-2 mt-4 pt-4 border-t border-slate-50;
+}
+
+.progress-track {
+  @apply w-full h-1 bg-slate-100 rounded-full overflow-hidden;
+}
+
+.progress-fill {
+  @apply h-full rounded-full opacity-60;
+}

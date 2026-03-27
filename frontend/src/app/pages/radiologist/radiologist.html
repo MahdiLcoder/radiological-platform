@@ -1,36 +1,103 @@
-<div class="flex-1 overflow-y-auto p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-  <!-- Welcome Section -->
+<div class="radiologist-dashboard animate-in fade-in slide-in-from-bottom-4 duration-500">
+  <!-- Interactive Specialist Header -->
   <app-welcome-section
-    title="Recent Uploads &amp; AI Queue"
-    subtitle="Real-time status of clinical imaging and AI diagnostic pipeline."
-    buttonText="Upload New Scan"
-    buttonIcon="add_circle"
+    title="Specialist Console"
+    subtitle="Review pending AI analysis results and validate critical clinical scans from the central repository."
+    buttonText="Import Digital Scan"
+    buttonIcon="cloud_upload"
     buttonLink="/dashboard/upload"
   ></app-welcome-section>
   
   @if (imagesQuery.isPending()) {
-    <app-loading-state message="Loading worklist..."></app-loading-state>
-  } @else if (imagesQuery.isError()) {
-    <app-error-state 
-      message="Failed to load worklist" 
-      (retry)="imagesQuery.refetch()"
-    ></app-error-state>
-  } @else {
-    <app-stats-summary [stats]="summaryStats()"></app-stats-summary>
-
-    <div class="flex items-center justify-between pt-4">
-      <h2 class="text-xl font-bold text-slate-900">Recent Scans</h2>
-      <a routerLink="/dashboard/all-images" class="text-sm font-bold text-primary hover:underline flex items-center gap-1 bg-primary/10 px-4 py-2 rounded-lg transition-all hover:bg-primary/20">
-        View All Scans <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-      </a>
+    <div class="metrics-area">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          @for (n of [1, 2, 3]; track n) {
+              <div class="medical-card h-36 animate-pulse opacity-50"></div>
+          }
+      </div>
     </div>
+    <div class="medical-card h-96 animate-pulse mt-8 opacity-30"></div>
+  } @else if (imagesQuery.isError()) {
+    <div class="p-20 text-center bg-rose-50/20 border border-dashed border-rose-200 rounded-3xl">
+      <span class="material-symbols-outlined text-6xl text-rose-500 mb-4">gpp_maybe</span>
+      <h3 class="text-xl font-extrabold text-slate-900 tracking-tight">Clinical Registry Offline</h3>
+      <p class="text-slate-500 font-medium mt-2">The PACS synchronization protocol encountered an interruption.</p>
+      <button (click)="imagesQuery.refetch()" class="mt-8 action-link-btn mx-auto">Re-establish Session</button>
+    </div>
+  } @else {
+    <!-- Clinical Volume Metrics -->
+    <section class="metrics-area">
+        <app-stats-summary [stats]="summaryStats()"></app-stats-summary>
+    </section>
 
-    
-    <app-worklist-table 
-    [columns]="tableColumns" 
-    [data]="worklistData()"
-    [hideFooter]="true"
-    ></app-worklist-table>
-    <app-radiology-charts [data]="worklistData()"></app-radiology-charts>
+    <div class="dashboard-main-grid mt-10">
+      <!-- Priority Clinical Worklist -->
+      <section class="worklist-container space-y-6 lg:col-span-8">
+        <header class="section-toolbar">
+          <div class="flex flex-col">
+            <h2 class="text-lg font-black text-slate-900 tracking-tight">Clinical Priority Worklist</h2>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Validated Diagnostics Awaiting Submission</p>
+          </div>
+          <a routerLink="/dashboard/all-images" class="action-link-btn group">
+            <span>Scan Archive</span>
+            <span class="material-symbols-outlined transition-transform group-hover:translate-x-1">folder_special</span>
+          </a>
+        </header>
+        
+        <app-worklist-table 
+          [columns]="tableColumns" 
+          [data]="worklistData()"
+          [hideFooter]="true"
+        ></app-worklist-table>
+      </section>
+
+      <!-- Specialist Sidebar: Analytics & Feed -->
+      <aside class="sidebar-container space-y-8 lg:col-span-4">
+         <!-- System Activity Feed -->
+         <section class="activity-feed space-y-6">
+            <header class="section-toolbar !justify-start">
+               <div class="flex flex-col">
+                  <h2 class="text-lg font-black text-slate-900 tracking-tight">Clinical Activity</h2>
+                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Recent AI Interpretations</p>
+               </div>
+            </header>
+            
+            <div class="flex flex-col gap-3">
+               @if (findingsQuery.data(); as findings) {
+                  @for (finding of findings.results; track finding.id) {
+                     <div class="activity-card group">
+                        <div class="flex items-center gap-3">
+                           <div class="size-9 rounded-xl bg-primary/5 text-primary flex items-center justify-center border border-primary/10">
+                              <span class="material-symbols-outlined text-lg">{{ finding.confidence > 0.8 ? 'check_circle' : 'psychology_alt' }}</span>
+                           </div>
+                           <div class="flex-1 min-w-0">
+                              <h4 class="text-[11px] font-black text-slate-900 truncate uppercase tracking-tight">{{ finding.top_finding }}</h4>
+                              <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{{ finding.analyzed_at | date:'HH:mm' }} • {{ finding.confidence | percent }} Match</p>
+                           </div>
+                        </div>
+                     </div>
+                  } @empty {
+                     <div class="p-6 text-center border-2 border-dashed border-slate-100 rounded-3xl opacity-40">
+                        <p class="text-[9px] font-black uppercase tracking-widest">No recent alerts</p>
+                     </div>
+                  }
+               }
+            </div>
+         </section>
+
+         <!-- Diagnostic Volume Analytics -->
+         <section class="analytics-container space-y-6">
+            <header class="section-toolbar justify-start">
+               <div class="flex flex-col">
+                  <h2 class="text-lg font-black text-slate-900 tracking-tight">Modality Flow</h2>
+                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">30-Day Distribution</p>
+               </div>
+            </header>
+            <div class="medical-card p-4 bg-white/50 backdrop-blur-sm shadow-xl shadow-black/[0.02]">
+               <app-radiology-charts [data]="worklistData()"></app-radiology-charts>
+            </div>
+         </section>
+      </aside>
+    </div>
   }
 </div>

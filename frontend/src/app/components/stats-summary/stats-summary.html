@@ -1,24 +1,31 @@
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="clinical-metrics-grid">
   @for (stat of stats(); track stat.title) {
-    <div
-      class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between"
-    >
-      <div>
-        <p class="text-slate-500 text-sm font-medium">{{ stat.title }}</p>
-        <h3 class="text-3xl font-black mt-1 {{ stat.valueColorClass || '' }}">{{ stat.value }}</h3>
-        <p
-          class="text-xs font-bold mt-2 flex items-center gap-1 {{
-            stat.trendColorClass || 'text-slate-500'
-          }}"
-        >
-          @if (stat.trendIcon) {
-            <span class="material-symbols-outlined text-sm">{{ stat.trendIcon }}</span>
-          }
-          {{ stat.trendText }}
-        </p>
+    <div class="metric-card group animate-in zoom-in-95 duration-500">
+      <div class="metric-accent" [class]="stat.iconBgClass || 'bg-slate-100'"></div>
+      
+      <div class="metric-header">
+        <div class="icon-orb" [class]="stat.iconBgClass || 'bg-slate-100'">
+           <span class="material-symbols-outlined text-xl" [class]="stat.iconColorClass || 'text-slate-500'">{{ stat.icon }}</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="metric-label">{{ stat.title }}</span>
+          <div class="flex items-baseline gap-2 mt-1">
+            <h3 class="metric-value" [class]="stat.valueColorClass || 'text-slate-900'">{{ stat.value }}</h3>
+            @if (stat.trendText) {
+               <div class="trend-pill" [class]="stat.trendColorClass || 'text-slate-500'">
+                  <span class="material-symbols-outlined text-[14px]">{{ stat.trendIcon }}</span>
+                  {{ stat.trendText }}
+               </div>
+            }
+          </div>
+        </div>
       </div>
-      <div class="p-4 rounded-xl {{ stat.iconBgClass }} {{ stat.iconColorClass }}">
-        <span class="material-symbols-outlined text-3xl">{{ stat.icon }}</span>
+
+      <div class="metric-footer">
+        <div class="progress-track">
+           <div class="progress-fill" [class]="stat.iconBgClass || 'bg-slate-200'" [style.width]="'65%'"></div>
+        </div>
+        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">30D Analysis Cycle</span>
       </div>
     </div>
   }
