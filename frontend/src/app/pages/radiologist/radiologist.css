@@ -34,5 +34,5 @@
 
 /* Ensure the chart area looks premium but fits the sidebar better */
 app-radiology-charts {
-  @apply w-full h-[300px] block;
+  @apply w-full h-auto block;
 }
