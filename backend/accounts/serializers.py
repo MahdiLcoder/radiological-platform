@@ -66,7 +66,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'role', 'first_name', 'last_name', 'phone']
+        fields = ['id', 'username', 'email', 'role', 'first_name', 'last_name', 'phone', 'created_at']
 
     def to_representation(self, user):
         data = super().to_representation(user)
