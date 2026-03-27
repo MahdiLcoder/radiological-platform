@@ -3,9 +3,6 @@ import { PatientService, Patient } from '../../services/patientService';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { LoadingStateComponent } from '../../components/loading-state/loading-state';
-import { ErrorStateComponent } from '../../components/error-state/error-state';
-import { EmptyStateComponent } from '../../components/empty-state/empty-state';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 
@@ -14,7 +11,7 @@ import { WelcomeSection } from '../../components/welcome-section/welcome-section
 @Component({
   selector: 'app-patients',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, LoadingStateComponent, ErrorStateComponent, EmptyStateComponent, WelcomeSection],
+  imports: [CommonModule, RouterLink, FormsModule, WelcomeSection],
   templateUrl: './patients.html',
   styleUrl: './patients.css',
 })

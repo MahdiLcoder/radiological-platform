@@ -2,8 +2,6 @@ import { Component, inject, computed, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { WorklistTable, WorklistItem } from '../../components/worklist-table/worklist-table';
-import { LoadingStateComponent } from '../../components/loading-state/loading-state';
-import { ErrorStateComponent } from '../../components/error-state/error-state';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 import { AnalysisService } from '../../services/analysisService';
@@ -13,7 +11,7 @@ import { WelcomeSection } from '../../components/welcome-section/welcome-section
 @Component({
   selector: 'app-all-images',
   standalone: true,
-  imports: [WorklistTable, RouterModule, FormsModule, LoadingStateComponent, ErrorStateComponent, WelcomeSection],
+  imports: [WorklistTable, RouterModule, FormsModule, WelcomeSection],
   templateUrl: './all-images.html',
   styleUrl: './all-images.css',
 })

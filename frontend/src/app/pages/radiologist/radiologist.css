@@ -1,5 +1,6 @@
+@reference "../../../styles.css";
 .radiologist-dashboard {
-  @apply flex flex-col max-width-[1400px] mx-auto;
+  @apply flex flex-col max-w-[1400px] mx-auto;
 }
 
 .metrics-area {

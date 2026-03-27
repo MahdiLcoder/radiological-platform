@@ -5,14 +5,11 @@ import { injectQuery } from '@tanstack/angular-query-experimental';
 import { PatientService } from '../../services/patientService';
 import { ReportService } from '../../services/reportService';
 import { lastValueFrom } from 'rxjs';
-import { LoadingStateComponent } from '../../components/loading-state/loading-state';
-import { ErrorStateComponent } from '../../components/error-state/error-state';
-import { EmptyStateComponent } from '../../components/empty-state/empty-state';
 
 @Component({
   selector: 'app-patient-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, LoadingStateComponent, ErrorStateComponent, EmptyStateComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './patient-detail.html',
   styleUrl: './patient-detail.css'
 })

@@ -1,5 +1,6 @@
+@reference "../../../styles.css";
 .patients-page {
-  @apply flex flex-col max-width-[1400px] mx-auto;
+  @apply flex flex-col max-w-[1400px] mx-auto;
 }
 
 .header-search-box {

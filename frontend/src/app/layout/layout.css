@@ -1,3 +1,4 @@
+@reference "../../styles.css";
 .app-shell {
   display: flex;
   height: 100vh;
@@ -23,7 +24,7 @@
   background-size: 40px 40px;
 }
 
-@media (max-width: 1024px) {
+@media (max-w-1024px) {
   .page-container {
     padding: 1rem;
   }

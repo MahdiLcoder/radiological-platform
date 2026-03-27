@@ -6,10 +6,12 @@ import { lastValueFrom } from 'rxjs';
 import { AnalysisService } from '../../services/analysisService';
 import { Router } from '@angular/router';
 
+import { WelcomeSection } from '../../components/welcome-section/welcome-section';
+
 @Component({
   selector: 'app-upload',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, WelcomeSection],
   templateUrl: './upload.html',
   styleUrl: './upload.css',
 })

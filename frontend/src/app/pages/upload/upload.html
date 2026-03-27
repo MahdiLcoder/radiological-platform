@@ -11,7 +11,7 @@
       [class.has-preview]="imagePreviewUrl()"
       (click)="fileInput.click()"
     >
-      <div class="zone-scanner-line" @if (analysisMutation.isPending()) { class="scanning" }></div>
+      <div class="zone-scanner-line" [class.scanning]="analysisMutation.isPending()"></div>
       
       @if (imagePreviewUrl()) {
           <img [src]="imagePreviewUrl()" class="preview-backdrop" alt="Clinical scan preview" />

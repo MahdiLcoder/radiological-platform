@@ -29,8 +29,29 @@
     }
   </section>
 
+  <!-- Clinical Filter Console (Dashboard Compact) -->
+  <div class="clinical-filter-console mt-6 animate-in fade-in slide-in-from-left-4 duration-700 delay-300">
+    <div class="console-group">
+      <div class="console-input-wrapper group">
+        <span class="material-symbols-outlined absolute left-3 text-slate-400 group-focus-within:text-primary transition-colors text-xl">manage_search</span>
+        <input
+          class="console-input !w-96"
+          placeholder="Quick-search clinical records (Name, MRN, UID)..."
+          type="text"
+        />
+      </div>
+    </div>
+    <div class="console-group">
+       <div class="flex items-center gap-2 px-4 py-2 bg-primary/5 rounded-xl border border-primary/10">
+          <div class="size-2 bg-primary rounded-full animate-pulse"></div>
+          <span class="text-[9px] font-black text-primary uppercase tracking-widest">Live Node: PACS-CENTRAL</span>
+       </div>
+       <button class="console-reset-btn"><span class="material-symbols-outlined">refresh</span></button>
+    </div>
+  </div>
+
   <div class="dashboard-main-grid mt-10">
-    <!-- Left Column: Diagnostic Insight Cards (Pending Case Reviews) -->
+    <!-- Left Column: Diagnostic Insight Cards -->
     <section class="diagnostic-cards-section lg:col-span-8 space-y-6">
       <header class="section-toolbar">
          <div class="flex flex-col">
@@ -62,7 +83,7 @@
       }
     </section>
 
-    <!-- Right Column: Verified Specialist Admissions (Verified Patients) -->
+    <!-- Right Column: Verified Admissions -->
     <section class="clinical-list-section lg:col-span-4 space-y-6">
       <header class="section-toolbar">
          <div class="flex flex-col">

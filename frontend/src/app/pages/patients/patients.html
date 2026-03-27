@@ -5,27 +5,28 @@
     buttonText="Register Patient"
     buttonIcon="person_add"
     buttonLink="/dashboard/create-patient"
-  >
-    <!-- Integrated Search in Welcome area -->
-    <div class="header-search-box group">
-       <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-xl">person_search</span>
-       <input
-         [ngModel]="searchQuery()"
-         (ngModelChange)="searchQuery.set($event); onFilterChange()"
-         class="h-10 bg-white/50 border border-slate-200 rounded-xl pl-10 pr-4 text-xs font-bold text-slate-700 outline-none transition-all placeholder:text-slate-400 focus:ring-4 focus:ring-primary/10 focus:border-primary w-64 lg:w-80"
-         placeholder="Search by MRN, Name..."
-         type="text"
-       />
-    </div>
-  </app-welcome-section>
+  ></app-welcome-section>
 
-  <!-- Navigation & Filter Strip -->
-  <div class="filter-strip">
-    <div class="filter-tabs-pills">
+  <!-- Clinical Filter Console -->
+  <div class="clinical-filter-console mt-[-1.5rem] relative z-10 animate-in fade-in zoom-in-95 duration-700 delay-200">
+    <div class="console-group">
+      <div class="console-input-wrapper group">
+        <span class="material-symbols-outlined absolute left-3 text-slate-400 group-focus-within:text-primary transition-colors text-xl">person_search</span>
+        <input
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event); onFilterChange()"
+          class="console-input !w-80"
+          placeholder="Search by MRN, Name..."
+          type="text"
+        />
+      </div>
+    </div>
+
+    <div class="console-tab-group">
       <button
         (click)="activeTab.set('ALL'); onFilterChange()"
         [class.is-active]="activeTab() === 'ALL'"
-        class="tab-pill"
+        class="console-tab"
       >
         <span class="material-symbols-outlined text-[18px]">clinical_notes</span>
         Master Directory
@@ -33,24 +34,34 @@
       <button
         (click)="activeTab.set('RECENT'); onFilterChange()"
         [class.is-active]="activeTab() === 'RECENT'"
-        class="tab-pill"
+        class="console-tab"
       >
         <span class="material-symbols-outlined text-[18px]">history</span>
-        Recent Synchronizations
+        Recent Syncs
       </button>
       <button
         (click)="activeTab.set('PRIORITY'); onFilterChange()"
         [class.is-active]="activeTab() === 'PRIORITY'"
-        class="tab-pill"
+        class="console-tab"
       >
         <span class="material-symbols-outlined text-[18px]">emergency</span>
-        Critical Protocol
+        Critical
+      </button>
+    </div>
+
+    <div class="console-group">
+      <button 
+        (click)="searchQuery.set(''); activeTab.set('ALL'); onFilterChange()" 
+        class="console-reset-btn"
+        title="Reset Console"
+      >
+        <span class="material-symbols-outlined">refresh</span>
       </button>
     </div>
   </div>
 
   <!-- Records Repository -->
-  <div class="clinical-list-area mt-4">
+  <div class="clinical-list-area mt-8">
     @if (patientsQuery.isPending()) {
        <div class="p-20 flex flex-col items-center justify-center gap-4 bg-white rounded-3xl border border-slate-100">
           <div class="w-10 h-10 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div>

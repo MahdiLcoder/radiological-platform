@@ -1,3 +1,4 @@
+@reference "../../../styles.css";
 .confidence-gauge {
   background: conic-gradient(var(--color-primary) 0% 94%, #e2e8f0 94% 100%);
   transition: all 0.5s ease-out;

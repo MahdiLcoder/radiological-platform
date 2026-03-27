@@ -5,65 +5,69 @@
     buttonText="Import Scan"
     buttonIcon="cloud_upload"
     buttonLink="/dashboard/upload"
-  >
-    <!-- Integrated Search in Welcome area -->
-    <div class="header-search-box group">
-       <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-xl">image_search</span>
-       <input
-         [ngModel]="searchQuery()"
-         (ngModelChange)="searchQuery.set($event); onFilterChange()"
-         class="h-10 bg-white/50 border border-slate-200 rounded-xl pl-10 pr-4 text-xs font-bold text-slate-700 outline-none transition-all placeholder:text-slate-400 focus:ring-4 focus:ring-primary/10 focus:border-primary w-64 lg:w-80"
-         placeholder="Search by Patient MRN, Name..."
-         type="text"
-       />
-    </div>
-  </app-welcome-section>
+  ></app-welcome-section>
 
-  <!-- Gallery Control Strip -->
-  <div class="filter-strip">
-    <div class="flex items-center gap-4">
-      <div class="filter-group">
-        <label class="compact-label">Modality Protocol</label>
-        <div class="select-box-premium">
-          <select
-            [ngModel]="selectedModality()"
-            (ngModelChange)="selectedModality.set($event); onFilterChange()"
-            class="premium-select"
-          >
-            <option value="">Archive: All Modalities</option>
-            <option value="X-Ray">X-Ray (Radiography)</option>
-            <option value="CT Scan">CT (Tomography)</option>
-            <option value="MRI">MRI (Magnetic Resonance)</option>
-          </select>
-          <span class="material-symbols-outlined select-arrow">expand_more</span>
-        </div>
+  <!-- Clinical Filter Console -->
+  <div class="clinical-filter-console mt-[-1.5rem] relative z-10 animate-in fade-in zoom-in-95 duration-700 delay-200">
+    <div class="console-group">
+      <div class="console-input-wrapper group">
+        <span class="material-symbols-outlined absolute left-3 text-slate-400 group-focus-within:text-primary transition-colors text-xl">image_search</span>
+        <input
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event); onFilterChange()"
+          class="console-input !w-80"
+          placeholder="Search by Patient MRN, Name..."
+          type="text"
+        />
       </div>
 
-      <div class="filter-group">
-        <label class="compact-label">Pipeline Status</label>
-        <div class="select-box-premium">
-          <select
-            [ngModel]="selectedStatus()"
-            (ngModelChange)="selectedStatus.set($event); onFilterChange()"
-            class="premium-select"
-          >
-            <option value="">Status: All Lifecycle</option>
-            <option value="Pending">Queue: Pending</option>
-            <option value="Analyzed">Pipeline: Analyzed</option>
-            <option value="Validated">Session: Validated</option>
-          </select>
-          <span class="material-symbols-outlined select-arrow">expand_more</span>
-        </div>
+      <div class="console-select-wrapper group">
+        <span class="material-symbols-outlined console-select-icon">radiology</span>
+        <select
+          [ngModel]="selectedModality()"
+          (ngModelChange)="selectedModality.set($event); onFilterChange()"
+          class="console-select !pl-10 !pr-10"
+        >
+          <option value="">All Modalities</option>
+          <option value="X-Ray">X-Ray</option>
+          <option value="CT Scan">CT Scan</option>
+          <option value="MRI">MRI</option>
+        </select>
+        <span class="material-symbols-outlined console-select-arrow">expand_more</span>
+      </div>
+
+      <div class="console-select-wrapper group">
+        <span class="material-symbols-outlined console-select-icon">analytics</span>
+        <select
+          [ngModel]="selectedStatus()"
+          (ngModelChange)="selectedStatus.set($event); onFilterChange()"
+          class="console-select !pl-10 !pr-10"
+        >
+          <option value="">All Lifecycle</option>
+          <option value="Pending">Queue: Pending</option>
+          <option value="Analyzed">Pipeline: Analyzed</option>
+          <option value="Validated">Session: Validated</option>
+        </select>
+        <span class="material-symbols-outlined console-select-arrow">expand_more</span>
       </div>
     </div>
 
-    <button (click)="imagesQuery.refetch()" class="sync-btn-pax">
-       <span class="material-symbols-outlined">sync</span>
-       Refresh Archive Log
-    </button>
+    <div class="console-group">
+      <button (click)="imagesQuery.refetch()" class="console-action-btn">
+         <span class="material-symbols-outlined text-[18px]">sync</span>
+         REFRESH
+      </button>
+      <button 
+        (click)="searchQuery.set(''); selectedModality.set(''); selectedStatus.set(''); onFilterChange()" 
+        class="console-reset-btn"
+        title="Reset Console"
+      >
+        <span class="material-symbols-outlined">refresh</span>
+      </button>
+    </div>
   </div>
 
-  <div class="min-h-96 mt-6">
+  <div class="min-h-96 mt-10">
     @if (imagesQuery.isPending()) {
        <div class="p-32 flex flex-col items-center justify-center gap-4 bg-white/50 rounded-3xl border border-slate-100">
           <div class="w-10 h-10 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div>

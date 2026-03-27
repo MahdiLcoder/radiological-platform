@@ -6,7 +6,7 @@
   
   <div class="welcome-content-wrapper">
     <div class="welcome-text-area">
-      <div class="welcome-icon-box" @if (buttonIcon()) { title="{{ buttonIcon() }}" }>
+      <div class="welcome-icon-box" [title]="buttonIcon() || ''">
          <span class="material-symbols-outlined">{{ buttonIcon() || 'clinical_notes' }}</span>
       </div>
       <div>

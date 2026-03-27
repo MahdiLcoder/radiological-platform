@@ -2,65 +2,69 @@
   <app-welcome-section
     title="Diagnostic Repository"
     subtitle="Centralized records of all validated clinical findings and AI-assisted reports."
-  >
-    <!-- Integrated Search in Welcome area -->
-    <div class="header-search-box group">
-       <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-xl">person_search</span>
-       <input
-         [ngModel]="patientIdFilter()"
-         (ngModelChange)="patientIdFilter.set($event); onFilterChange()"
-         class="h-10 bg-white/50 border border-slate-200 rounded-xl pl-10 pr-4 text-xs font-bold text-slate-700 outline-none transition-all placeholder:text-slate-400 focus:ring-4 focus:ring-primary/10 focus:border-primary w-64 lg:w-80"
-         placeholder="Filter by Subject Name/MRN..."
-         type="text"
-       />
-    </div>
-  </app-welcome-section>
+  ></app-welcome-section>
 
-  <!-- Control Console -->
-  <div class="filter-strip">
-    <div class="flex items-center gap-4">
-      <div class="filter-group">
-        <label class="compact-label">Modality Filter</label>
-        <div class="select-box-premium">
-          <select
-            [ngModel]="modalityFilter()"
-            (ngModelChange)="modalityFilter.set($event); onFilterChange()"
-            class="premium-select"
-          >
-            <option value="All Modalities">Protocol: All Modalities</option>
-            <option value="MRI">MRI (Magnetic Resonance)</option>
-            <option value="CT Scan">CT (Tomography)</option>
-            <option value="X-Ray">X-Ray (Radiography)</option>
-          </select>
-          <span class="material-symbols-outlined select-arrow">expand_more</span>
-        </div>
+  <!-- Clinical Filter Console -->
+  <div class="clinical-filter-console mt-[-1.5rem] relative z-10 animate-in fade-in zoom-in-95 duration-700 delay-200">
+    <div class="console-group">
+      <div class="console-input-wrapper group">
+        <span class="material-symbols-outlined absolute left-3 text-slate-400 group-focus-within:text-primary transition-colors text-xl">person_search</span>
+        <input
+          [ngModel]="patientIdFilter()"
+          (ngModelChange)="patientIdFilter.set($event); onFilterChange()"
+          class="console-input !w-64"
+          placeholder="Subject Name/MRN..."
+          type="text"
+        />
       </div>
 
-      <div class="filter-group">
-        <label class="compact-label">Temporal Range</label>
-        <div class="select-box-premium">
-          <select
-            [ngModel]="dateFilter()"
-            (ngModelChange)="dateFilter.set($event); onFilterChange()"
-            class="premium-select"
-          >
-            <option value="All Time">Archive: All Time</option>
-            <option value="Last 7 Days">Cycle: 7 Days</option>
-            <option value="Last 30 Days">Cycle: 30 Days</option>
-          </select>
-          <span class="material-symbols-outlined select-arrow">expand_more</span>
-        </div>
+      <div class="console-select-wrapper group">
+        <span class="material-symbols-outlined console-select-icon">radiology</span>
+        <select
+          [ngModel]="modalityFilter()"
+          (ngModelChange)="modalityFilter.set($event); onFilterChange()"
+          class="console-select !pl-10 !pr-10"
+        >
+          <option value="All Modalities">All Modalities</option>
+          <option value="MRI">MRI</option>
+          <option value="CT Scan">CT Scan</option>
+          <option value="X-Ray">X-Ray</option>
+        </select>
+        <span class="material-symbols-outlined console-select-arrow">expand_more</span>
+      </div>
+
+      <div class="console-select-wrapper group">
+        <span class="material-symbols-outlined console-select-icon">calendar_month</span>
+        <select
+          [ngModel]="dateFilter()"
+          (ngModelChange)="dateFilter.set($event); onFilterChange()"
+          class="console-select !pl-10 !pr-10"
+        >
+          <option value="All Time">All Time</option>
+          <option value="Last 7 Days">7 Days</option>
+          <option value="Last 30 Days">30 Days</option>
+        </select>
+        <span class="material-symbols-outlined console-select-arrow">expand_more</span>
       </div>
     </div>
 
-    <button (click)="reportsQuery.refetch()" class="sync-btn-pax">
-       <span class="material-symbols-outlined">sync</span>
-       Synchronize Repository
-    </button>
+    <div class="console-group">
+      <button (click)="reportsQuery.refetch()" class="console-action-btn">
+         <span class="material-symbols-outlined">sync</span>
+         SYNCHRONIZE
+      </button>
+      <button 
+        (click)="patientIdFilter.set(''); modalityFilter.set('All Modalities'); dateFilter.set('All Time'); onFilterChange()" 
+        class="console-reset-btn"
+        title="Reset Console"
+      >
+        <span class="material-symbols-outlined">refresh</span>
+      </button>
+    </div>
   </div>
 
   <!-- Evidence Grid -->
-  <div class="min-h-96 mt-6">
+  <div class="min-h-96 mt-10">
     @if (reportsQuery.isPending()) {
        <div class="p-32 flex flex-col items-center justify-center gap-4 bg-white/50 rounded-3xl border border-slate-100 italic">
           <div class="w-10 h-10 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div>

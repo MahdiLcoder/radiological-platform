@@ -13,49 +13,57 @@
       buttonText="Delegate Access"
       buttonIcon="person_add"
       buttonLink="/dashboard/admin/invite"
-    >
-      <!-- Integrated Search in Welcome area -->
-      <div class="header-search-box group">
-         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-xl">manage_search</span>
-         <input
-           [ngModel]="searchTerm()"
-           (ngModelChange)="searchTerm.set($event); onFilterChange()"
-           class="h-10 bg-white/50 border border-slate-200 rounded-xl pl-10 pr-4 text-xs font-bold text-slate-700 outline-none transition-all placeholder:text-slate-400 focus:ring-4 focus:ring-primary/10 focus:border-primary w-64 lg:w-80"
-           placeholder="Search Identities or UUIDs..."
-           type="text"
-         />
-      </div>
-    </app-welcome-section>
+    ></app-welcome-section>
   </div>
 
-  <!-- Filtration Console -->
-  <div class="filter-strip">
-    <div class="filter-group">
-      <label class="compact-label">Deployment Role</label>
-      <div class="select-box-premium">
+  <!-- Clinical Filter Console -->
+  <div class="clinical-filter-console mt-[-1.5rem] relative z-10 animate-in fade-in zoom-in-95 duration-700 delay-200">
+    <div class="console-group">
+      <div class="console-input-wrapper group">
+        <span class="material-symbols-outlined absolute left-3 text-slate-400 group-focus-within:text-primary transition-colors text-xl">manage_search</span>
+        <input
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event); onFilterChange()"
+          class="console-input !w-80"
+          placeholder="Search Identities or UUIDs..."
+          type="text"
+        />
+      </div>
+
+      <div class="console-select-wrapper group">
+        <span class="material-symbols-outlined console-select-icon">shield_person</span>
         <select
           [ngModel]="selectedRole()"
           (ngModelChange)="selectedRole.set($event); onFilterChange()"
-          class="premium-select"
+          class="console-select !pl-10 !pr-10"
         >
-          <option value="">Status: All Institutional Roles</option>
+          <option value="">All Institutional Roles</option>
           <option value="admin">System Administrator</option>
           <option value="radiologist">Radiologist Consultant</option>
           <option value="doctor">Clinical Physician</option>
         </select>
-        <span class="material-symbols-outlined select-arrow">expand_more</span>
+        <span class="material-symbols-outlined console-select-arrow">expand_more</span>
       </div>
     </div>
 
-    <div class="registry-stats text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-       @if (usersQuery.data(); as users) {
-          Registry Index: <span class="text-slate-900">{{ users.count }}</span> Active Accounts
-       }
+    <div class="console-group">
+      <div class="registry-stats text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mr-4">
+         @if (usersQuery.data(); as users) {
+            Registry Index: <span class="text-slate-900">{{ users.count }}</span> Active
+         }
+      </div>
+      <button 
+        (click)="searchTerm.set(''); selectedRole.set(''); onFilterChange()" 
+        class="console-reset-btn"
+        title="Reset Console"
+      >
+        <span class="material-symbols-outlined">refresh</span>
+      </button>
     </div>
   </div>
 
   <!-- Management Interface -->
-  <div class="clinical-list-area mt-6">
+  <div class="clinical-list-area mt-10">
     @if (usersQuery.isLoading()) {
        <div class="p-20 flex flex-col items-center justify-center gap-4 bg-white/50 rounded-3xl border border-slate-100">
           <div class="w-10 h-10 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div>

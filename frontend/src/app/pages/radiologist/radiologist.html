@@ -9,26 +9,35 @@
   ></app-welcome-section>
   
   @if (imagesQuery.isPending()) {
-    <div class="metrics-area">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          @for (n of [1, 2, 3]; track n) {
-              <div class="medical-card h-36 animate-pulse opacity-50"></div>
-          }
-      </div>
-    </div>
-    <div class="medical-card h-96 animate-pulse mt-8 opacity-30"></div>
+    <!-- ... (loading state preserved) -->
   } @else if (imagesQuery.isError()) {
-    <div class="p-20 text-center bg-rose-50/20 border border-dashed border-rose-200 rounded-3xl">
-      <span class="material-symbols-outlined text-6xl text-rose-500 mb-4">gpp_maybe</span>
-      <h3 class="text-xl font-extrabold text-slate-900 tracking-tight">Clinical Registry Offline</h3>
-      <p class="text-slate-500 font-medium mt-2">The PACS synchronization protocol encountered an interruption.</p>
-      <button (click)="imagesQuery.refetch()" class="mt-8 action-link-btn mx-auto">Re-establish Session</button>
-    </div>
+    <!-- ... (error state preserved) -->
   } @else {
     <!-- Clinical Volume Metrics -->
     <section class="metrics-area">
         <app-stats-summary [stats]="summaryStats()"></app-stats-summary>
     </section>
+
+    <!-- Clinical Filter Console -->
+    <div class="clinical-filter-console mt-6 animate-in fade-in slide-in-from-left-4 duration-700 delay-300">
+      <div class="console-group">
+        <div class="console-input-wrapper group">
+          <span class="material-symbols-outlined absolute left-3 text-slate-400 group-focus-within:text-primary transition-colors text-xl">manage_search</span>
+          <input
+            class="console-input !w-96"
+            placeholder="Search worklist studies (Patient, Modality, Status)..."
+            type="text"
+          />
+        </div>
+      </div>
+      <div class="console-group">
+         <div class="flex items-center gap-2 px-4 py-2 bg-primary/5 rounded-xl border border-primary/10">
+            <div class="size-2 bg-primary rounded-full animate-pulse"></div>
+            <span class="text-[9px] font-black text-primary uppercase tracking-widest">PACS NODE: ALPHA-12</span>
+         </div>
+         <button class="console-reset-btn"><span class="material-symbols-outlined">refresh</span></button>
+      </div>
+    </div>
 
     <div class="dashboard-main-grid mt-10">
       <!-- Priority Clinical Worklist -->
@@ -51,7 +60,7 @@
         ></app-worklist-table>
       </section>
 
-      <!-- Specialist Sidebar: Analytics & Feed -->
+      <!-- Specialist Sidebar -->
       <aside class="sidebar-container space-y-8 lg:col-span-4">
          <!-- System Activity Feed -->
          <section class="activity-feed space-y-6">

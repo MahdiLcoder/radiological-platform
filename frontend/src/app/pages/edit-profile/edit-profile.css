@@ -1,5 +1,6 @@
+@reference "../../../styles.css";
 .profile-page {
-  @apply flex flex-col max-width-[1400px] mx-auto pb-20;
+  @apply flex flex-col max-w-[1400px] mx-auto pb-20;
 }
 
 /* Local Styles Override */

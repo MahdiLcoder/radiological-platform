@@ -1,3 +1,4 @@
+@reference "../../../styles.css";
 :host {
   @apply fixed left-0 top-0 bottom-0 w-72 bg-white border-r border-slate-100 z-50;
 }

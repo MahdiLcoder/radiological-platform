@@ -4,9 +4,12 @@ import { AuthService } from '../../services/authService';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 
+import { CommonModule, UpperCasePipe } from '@angular/common';
+
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterLink, RouterLinkActive],
+  standalone: true,
+  imports: [CommonModule, RouterLink, RouterLinkActive, UpperCasePipe],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css',
 })
