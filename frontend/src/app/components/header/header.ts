@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { AuthService } from '../../services/authService';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 export interface UserProfile {
@@ -18,7 +18,7 @@ export interface UserProfile {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })

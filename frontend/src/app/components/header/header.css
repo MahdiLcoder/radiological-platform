@@ -1,31 +1,33 @@
 @reference "../../../styles.css";
+
 :host {
-  @apply sticky top-0 left-0 right-0 z-40;
+  @apply block sticky top-0 z-50;
 }
 
-.header-main-h-16 {
-  @apply h-16 bg-white/80 backdrop-blur-md border-b border-slate-100 transition-all;
+.header-host {
+  @apply transition-all duration-300;
 }
 
-/* Clinical System Status Pill */
-.clinical-system-status {
-  @apply flex items-center gap-2 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-full;
+/* Glassmorphism search input highlights */
+input:focus {
+  @apply shadow-[0_0_20px_rgba(30,64,175,0.08)];
 }
 
-.status-orb-pulse {
-  @apply size-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.4)];
+/* Profile Dropdown Animations */
+.rotate-180 {
+  transform: rotate(180deg);
 }
 
-/* Tool Buttons Premium */
-.tool-btn-premium {
-  @apply relative size-10 flex items-center justify-center rounded-xl bg-white border border-slate-100 text-slate-400 transition-all hover:bg-primary/5 hover:text-primary hover:border-primary/20 hover:shadow-sm;
+/* Custom shadow for the profile orb ring */
+.ring-primary\/5 {
+  --tw-ring-color: rgba(30, 64, 175, 0.05);
 }
 
-.notification-blip {
-  @apply absolute top-2 right-2 size-2 bg-rose-500 rounded-full border-2 border-white;
+/* Ensure backdrop covers full screen but stays below dropdown */
+.z-55 {
+  z-index: 55;
 }
 
-/* Header Professional Identity */
-.header-professional-info {
-  @apply select-none;
+.z-60 {
+  z-index: 60;
 }
