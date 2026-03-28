@@ -39,7 +39,7 @@
           </p>
           <p class="text-xs text-slate-500 truncate font-medium max-w-[90%]">
             <ng-container *ngIf="conv.lastMessage; else noMessages">
-              <span *ngIf="conv.lastMessage.sender_id === currentUserId" class="text-slate-400 font-bold">You: </span>
+              <span *ngIf="isMine(conv.lastMessage)" class="text-slate-400 font-bold">You: </span>
               {{ conv.lastMessage.content }}
             </ng-container>
             <ng-template #noMessages>
@@ -100,15 +100,15 @@
           <div
             *ngFor="let message of messages"
             class="flex w-full message-animate"
-            [ngClass]="message.sender_id === currentUserId ? 'justify-end' : 'justify-start'"
+            [ngClass]="isMine(message) ? 'justify-end' : 'justify-start'"
           >
             <div 
               class="max-w-[70%] relative group flex flex-col"
-              [ngClass]="message.sender_id === currentUserId ? 'items-end' : 'items-start'"
+              [ngClass]="isMine(message) ? 'items-end' : 'items-start'"
             >
               <div 
                 class="px-5 py-3.5 shadow-sm leading-relaxed"
-                [ngClass]="message.sender_id === currentUserId 
+                [ngClass]="isMine(message) 
                   ? 'bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-[24px] rounded-tr-[4px]' 
                   : 'bg-white border border-slate-200 text-slate-800 rounded-[24px] rounded-tl-[4px]'"
               >
@@ -116,12 +116,12 @@
               </div>
               <div 
                 class="flex items-center gap-1 mt-1.5 px-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                [ngClass]="message.sender_id === currentUserId ? 'justify-end' : 'justify-start'"
+                [ngClass]="isMine(message) ? 'justify-end' : 'justify-start'"
               >
                 <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                   {{ message.created_at | date:'MMM d, h:mm a' }}
                 </span>
-                <span *ngIf="message.sender_id === currentUserId" class="material-symbols-outlined text-[14px] text-indigo-400">done_all</span>
+                <span *ngIf="isMine(message)" class="material-symbols-outlined text-[14px] text-indigo-400">done_all</span>
               </div>
             </div>
           </div>

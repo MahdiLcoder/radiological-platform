@@ -188,6 +188,10 @@ export class Chat implements OnInit, OnDestroy {
     }
   }
 
+  isMine(message: Message): boolean {
+  return Number(message.sender_id) === Number(this.currentUserId);
+}
+
   private scrollToBottom() {
     setTimeout(() => {
       if (this.messagesContainer) {
