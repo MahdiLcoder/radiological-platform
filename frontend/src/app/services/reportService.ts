@@ -5,6 +5,7 @@ import { PaginatedResponse } from '../models/pagination';
 
 export interface ReportApiItem {
   id: string;
+  doctor: string;
   image: {
     id: string;
     patient_name: string | null;

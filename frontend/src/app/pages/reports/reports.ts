@@ -75,7 +75,7 @@ export class Reports {
       modality: this.normalizeModality(item.image?.modality),
       status: this.mapActionToStatus(item.diagnosis?.action),
       diagnosis: item.diagnosis?.final_finding ?? 'No finding recorded',
-      doctor: `Radiologist #${item.generated_by}`,
+      doctor: item.doctor || `Radiologist #${item.generated_by}`,
       date: item.generated_at
         ? new Date(item.generated_at).toLocaleDateString('en-US', {
             year: 'numeric',

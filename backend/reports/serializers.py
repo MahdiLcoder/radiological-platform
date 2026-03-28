@@ -5,11 +5,13 @@ from rest_framework.exceptions import NotFound, APIException
 from diagnosis.models import Diagnosis
 from .models import Report
 from .services import PDFService
+from django.contrib.auth import get_user_model
+
 
 
 logger = logging.getLogger(__name__)
 
-
+User = get_user_model()
 class ReportSerializer(serializers.Serializer):
     id           = serializers.CharField(read_only=True)
     diagnosis_id = serializers.CharField(write_only=True)
@@ -51,8 +53,18 @@ class ReportSerializer(serializers.Serializer):
         return report
 
     def to_representation(self, instance):
+        doctor_name = f"Radiologist #{instance.generated_by}"
+        if instance.generated_by:
+            try:
+                user = User.objects.get(id=instance.generated_by)
+                if user.first_name or user.last_name:
+                    doctor_name = f"Dr. {user.first_name} {user.last_name}".strip()
+            except User.DoesNotExist:
+                pass
+
         return {
             "id": str(instance.id),
+            "doctor": doctor_name,
             "image": {
             "id": str(instance.image.id),
             "patient_name": instance.image.patient.full_name if instance.image and instance.image.patient else None,
