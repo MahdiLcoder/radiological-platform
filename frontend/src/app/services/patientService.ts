@@ -43,8 +43,9 @@ export class PatientService {
     return this.http.get<PaginatedResponse<Patient[]>>(`${this.apiUrl}/`, { params: httpParams });
   }
 
-  getById(id: string): Observable<Patient> {
-    return this.http.get<Patient>(`${this.apiUrl}/${id}/`);
+  getById(id: string, scanOrder: 'desc' | 'asc' = 'desc'): Observable<Patient> {
+    const params = new HttpParams().set('scan_order', scanOrder);
+    return this.http.get<Patient>(`${this.apiUrl}/${id}/`, { params });
   }
 
   create(patientData: Patient): Observable<Patient> {

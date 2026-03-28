@@ -103,7 +103,9 @@ class PatientDetailView(APIView):
         """Get patient details with related medical records"""
         patient = self.get_object(pk)
 
-        images = RadiologyImage.objects.filter(patient=patient).order_by('-uploaded_at')
+        scan_order = request.query_params.get('scan_order', 'desc')
+        order_field = 'uploaded_at' if scan_order == 'asc' else '-uploaded_at'
+        images = RadiologyImage.objects.filter(patient=patient).order_by(order_field)
         diagnoses = Diagnosis.objects.filter(image__in=[img.id for img in images]).order_by('-validated_at')
         
         last_visit = None

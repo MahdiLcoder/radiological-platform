@@ -121,7 +121,17 @@
               <span class="material-symbols-outlined text-slate-400">biotech</span>
               Imaging Studies
             </h3>
-            <button class="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors">History</button>
+            <!-- Sort toggle -->
+            <button
+              (click)="toggleScanSort()"
+              class="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors group"
+              [title]="scanSortOrder() === 'desc' ? 'Showing newest first — click for oldest first' : 'Showing oldest first — click for newest first'"
+            >
+              <span class="material-symbols-outlined text-base transition-transform duration-300"
+                [style.transform]="scanSortOrder() === 'asc' ? 'scaleY(-1)' : 'scaleY(1)'"
+              >sort</span>
+              {{ scanSortOrder() === 'desc' ? 'Newest' : 'Oldest' }}
+            </button>
           </div>
 
           <div class="space-y-5">

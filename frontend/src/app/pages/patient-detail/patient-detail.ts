@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { injectQuery } from '@tanstack/angular-query-experimental';
@@ -25,11 +25,16 @@ export class PatientDetail {
   patientId = this.route.snapshot.paramMap.get('id');
 
   patientQuery = injectQuery(() => ({
-    queryKey: ['patient', this.patientId],
-    queryFn: () => lastValueFrom(this.patientService.getById(this.patientId!)),
+    queryKey: ['patient', this.patientId, this.scanSortOrder()],
+    queryFn: () => lastValueFrom(this.patientService.getById(this.patientId!, this.scanSortOrder())),
     enabled: !!this.patientId
   }));
 
+  scanSortOrder = signal<'desc' | 'asc'>('desc');
+
+  toggleScanSort(): void {
+    this.scanSortOrder.update(o => (o === 'desc' ? 'asc' : 'desc'));
+  }
 
   calculateAge(dob: string | undefined): number {
     if (!dob) return 0;
