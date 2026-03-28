@@ -32,7 +32,35 @@
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  /* Entrance Animations (mimicking tailwindcss-animate) */
+  @keyframes enter {
+    from {
+      opacity: var(--tw-enter-opacity, 1);
+      transform: translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0) 
+                 scale3d(var(--tw-enter-scale, 1), var(--tw-enter-scale, 1), var(--tw-enter-scale, 1)) 
+                 rotate(var(--tw-enter-rotate, 0));
+    }
+  }
 }
+
+@utility animate-in {
+  animation-name: enter;
+  animation-duration: 250ms;
+  animation-fill-mode: both;
+}
+
+@utility fade-in { --tw-enter-opacity: 0; }
+@utility fade-out { --tw-exit-opacity: 0; }
+
+@utility slide-in-from-top-4 { --tw-enter-translate-y: -1rem; }
+@utility slide-in-from-bottom-4 { --tw-enter-translate-y: 1rem; }
+@utility slide-in-from-bottom-6 { --tw-enter-translate-y: 1.5rem; }
+@utility slide-in-from-left-4 { --tw-enter-translate-x: -1rem; }
+@utility slide-in-from-right-4 { --tw-enter-translate-x: 1rem; }
+
+@utility zoom-in-95 { --tw-enter-scale: 0.95; }
+@utility zoom-in-100 { --tw-enter-scale: 1; }
 
 @layer base {
   body {
