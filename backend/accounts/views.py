@@ -45,7 +45,7 @@ class StandardResultsSetPagination(PageNumberPagination):
     
 class UserListView(generics.ListAPIView):
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated, IsAdmin]
+    permission_classes = [permissions.IsAuthenticated]
     pagination_class = StandardResultsSetPagination
 
 
@@ -164,12 +164,6 @@ class UserDetailView(APIView):
 
 
 class ForgotPasswordView(APIView):
-    """
-    Public endpoint — no authentication required.
-    Accepts { "email": "..." } and sends a newly generated password
-    to that address if a user account exists.
-    Always returns 200 to prevent user enumeration.
-    """
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):

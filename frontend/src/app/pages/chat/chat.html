@@ -1,0 +1,158 @@
+<!-- Main Chat Layout -->
+<div class="flex h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] bg-slate-50/30 overflow-hidden font-sans">
+  
+  <!-- Sidebar Container -->
+  <aside class="w-full max-w-[380px] bg-white border-r border-slate-200 flex flex-col shrink-0">
+    <div class="px-6 py-5 border-b border-slate-200 shrink-0">
+      <h3 class="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+        <span class="material-symbols-outlined text-indigo-500">forum</span>
+        Clinical Discussions
+      </h3>
+      <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Direct Messaging</p>
+    </div>
+    
+    <div class="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
+      <div
+        *ngFor="let conv of conversations()"
+        class="flex items-center gap-4 p-3 rounded-2xl cursor-pointer transition-all duration-200 border border-transparent"
+        [ngClass]="conv.otherUser.id === receiverId() ? 'bg-indigo-50/50 border-indigo-100 shadow-sm' : 'hover:bg-slate-50 hover:border-slate-200'"
+        (click)="selectConversation(conv)"
+      >
+        <!-- Avatar -->
+        <div class="size-12 rounded-2xl bg-gradient-to-br from-indigo-100 to-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 font-black shadow-inner shrink-0 relative">
+          {{ getUserInitials(conv.otherUser) }}
+          <span class="absolute -bottom-1 -right-1 size-3.5 bg-emerald-400 border-2 border-white rounded-full"></span>
+        </div>
+        
+        <!-- Info -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between mb-0.5">
+            <h4 class="text-sm font-black text-slate-900 truncate">
+              {{ conv.otherUser.first_name }} {{ conv.otherUser.last_name }}
+            </h4>
+            <span *ngIf="conv.lastMessage" class="text-[10px] font-bold text-slate-400 uppercase tracking-widest shrink-0">
+              {{ conv.lastMessage.created_at | date:'shortTime' }}
+            </span>
+          </div>
+          <p class="text-[11px] font-bold uppercase tracking-widest text-indigo-500/80 mb-1">
+            {{ conv.otherUser.role }}
+          </p>
+          <p class="text-xs text-slate-500 truncate font-medium max-w-[90%]">
+            <ng-container *ngIf="conv.lastMessage; else noMessages">
+              <span *ngIf="conv.lastMessage.sender_id === currentUserId" class="text-slate-400 font-bold">You: </span>
+              {{ conv.lastMessage.content }}
+            </ng-container>
+            <ng-template #noMessages>
+              <span class="italic text-slate-400">Start a discussion...</span>
+            </ng-template>
+          </p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Chat Area -->
+  <main class="flex-1 flex flex-col min-w-0 relative bg-slate-50/30">
+    <!-- Empty State -->
+    <div *ngIf="!receiverId()" class="absolute inset-0 flex flex-col items-center justify-center bg-white/50 backdrop-blur-sm z-10">
+      <div class="size-24 bg-slate-100 rounded-full flex items-center justify-center mb-6">
+        <span class="material-symbols-outlined text-5xl text-slate-300">chat_bubble</span>
+      </div>
+      <h2 class="text-2xl font-black text-slate-800 tracking-tight">Select a conversation</h2>
+      <p class="text-slate-500 mt-2 text-sm font-medium">Connect with clinical staff to coordinate action plans.</p>
+    </div>
+
+    <!-- Active Chat Content -->
+    <ng-container *ngIf="receiverId()">
+      <!-- Chat Header -->
+      <header class="px-8 py-4 bg-white/80 backdrop-blur-md border-b border-slate-200 shrink-0 sticky top-0 z-20 shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="size-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 font-black">
+            {{ getUserInitials(currentConversation()?.otherUser) }}
+          </div>
+          <div>
+            <h2 class="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2">
+              {{ currentConversation()?.otherUser?.first_name }} {{ currentConversation()?.otherUser?.last_name }}
+              <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-widest border border-emerald-100">Online</span>
+            </h2>
+            <p class="text-[11px] font-bold uppercase tracking-widest text-slate-500 mt-0.5">
+              {{ currentConversation()?.otherUser?.role }}
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="size-10 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 transition-colors">
+            <span class="material-symbols-outlined text-xl">more_vert</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Messages Stream -->
+      <div class="flex-1 overflow-y-auto p-8 custom-scrollbar space-y-6" #messagesContainer>
+        <div *ngIf="messagesQuery.isPending()" class="flex justify-center p-8">
+          <div class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-slate-100 text-sm font-bold text-slate-400">
+            <span class="material-symbols-outlined animate-spin text-indigo-500">sync</span>
+            Decrypting history...
+          </div>
+        </div>
+        
+        <ng-container *ngIf="messagesQuery.data() as messages">
+          <div
+            *ngFor="let message of messages"
+            class="flex w-full message-animate"
+            [ngClass]="message.sender_id === currentUserId ? 'justify-end' : 'justify-start'"
+          >
+            <div 
+              class="max-w-[70%] relative group flex flex-col"
+              [ngClass]="message.sender_id === currentUserId ? 'items-end' : 'items-start'"
+            >
+              <div 
+                class="px-5 py-3.5 shadow-sm leading-relaxed"
+                [ngClass]="message.sender_id === currentUserId 
+                  ? 'bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-[24px] rounded-tr-[4px]' 
+                  : 'bg-white border border-slate-200 text-slate-800 rounded-[24px] rounded-tl-[4px]'"
+              >
+                <p class="text-[15px] whitespace-pre-wrap">{{ message.content }}</p>
+              </div>
+              <div 
+                class="flex items-center gap-1 mt-1.5 px-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                [ngClass]="message.sender_id === currentUserId ? 'justify-end' : 'justify-start'"
+              >
+                <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                  {{ message.created_at | date:'MMM d, h:mm a' }}
+                </span>
+                <span *ngIf="message.sender_id === currentUserId" class="material-symbols-outlined text-[14px] text-indigo-400">done_all</span>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- Input Area -->
+      <footer class="p-4 bg-white border-t border-slate-200 shrink-0">
+        <div class="max-w-4xl mx-auto flex items-end gap-3 bg-slate-50 border border-slate-200 rounded-t-2xl rounded-b-3xl p-2 shadow-inner focus-within:border-indigo-300 focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
+          <button class="size-10 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors shrink-0">
+            <span class="material-symbols-outlined text-xl">attach_file</span>
+          </button>
+          
+          <textarea
+            [(ngModel)]="newMessage"
+            (keyup.enter)="$event.preventDefault(); sendMessage()"
+            placeholder="Discuss clinical findings securely..."
+            class="flex-1 max-h-32 min-h-[44px] bg-transparent border-none outline-none resize-none py-3 text-[15px] text-slate-800 placeholder-slate-400 custom-scrollbar"
+            rows="1"
+          ></textarea>
+          
+          <button 
+            (click)="sendMessage()"
+            [disabled]="!newMessage.trim()"
+            class="size-12 rounded-full flex items-center justify-center transition-all shrink-0 shadow-md"
+            [ngClass]="newMessage.trim() ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'"
+          >
+            <span class="material-symbols-outlined" [class.ml-1]="newMessage.trim()">send</span>
+          </button>
+        </div>
+      </footer>
+    </ng-container>
+  </main>
+</div>

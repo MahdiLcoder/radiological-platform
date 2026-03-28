@@ -10,9 +10,7 @@ export const routes: Routes = [
   {
     path: 'forgot-password',
     loadComponent: () =>
-      import('./pages/forgot-password/forgot-password').then(
-        (m) => m.ForgotPassword
-      ),
+      import('./pages/forgot-password/forgot-password').then((m) => m.ForgotPassword),
   },
   {
     path: 'dashboard',
@@ -43,10 +41,14 @@ export const routes: Routes = [
       {
         path: 'all-images',
         loadComponent: () => import('./pages/all-images/all-images').then((m) => m.AllImages),
-      },  
+      },
       {
         path: 'reports',
         loadComponent: () => import('./pages/reports/reports').then((m) => m.Reports),
+      },
+      {
+        path: 'chat',
+        loadComponent: () => import('./pages/chat/chat').then((m) => m.Chat),
       },
       {
         path: 'upload',

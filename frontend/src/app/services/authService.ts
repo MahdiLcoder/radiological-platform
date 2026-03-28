@@ -13,15 +13,18 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/register/`, userData);
   }
 
-
-  login(username: string, password: string) { 
-    return this.http.post(`${this.apiUrl}/login/`, {
-      username,
-      password
-    }).pipe(tap((res: any) => {
-      localStorage.setItem('access_token', res.access);
-      localStorage.setItem('refresh_token', res.refresh);
-     }))
+  login(username: string, password: string) {
+    return this.http
+      .post(`${this.apiUrl}/login/`, {
+        username,
+        password,
+      })
+      .pipe(
+        tap((res: any) => {
+          localStorage.setItem('access_token', res.access);
+          localStorage.setItem('refresh_token', res.refresh);
+        }),
+      );
   }
 
   refresh() {
@@ -29,11 +32,15 @@ export class AuthService {
     if (!refreshToken) {
       return throwError(() => new Error('No refresh token available'));
     }
-    return this.http.post(`${this.apiUrl}/refresh/`, {
-      refresh: refreshToken
-    }).pipe(tap((res: any) => {
-      localStorage.setItem('access_token', res.access);
-     }))
+    return this.http
+      .post(`${this.apiUrl}/refresh/`, {
+        refresh: refreshToken,
+      })
+      .pipe(
+        tap((res: any) => {
+          localStorage.setItem('access_token', res.access);
+        }),
+      );
   }
 
   getProfile(): Observable<any> {
@@ -44,14 +51,17 @@ export class AuthService {
     return this.http.patch(`${this.apiUrl}/users/${id}/`, profileData);
   }
 
-  getUsers(role?: string, page: number = 1, page_size: number = 10, search?: string): Observable<any> {
+  getUsers(
+    role?: string,
+    page: number = 1,
+    page_size: number = 10,
+    search?: string,
+  ): Observable<any> {
     const params: any = { page, page_size };
     if (role) params.role = role;
     if (search) params.search = search;
     return this.http.get<any>(`${this.apiUrl}/users/`, { params });
   }
-
-
 
   getStats(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/stats/`);
@@ -66,7 +76,6 @@ export class AuthService {
   }
 
   logout() {
-
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
   }
@@ -81,5 +90,14 @@ export class AuthService {
 
   isLoggedIn() {
     return !!this.getAccessToken();
+  }
+
+  getCurrentUserId(): number | null {
+    const token = this.getAccessToken();
+    if (token) {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.user_id;
+    }
+    return null;
   }
 }

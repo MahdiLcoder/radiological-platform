@@ -17,12 +17,34 @@ export class Sidebar {
   private authService = inject(AuthService);
 
   private navItems = [
-    { label: 'Dashboard', icon: 'dashboard', link: '/dashboard/', roles: ['admin', 'radiologist', 'doctor'], exact: true },
+    {
+      label: 'Dashboard',
+      icon: 'dashboard',
+      link: '/dashboard/',
+      roles: ['admin', 'radiologist', 'doctor'],
+      exact: true,
+    },
     { label: 'Staff Management', icon: 'badge', link: '/dashboard/admin/users', roles: ['admin'] },
-    { label: 'Upload Scans', icon: 'upload_file', link: '/dashboard/upload', roles: ['radiologist'] },
-    { label: 'All Scans', icon: 'collections', link: '/dashboard/all-images', roles: ['radiologist'] },
-    { label: 'Reports', icon: 'clinical_notes', link: '/dashboard/reports', roles: ['admin', 'radiologist', 'doctor'] },
+    {
+      label: 'Upload Scans',
+      icon: 'upload_file',
+      link: '/dashboard/upload',
+      roles: ['radiologist'],
+    },
+    {
+      label: 'All Scans',
+      icon: 'collections',
+      link: '/dashboard/all-images',
+      roles: ['radiologist'],
+    },
+    {
+      label: 'Reports',
+      icon: 'clinical_notes',
+      link: '/dashboard/reports',
+      roles: ['admin', 'radiologist', 'doctor'],
+    },
     { label: 'Patient Records', icon: 'groups', link: '/dashboard/patients', roles: ['doctor'] },
+    { label: 'Chat', icon: 'chat', link: '/dashboard/chat', roles: ['radiologist', 'doctor'] },
   ];
 
   profileQuery = injectQuery(() => ({
@@ -35,7 +57,6 @@ export class Sidebar {
   get filteredNavItems() {
     const role = this.profileQuery.data()?.role?.toLowerCase();
     if (!role) return [];
-    return this.navItems.filter(item => item.roles.includes(role));
+    return this.navItems.filter((item) => item.roles.includes(role));
   }
-
 }

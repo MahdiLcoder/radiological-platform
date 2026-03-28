@@ -14,6 +14,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -21,12 +22,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'rest_framework',
     'corsheaders',
+    'channels',
     'accounts',
     'images',
     'inference',
     'diagnosis',
     'reports',
     'patients',
+    'chat',
     'anymail'
 ]
 
@@ -73,6 +76,15 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'config.exception_handler.custom_exception_handler',
 }
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],
+        },
+    },
+}
+
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -95,9 +107,11 @@ TEMPLATES = [
     },
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True  # Restrict in production
+CORS_ALLOW_ALL_ORIGINS = True
 ROOT_URLCONF = 'config.urls'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+WSGI_APPLICATION = 'config.wsgi.application'
+ASGI_APPLICATION = 'config.asgi.application'
 
 cloudinary.config(
     cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
