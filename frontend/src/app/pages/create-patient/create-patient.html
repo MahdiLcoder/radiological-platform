@@ -29,20 +29,26 @@
           <input
             formControlName="first_name"
             class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:bg-white outline-none transition-all placeholder:text-slate-400"
-            [class.border-red-300]="patientForm.get('first_name')?.touched && patientForm.get('first_name')?.invalid"
+            [class.input-invalid]="patientForm.get('first_name')?.touched && patientForm.get('first_name')?.invalid"
             placeholder="e.g. John"
             type="text"
           />
+          @if (patientForm.get('first_name')?.touched && patientForm.get('first_name')?.errors?.['required']) {
+            <p class="input-error-text">First name is mandatory</p>
+          }
         </div>
         <div class="space-y-2">
           <label class="text-sm font-bold text-slate-700">Last Name <span class="text-red-500">*</span></label>
           <input
             formControlName="last_name"
             class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:bg-white outline-none transition-all placeholder:text-slate-400"
-            [class.border-red-300]="patientForm.get('last_name')?.touched && patientForm.get('last_name')?.invalid"
+            [class.input-invalid]="patientForm.get('last_name')?.touched && patientForm.get('last_name')?.invalid"
             placeholder="e.g. Doe"
             type="text"
           />
+          @if (patientForm.get('last_name')?.touched && patientForm.get('last_name')?.errors?.['required']) {
+            <p class="input-error-text">Last name is mandatory</p>
+          }
         </div>
         <div class="space-y-2">
           <label class="text-sm font-bold text-slate-700">Date of Birth</label>
@@ -104,14 +110,18 @@
             <input
               formControlName="email"
               class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-12 pr-4 py-3 focus:ring-2 focus:ring-primary focus:bg-white outline-none transition-all placeholder:text-slate-400"
-              [class.border-red-300]="patientForm.get('email')?.touched && patientForm.get('email')?.invalid"
+              [class.input-invalid]="patientForm.get('email')?.touched && patientForm.get('email')?.invalid"
               placeholder="john.doe@example.com"
               type="email"
             />
           </div>
+          @if (patientForm.get('email')?.touched && patientForm.get('email')?.errors?.['email']) {
+            <p class="input-error-text">Invalid email contact format</p>
+          }
         </div>
       </div>
     </section>
+
 
     <!-- Form Actions -->
     <div class="flex items-center justify-end gap-4 pb-12 pt-4">

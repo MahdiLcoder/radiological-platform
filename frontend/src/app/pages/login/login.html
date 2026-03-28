@@ -33,19 +33,22 @@
         <h2 class="text-3xl font-black text-charcoal mb-2">Welcome Back</h2>
         <p class="text-slate-500">Sign in to your clinical workstation portal.</p>
       </div>
-      <form (ngSubmit)="onLogin()" class="space-y-6">
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="space-y-6">
         <div>
           <label class="block text-sm font-semibold text-slate-700 mb-2">userName</label>
           <div class="relative">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">mail</span>
             <input 
-              [(ngModel)]="userName" 
-              name="userName"
+              formControlName="userName"
               class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-charcoal placeholder-slate-400" 
+              [class.input-invalid]="loginForm.get('userName')?.touched && loginForm.get('userName')?.invalid"
               placeholder="enter you userName" 
               type="text" 
             />
           </div>
+          @if (loginForm.get('userName')?.touched && loginForm.get('userName')?.errors?.['required']) {
+            <p class="input-error-text">Username is required for authentication</p>
+          }
         </div>
         <div>
           <div class="flex justify-between mb-2">
@@ -55,10 +58,10 @@
           <div class="relative">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">lock</span>
             <input 
-              [(ngModel)]="password" 
-              name="password"
+              formControlName="password"
               [type]="showPassword ? 'text' : 'password'"
               class="w-full pl-12 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-charcoal placeholder-slate-400" 
+              [class.input-invalid]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
               placeholder="••••••••" 
             />
             <button 
@@ -69,6 +72,9 @@
               <span class="material-symbols-outlined text-xl">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>
+          @if (loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']) {
+            <p class="input-error-text">Master security key is required</p>
+          }
         </div>
         <div class="flex items-center">
           <label class="flex items-center gap-3 group cursor-pointer">
@@ -78,7 +84,10 @@
         </div>
 
         @if (loginMutation.isError()) {
-          <span class="text-sm font-medium text-red-500">Login failed. Please check your credentials.</span>
+          <div class="p-4 bg-red-50 border border-red-100 rounded-lg flex items-center gap-3 animate-in shake duration-300">
+            <span class="material-symbols-outlined text-red-500">error</span>
+            <span class="text-sm font-bold text-red-600">Authentication failed. Verify credentials and try again.</span>
+          </div>
         }
 
         <button 
@@ -90,10 +99,12 @@
             <span>Access Portal</span>
             <span class="material-symbols-outlined">login</span>
           } @else {
-            <span>Logging in...</span>
+            <span class="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+            <span>Securing Connection...</span>
           }
         </button>
       </form>
+
       <div class="mt-10 pt-8 border-t border-slate-100">
         <p class="text-center text-sm text-slate-500">
           Need an account for your department? 

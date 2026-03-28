@@ -11,7 +11,7 @@
             <button (click)="profileQuery.refetch()" class="mt-8 px-8 py-2.5 bg-primary text-white rounded-xl font-black uppercase tracking-widest text-[10px]">Re-target Registry</button>
         </div>
     } @else if (profileQuery.data(); as profile) {
-        <div class="max-w-[1200px] mx-auto">
+        <form [formGroup]="profileForm" (ngSubmit)="saveChanges(profile.id)" class="max-w-[1200px] mx-auto">
             <!-- Professional Hub Header -->
             <header class="mb-12">
                 <h2 class="text-4xl font-black text-slate-900 tracking-tighter">Profile Configuration</h2>
@@ -53,45 +53,57 @@
                                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Given Name</label>
                                     <input 
                                         class="premium-input-field w-full" 
+                                        [class.input-invalid]="profileForm.get('first_name')?.touched && profileForm.get('first_name')?.invalid"
                                         type="text" 
-                                        [(ngModel)]="profile.first_name"
-                                        (ngModelChange)="clearMessages()"
-                                        name="firstName"
+                                        formControlName="first_name"
                                         placeholder="First Name"
                                     />
+                                    @if (profileForm.get('first_name')?.touched && profileForm.get('first_name')?.errors?.['required']) {
+                                        <p class="input-error-text">Given name is mandatory</p>
+                                    }
                                 </div>
                                 <div class="space-y-3">
                                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Family Reference</label>
                                     <input 
                                         class="premium-input-field w-full" 
+                                        [class.input-invalid]="profileForm.get('last_name')?.touched && profileForm.get('last_name')?.invalid"
                                         type="text" 
-                                        [(ngModel)]="profile.last_name"
-                                        (ngModelChange)="clearMessages()"
-                                        name="lastName"
+                                        formControlName="last_name"
                                         placeholder="Last Name"
                                     />
+                                    @if (profileForm.get('last_name')?.touched && profileForm.get('last_name')?.errors?.['required']) {
+                                        <p class="input-error-text">Family name is mandatory</p>
+                                    }
                                 </div>
                                 <div class="space-y-3">
                                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Clinical Communication</label>
                                     <input 
                                         class="premium-input-field w-full" 
+                                        [class.input-invalid]="profileForm.get('email')?.touched && profileForm.get('email')?.invalid"
                                         type="email" 
-                                        [(ngModel)]="profile.email"
-                                        (ngModelChange)="clearMessages()"
-                                        name="email"
+                                        formControlName="email"
                                         placeholder="email@institution.com"
                                     />
+                                    @if (profileForm.get('email')?.touched) {
+                                        @if (profileForm.get('email')?.errors?.['required']) {
+                                            <p class="input-error-text">Email address is mandatory</p>
+                                        } @else if (profileForm.get('email')?.errors?.['email']) {
+                                            <p class="input-error-text">Invalid institutional email format</p>
+                                        }
+                                    }
                                 </div>
                                 <div class="space-y-3">
                                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Secure Contact</label>
                                     <input 
                                         class="premium-input-field w-full" 
+                                        [class.input-invalid]="profileForm.get('phone')?.touched && profileForm.get('phone')?.invalid"
                                         type="text" 
-                                        [(ngModel)]="profile.phone"
-                                        (ngModelChange)="clearMessages()"
-                                        name="phone"
+                                        formControlName="phone"
                                         placeholder="+1 (555) 000-0000"
                                     />
+                                    @if (profileForm.get('phone')?.touched && profileForm.get('phone')?.errors?.['required']) {
+                                        <p class="input-error-text">Contact sequence is mandatory</p>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -128,29 +140,51 @@
                         @if (profile.role === 'doctor') {
                             <div class="space-y-3">
                                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Clinical Specialty</label>
-                                <input class="premium-input-field w-full" type="text" [(ngModel)]="profile.specialty" placeholder="e.g. Cardiology" />
+                                <input class="premium-input-field w-full" [class.input-invalid]="profileForm.get('specialty')?.touched && profileForm.get('specialty')?.invalid" type="text" formControlName="specialty" placeholder="e.g. Cardiology" />
+                                @if (profileForm.get('specialty')?.touched && profileForm.get('specialty')?.errors?.['required']) {
+                                    <p class="input-error-text">Specialty is required</p>
+                                }
                             </div>
                             <div class="space-y-3">
                                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Medical License</label>
-                                <input class="premium-input-field w-full" type="text" [(ngModel)]="profile.medical_license_number" placeholder="LIC-000000" />
+                                <input class="premium-input-field w-full" [class.input-invalid]="profileForm.get('medical_license_number')?.touched && profileForm.get('medical_license_number')?.invalid" type="text" formControlName="medical_license_number" placeholder="LIC-000000" />
+                                @if (profileForm.get('medical_license_number')?.touched && profileForm.get('medical_license_number')?.errors?.['required']) {
+                                    <p class="input-error-text">License number is required</p>
+                                }
                             </div>
                             <div class="space-y-3">
                                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Institution</label>
-                                <input class="premium-input-field w-full" type="text" [(ngModel)]="profile.clinic" placeholder="Main Hospital" />
+                                <input class="premium-input-field w-full" [class.input-invalid]="profileForm.get('clinic')?.touched && profileForm.get('clinic')?.invalid" type="text" formControlName="clinic" placeholder="Main Hospital" />
+                                @if (profileForm.get('clinic')?.touched && profileForm.get('clinic')?.errors?.['required']) {
+                                    <p class="input-error-text">Institution reference is required</p>
+                                }
                             </div>
                         } @else if (profile.role === 'radiologist') {
                             <div class="space-y-3">
                                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Imaging License</label>
-                                <input class="premium-input-field w-full" type="text" [(ngModel)]="profile.medical_license_number" />
+                                <input class="premium-input-field w-full" [class.input-invalid]="profileForm.get('medical_license_number')?.touched && profileForm.get('medical_license_number')?.invalid" type="text" formControlName="medical_license_number" />
+                                @if (profileForm.get('medical_license_number')?.touched && profileForm.get('medical_license_number')?.errors?.['required']) {
+                                    <p class="input-error-text">License number is required</p>
+                                }
                             </div>
                             <div class="space-y-3 md:col-span-2">
                                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Clinical Experience (Years)</label>
-                                <input class="premium-input-field w-full" type="number" [(ngModel)]="profile.years_of_experience" />
+                                <input class="premium-input-field w-full" [class.input-invalid]="profileForm.get('years_of_experience')?.touched && profileForm.get('years_of_experience')?.invalid" type="number" formControlName="years_of_experience" />
+                                @if (profileForm.get('years_of_experience')?.touched) {
+                                    @if (profileForm.get('years_of_experience')?.errors?.['required']) {
+                                        <p class="input-error-text">Exprience metrics required</p>
+                                    } @else if (profileForm.get('years_of_experience')?.errors?.['min']) {
+                                        <p class="input-error-text">Invalid temporal reference</p>
+                                    }
+                                }
                             </div>
                         } @else if (profile.role === 'admin') {
                             <div class="space-y-3 md:col-span-3">
                                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Management Department</label>
-                                <input class="premium-input-field w-full" type="text" [(ngModel)]="profile.department" />
+                                <input class="premium-input-field w-full" [class.input-invalid]="profileForm.get('department')?.touched && profileForm.get('department')?.invalid" type="text" formControlName="department" />
+                                @if (profileForm.get('department')?.touched && profileForm.get('department')?.errors?.['required']) {
+                                    <p class="input-error-text">Department allocation required</p>
+                                }
                             </div>
                         }
                     </div>
@@ -189,9 +223,9 @@
                                 <div class="pw-box">
                                     <input 
                                         class="premium-input-field w-full pr-14" 
+                                        [class.input-invalid]="profileForm.get('oldPassword')?.touched && profileForm.get('oldPassword')?.invalid"
                                         [type]="showOldPassword ? 'text' : 'password'" 
-                                        [(ngModel)]="oldPassword"
-                                        (ngModelChange)="clearMessages()"
+                                        formControlName="oldPassword"
                                         placeholder="Existing Password Sequence"
                                     />
                                     <button type="button" (click)="toggleOldPassword()" class="pw-toggle">
@@ -206,15 +240,18 @@
                                     <div class="pw-box">
                                         <input 
                                             class="premium-input-field w-full pr-14" 
+                                            [class.input-invalid]="profileForm.get('newPassword')?.touched && profileForm.get('newPassword')?.invalid"
                                             [type]="showNewPassword ? 'text' : 'password'" 
-                                            [(ngModel)]="newPassword"
-                                            (ngModelChange)="clearMessages()"
+                                            formControlName="newPassword"
                                             placeholder="Min 8 Characters"
                                         />
                                         <button type="button" (click)="toggleNewPassword()" class="pw-toggle">
                                             <span class="material-symbols-outlined text-lg">{{ showNewPassword ? 'visibility_off' : 'visibility' }}</span>
                                         </button>
                                     </div>
+                                    @if (profileForm.get('newPassword')?.touched && profileForm.get('newPassword')?.errors?.['minlength']) {
+                                        <p class="input-error-text">Security protocol requires 8+ characters</p>
+                                    }
                                 </div>
 
                                 <div class="space-y-3">
@@ -222,9 +259,9 @@
                                     <div class="pw-box">
                                         <input 
                                             class="premium-input-field w-full pr-14" 
+                                            [class.input-invalid]="profileForm.get('confirmPassword')?.touched && profileForm.get('confirmPassword')?.invalid"
                                             [type]="showConfirmPassword ? 'text' : 'password'" 
-                                            [(ngModel)]="confirmPassword"
-                                            (ngModelChange)="clearMessages()"
+                                            formControlName="confirmPassword"
                                             placeholder="Repeat Sequence"
                                         />
                                         <button type="button" (click)="toggleConfirmPassword()" class="pw-toggle">
@@ -245,7 +282,7 @@
                            </div>
                            <h4 class="text-lg font-black text-slate-900 tracking-tight">Access Protocol</h4>
                            <p class="text-[10px] text-slate-500 mt-6 leading-relaxed font-bold uppercase tracking-widest opacity-60">
-                              Institutional security guidelines mandate complex alphanumeric rotations every 90 days.
+                               Institutional security guidelines mandate complex alphanumeric rotations every 90 days.
                            </p>
                         </div>
                     </section>
@@ -255,13 +292,14 @@
             <!-- Global Action Console -->
             <div class="flex items-center justify-end gap-5 py-10 border-t border-slate-100 mt-12">
                 <button 
+                    type="button"
                     routerLink="/dashboard"
                     class="h-12 px-8 flex items-center justify-center text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-50 rounded-2xl transition-all"
                 >
                     Discard Changes
                 </button>
                 <button 
-                    (click)="saveChanges(profile.id, profile)"
+                    type="submit"
                     [disabled]="updateProfileMutation.isPending()"
                     class="h-12 px-10 flex items-center justify-center gap-3 bg-primary text-white rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
                 >
@@ -274,6 +312,7 @@
                     }
                 </button>
             </div>
-        </div>
+        </form>
     }
+
 </main>

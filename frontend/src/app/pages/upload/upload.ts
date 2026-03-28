@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { injectMutation } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
@@ -11,18 +11,25 @@ import { WelcomeSection } from '../../components/welcome-section/welcome-section
 @Component({
   selector: 'app-upload',
   standalone: true,
-  imports: [FormsModule, CommonModule, WelcomeSection],
+  imports: [ReactiveFormsModule, CommonModule, WelcomeSection],
   templateUrl: './upload.html',
   styleUrl: './upload.css',
 })
 export class Upload {
   private analysisService = inject(AnalysisService);
   private router = inject(Router);
+  private fb = inject(FormBuilder);
   
-  patientId: string = '';
-  modality: string = 'X-Ray';
+  uploadForm: FormGroup;
   selectedFiles: File[] = [];
   imagePreviewUrl = signal<string | null>(null);
+
+  constructor() {
+    this.uploadForm = this.fb.group({
+      patientId: ['', [Validators.required]],
+      modality: ['X-Ray', [Validators.required]]
+    });
+  }
 
   // Unified Analysis Mutation (Upload -> Run Prediction)
   analysisMutation = injectMutation(() => ({
@@ -36,8 +43,6 @@ export class Upload {
       return { uploadId: uploadRes.id, ...predictRes };
     },
     onSuccess: (data) => {
-      console.log('Analysis completed successfully:', data);
-      // Navigate to dedicated validation page
       this.router.navigate(['/dashboard/aivalidation', data.uploadId]);
     }
   }));
@@ -66,24 +71,28 @@ export class Upload {
 
   canStartAnalysis(): boolean {
     return this.selectedFiles.length > 0 && 
-           this.patientId.trim().length > 0 && 
+           this.uploadForm.valid && 
            !this.analysisMutation.isPending();
   }
 
   startAnalysis() {
     if (this.canStartAnalysis()) {
+      const { patientId, modality } = this.uploadForm.value;
       this.analysisMutation.mutate({
         file: this.selectedFiles[0],
-        patientId: this.patientId,
-        modality: this.modality
+        patientId,
+        modality
       });
+    } else {
+      this.uploadForm.markAllAsTouched();
     }
   }
 
   reset() {
     this.analysisMutation.reset();
-    this.patientId = '';
+    this.uploadForm.reset({ modality: 'X-Ray' });
     this.selectedFiles = [];
     this.imagePreviewUrl.set(null);
   }
 }
+

@@ -52,7 +52,7 @@
     </section>
 
     <!-- Contextual Control Console -->
-    <section class="control-console">
+    <section class="control-console" [formGroup]="uploadForm">
       <header class="console-header">
          <div class="flex items-center gap-3">
             <div class="size-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center border border-primary/10 shadow-sm">
@@ -67,17 +67,20 @@
 
       <div class="console-body space-y-6">
         <!-- Patient Cross-Reference -->
-        <div class="form-group">
+        <div class="form-group" [class.is-invalid]="uploadForm.get('patientId')?.touched && uploadForm.get('patientId')?.invalid">
           <label class="form-label">Subject Identification (MRN)</label>
-          <div class="premium-input-box group">
+          <div class="premium-input-box group" [class.input-invalid]="uploadForm.get('patientId')?.touched && uploadForm.get('patientId')?.invalid">
             <span class="material-symbols-outlined input-icon group-focus-within:text-primary">person_search</span>
             <input
-              [(ngModel)]="patientId"
+              formControlName="patientId"
               class="premium-input"
               placeholder="Assign to Registry ID..."
               type="text"
             />
           </div>
+          @if (uploadForm.get('patientId')?.touched && uploadForm.get('patientId')?.errors?.['required']) {
+            <p class="input-error-text">Subject identity is required for ingestion</p>
+          }
         </div>
 
         <!-- Modality Protocol -->
@@ -85,7 +88,7 @@
           <label class="form-label">Imaging Modality Protocol</label>
           <div class="select-box-premium w-full">
             <select
-              [(ngModel)]="modality"
+              formControlName="modality"
               class="premium-select w-full"
             >
               <option value="X-Ray">X-Ray (Radiography)</option>
@@ -121,8 +124,13 @@
              </div>
            } @else {
               <div class="text-center space-y-2 opacity-30">
-                 <span class="material-symbols-outlined text-4xl">ifl</span>
-                 <p class="text-[9px] font-black uppercase tracking-widest">Pipeline Standby</p>
+                 @if (selectedFiles.length === 0 && uploadForm.get('patientId')?.touched) {
+                    <span class="material-symbols-outlined text-4xl text-rose-500">warning</span>
+                    <p class="text-[9px] font-black uppercase tracking-widest text-rose-500">Missing Scan Artifact</p>
+                 } @else {
+                    <span class="material-symbols-outlined text-4xl">ifl</span>
+                    <p class="text-[9px] font-black uppercase tracking-widest">Pipeline Standby</p>
+                 }
               </div>
            }
         </div>
@@ -133,7 +141,7 @@
           <button
             (click)="startAnalysis()"
             class="action-btn-pax !px-10 !py-4 !bg-primary !text-white !border-primary"
-            [disabled]="!canStartAnalysis() || analysisMutation.isPending()"
+            [disabled]="analysisMutation.isPending()"
           >
             @if (analysisMutation.isPending()) {
               <span class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
@@ -150,5 +158,6 @@
         }
       </footer>
     </section>
+
   </div>
 </div>

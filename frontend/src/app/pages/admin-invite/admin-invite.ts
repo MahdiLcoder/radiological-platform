@@ -1,23 +1,23 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { injectMutation } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 import { AuthService } from '../../services/authService';
 
-import { WelcomeSection } from '../../components/welcome-section/welcome-section';
 
 @Component({
   selector: 'app-admin-invite',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, WelcomeSection],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule],
   templateUrl: './admin-invite.html',
   styleUrl: './admin-invite.css',
 })
 export class AdminInvite {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private fb = inject(FormBuilder);
 
   // Modal States
   isSuccessModalOpen = signal(false);
@@ -25,18 +25,50 @@ export class AdminInvite {
   errorMessage = signal('');
   generatedPassword = signal('');
 
-  inviteData = {
-    first_name: '',
-    last_name: '',
-    username: '',
-    email: '',
-    role: '',
-    department: '',
-    specialty: '',
-    medical_license_number: '',
-    years_of_experience: null as number | null,
-    clinic: ''
-  };
+  inviteForm: FormGroup;
+
+  constructor() {
+    this.inviteForm = this.fb.group({
+      first_name: ['', [Validators.required]],
+      last_name: ['', [Validators.required]],
+      username: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      role: ['', [Validators.required]],
+      department: [''],
+      specialty: [''],
+      medical_license_number: [''],
+      years_of_experience: [null as number | null],
+      clinic: ['']
+    });
+
+    // Dynamic role-based validation
+    this.inviteForm.get('role')?.valueChanges.subscribe(role => {
+      this.updateValidators(role);
+    });
+  }
+
+  private updateValidators(role: string) {
+    const specialty = this.inviteForm.get('specialty');
+    const license = this.inviteForm.get('medical_license_number');
+    const clinic = this.inviteForm.get('clinic');
+    const experience = this.inviteForm.get('years_of_experience');
+    const department = this.inviteForm.get('department');
+
+    [specialty, license, clinic, experience, department].forEach(c => c?.clearValidators());
+
+    if (role === 'doctor') {
+      specialty?.setValidators([Validators.required]);
+      license?.setValidators([Validators.required]);
+      clinic?.setValidators([Validators.required]);
+    } else if (role === 'radiologist') {
+      license?.setValidators([Validators.required]);
+      experience?.setValidators([Validators.required, Validators.min(0)]);
+    } else if (role === 'admin') {
+      department?.setValidators([Validators.required]);
+    }
+
+    [specialty, license, clinic, experience, department].forEach(c => c?.updateValueAndValidity());
+  }
 
   private generatePassword(length = 12): string {
     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
@@ -52,7 +84,6 @@ export class AdminInvite {
       const password = this.generatePassword();
       this.generatedPassword.set(password);
       
-      // Clean up the payload: remove null or empty string values
       const cleanedData = Object.entries(data).reduce((acc: any, [key, value]) => {
         if (value !== null && value !== '') {
           acc[key] = value;
@@ -62,7 +93,6 @@ export class AdminInvite {
 
       const payload = {
         ...cleanedData,
-        username: data.username,
         password: password
       };
       return lastValueFrom(this.authService.register(payload));
@@ -72,32 +102,19 @@ export class AdminInvite {
       this.isSuccessModalOpen.set(true);
     },
     onError: (error: any) => {
-      const detail = error.error?.detail || error.error?.message;
-      let message = 'An unexpected error occurred';
-      
-      if (typeof detail === 'string') {
-        message = detail;
-      } else if (typeof detail === 'object' && detail !== null) {
-        // Collect all error strings from the object
-        message = Object.values(detail).flat().join(' ');
-      } else {
-        message = error.message || message;
-      }
-      
-      this.errorMessage.set(message);
+      const detail = error.error?.detail || error.error?.message || 'An unexpected error occurred';
+      this.errorMessage.set(typeof detail === 'string' ? detail : JSON.stringify(detail));
       this.isErrorModalOpen.set(true);
     }
   }));
 
   sendInvitation() {
-    if (!this.inviteData.email || !this.inviteData.role || !this.inviteData.username) {
-      this.errorMessage.set('Please fill in at least the username, email, and role.');
-      this.isErrorModalOpen.set(true);
+    if (this.inviteForm.invalid) {
+      this.inviteForm.markAllAsTouched();
       return;
     }
-    this.inviteMutation.mutate(this.inviteData);
+    this.inviteMutation.mutate(this.inviteForm.value);
   }
-
 
   closeSuccessModal() {
     this.isSuccessModalOpen.set(false);
@@ -112,4 +129,5 @@ export class AdminInvite {
     this.router.navigate(['/dashboard/admin/users']);
   }
 }
+
 

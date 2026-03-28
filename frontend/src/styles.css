@@ -53,12 +53,16 @@
 @utility fade-in { --tw-enter-opacity: 0; }
 @utility fade-out { --tw-exit-opacity: 0; }
 
+@utility slide-in-from-top-1 { --tw-enter-translate-y: -0.25rem; }
+@utility slide-in-from-top-2 { --tw-enter-translate-y: -0.5rem; }
 @utility slide-in-from-top-4 { --tw-enter-translate-y: -1rem; }
+@utility slide-in-from-top-full { --tw-enter-translate-y: -100%; }
 @utility slide-in-from-bottom-4 { --tw-enter-translate-y: 1rem; }
 @utility slide-in-from-bottom-6 { --tw-enter-translate-y: 1.5rem; }
 @utility slide-in-from-left-4 { --tw-enter-translate-x: -1rem; }
 @utility slide-in-from-right-4 { --tw-enter-translate-x: 1rem; }
 
+@utility zoom-in { --tw-enter-scale: 0.95; }
 @utility zoom-in-95 { --tw-enter-scale: 0.95; }
 @utility zoom-in-100 { --tw-enter-scale: 1; }
 
@@ -188,6 +192,29 @@
 .badge-pending { @apply bg-amber-50 text-amber-600 border-amber-200; }
 .badge-validated { @apply bg-emerald-50 text-emerald-600 border-emerald-200; }
 .badge-processing { @apply bg-blue-50 text-blue-600 border-blue-200; }
+
+
+/* --- Form Validation Utilities --- */
+
+.input-error-text {
+  @apply text-[10px] font-black text-rose-500 uppercase tracking-widest mt-1.5 ml-1 animate-in fade-in slide-in-from-top-1 duration-200;
+}
+
+.input-invalid {
+  @apply !border-rose-400 !bg-rose-50/10 focus:!ring-rose-500/20 focus:!border-rose-500 animate-in shake duration-300;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+@utility shake {
+  animation-name: shake;
+  animation-duration: 0.3s;
+  animation-timing-function: ease-in-out;
+}
 
 .medical-grid {
   background-image: radial-gradient(circle at 2px 2px, rgba(30, 64, 175, 0.03) 1px, transparent 0);
