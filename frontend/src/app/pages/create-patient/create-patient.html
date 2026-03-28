@@ -51,20 +51,25 @@
           }
         </div>
         <div class="space-y-2">
-          <label class="text-sm font-bold text-slate-700">Date of Birth</label>
+          <label class="text-sm font-bold text-slate-700">Date of Birth <span class="text-red-500">*</span></label>
           <input
             formControlName="date_of_birth"
             class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:bg-white outline-none transition-all"
+            [class.input-invalid]="patientForm.get('date_of_birth')?.touched && patientForm.get('date_of_birth')?.invalid"
             type="date"
           />
+          @if (patientForm.get('date_of_birth')?.touched && patientForm.get('date_of_birth')?.errors?.['required']) {
+            <p class="input-error-text">Date of birth is mandatory</p>
+          }
         </div>
         <div class="grid grid-cols-2 gap-4">
           <div class="space-y-2">
-            <label class="text-sm font-bold text-slate-700">Gender</label>
+            <label class="text-sm font-bold text-slate-700">Gender <span class="text-red-500">*</span></label>
             <div class="relative">
               <select
                 formControlName="gender"
                 class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:bg-white outline-none appearance-none transition-all"
+                [class.input-invalid]="patientForm.get('gender')?.touched && patientForm.get('gender')?.invalid"
               >
                 <option value="">Select</option>
                 <option value="M">Male</option>
@@ -75,6 +80,9 @@
                 >expand_more</span
               >
             </div>
+            @if (patientForm.get('gender')?.touched && patientForm.get('gender')?.errors?.['required']) {
+              <p class="input-error-text mt-2">Gender is mandatory</p>
+            }
           </div>
         </div>
       </div>
@@ -88,7 +96,7 @@
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="space-y-2">
-          <label class="text-sm font-bold text-slate-700">Contact Number</label>
+          <label class="text-sm font-bold text-slate-700">Contact Number <span class="text-red-500">*</span></label>
           <div class="relative">
             <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
               <span class="material-symbols-outlined text-lg">phone</span>
@@ -96,10 +104,14 @@
             <input
               formControlName="phone"
               class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-12 pr-4 py-3 focus:ring-2 focus:ring-primary focus:bg-white outline-none transition-all placeholder:text-slate-400"
+              [class.input-invalid]="patientForm.get('phone')?.touched && patientForm.get('phone')?.invalid"
               placeholder="+1 (555) 000-0000"
               type="tel"
             />
           </div>
+          @if (patientForm.get('phone')?.touched && patientForm.get('phone')?.errors?.['required']) {
+            <p class="input-error-text">Contact number is mandatory</p>
+          }
         </div>
         <div class="space-y-2">
           <label class="text-sm font-bold text-slate-700">Email Address</label>

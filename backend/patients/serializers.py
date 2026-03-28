@@ -6,10 +6,10 @@ class PatientSerializer(serializers.Serializer):
     id = serializers.CharField(read_only=True)
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
-    date_of_birth = serializers.DateField(required=False)
-    gender = serializers.ChoiceField(choices=['M', 'F', 'Other'], required=False)
+    date_of_birth = serializers.DateField(required=True)
+    gender = serializers.ChoiceField(choices=['M', 'F', 'Other'], required=True)
 
-    phone = serializers.CharField(required=False, allow_blank=True)
+    phone = serializers.CharField(required=True, allow_blank=False)
     email = serializers.EmailField(required=False, allow_blank=True)
 
     doctor = serializers.SerializerMethodField()

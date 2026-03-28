@@ -69,9 +69,9 @@ export class CreatePatient implements OnInit {
     this.patientForm = this.fb.group({
       first_name: ['', [Validators.required]],
       last_name: ['', [Validators.required]],
-      date_of_birth: [''],
-      gender: [''],
-      phone: [''],
+      date_of_birth: ['', [Validators.required]],
+      gender: ['', [Validators.required]],
+      phone: ['', [Validators.required]],
       email: ['', [Validators.email]]
     });
   }

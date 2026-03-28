@@ -7,10 +7,10 @@ User = get_user_model()
 class Patient(me.Document):
     first_name = me.StringField(required=True)
     last_name = me.StringField(required=True)
-    date_of_birth = me.DateField()
-    gender = me.StringField(choices=['M', 'F'])
+    date_of_birth = me.DateField(required=True)
+    gender = me.StringField(choices=['M', 'F', 'Other'], required=True)
 
-    phone = me.StringField()
+    phone = me.StringField(required=True)
     email = me.StringField()
 
     doctor_id = me.IntField()
