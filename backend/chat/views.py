@@ -27,11 +27,13 @@ class UserMessagesView(APIView):
 
     def get(self, request):
         user_id = request.user.id
+
+        # Fetch all messages for this user in one query — no N+1
         messages = CaseMessage.objects(
             __raw__={'$or': [{'sender_id': user_id}, {'receiver_id': user_id}]}
         ).order_by('-created_at')
-        
-        # Group by conversation (the other user)
+
+        # Group messages by conversation key, reusing the already-fetched queryset
         conversations = {}
         for msg in messages:
             other_user_id = msg.receiver_id if msg.sender_id == user_id else msg.sender_id
@@ -39,25 +41,18 @@ class UserMessagesView(APIView):
             if key not in conversations:
                 conversations[key] = {
                     'other_user_id': other_user_id,
-                    'last_message': msg
+                    'messages': []
                 }
-        
-        # Return conversations
+            conversations[key]['messages'].append(msg)
+
         result = []
         for conv in conversations.values():
-            # Get all messages for this conversation
-            conv_messages = CaseMessage.objects(
-                __raw__={
-                    '$or': [
-                        {'sender_id': user_id, 'receiver_id': conv['other_user_id']},
-                        {'sender_id': conv['other_user_id'], 'receiver_id': user_id}
-                    ]
-                }
-            ).order_by('created_at')
-            serializer = CaseMessageSerializer(conv_messages, many=True)
+            # Messages came in descending order; reverse per conversation for chronological display
+            conv['messages'].sort(key=lambda m: m.created_at)
+            serializer = CaseMessageSerializer(conv['messages'], many=True)
             result.append({
                 'other_user_id': conv['other_user_id'],
                 'messages': serializer.data
             })
-        
+
         return Response(result)

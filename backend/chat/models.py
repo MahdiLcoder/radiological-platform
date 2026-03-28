@@ -7,4 +7,10 @@ class CaseMessage(me.Document):
     receiver_id = me.IntField(required=True)
     content = me.StringField(required=True)
     created_at = me.DateTimeField(default=datetime.datetime.utcnow)
-    meta = {'collection': 'case_messages'}
+    meta = {
+        'collection': 'case_messages',
+        'indexes': [
+            ('sender_id', 'receiver_id'),  
+            '-created_at',                  
+        ]
+    }

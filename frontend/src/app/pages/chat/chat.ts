@@ -1,19 +1,22 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, inject, signal, computed, effect } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  ElementRef,
+  inject,
+  signal,
+  computed,
+  effect,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { AuthService } from '../../services/authService';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { injectQuery, injectQueryClient } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
-
-interface Message {
-  sender_id: number;
-  receiver_id: number;
-  content: string;
-  created_at: string;
-}
+import { ChatService, Message } from '../../services/chat.service';
 
 interface User {
   id: number;
@@ -40,8 +43,8 @@ export class Chat implements OnInit, OnDestroy {
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private http = inject(HttpClient);
   private authService = inject(AuthService);
+  private chatService = inject(ChatService);
   private queryClient = injectQueryClient();
 
   receiverId = signal<number | null>(null);
@@ -56,12 +59,12 @@ export class Chat implements OnInit, OnDestroy {
 
   conversationsQuery = injectQuery(() => ({
     queryKey: ['conversationsData'],
-    queryFn: () => lastValueFrom(this.http.get<any[]>('/api/chat/messages/')),
+    queryFn: () => lastValueFrom(this.chatService.getConversations()),
   }));
 
   messagesQuery = injectQuery(() => ({
     queryKey: ['chatMessages', this.receiverId()],
-    queryFn: () => lastValueFrom(this.http.get<Message[]>(`/api/chat/users/${this.receiverId()}/messages/`)),
+    queryFn: () => lastValueFrom(this.chatService.getMessages(this.receiverId()!)),
     enabled: !!this.receiverId(),
   }));
 
@@ -76,29 +79,29 @@ export class Chat implements OnInit, OnDestroy {
     if (!usersList || usersList.length === 0) return [];
 
     const caseData = this.conversationsQuery.data() as any[] | undefined;
-    
+
     const existingConvs = new Map<number, Message>();
     if (caseData && Array.isArray(caseData)) {
-      caseData.forEach(caseItem => {
+      caseData.forEach((caseItem) => {
         const messages = caseItem.messages;
         if (messages && messages.length > 0) {
           existingConvs.set(caseItem.other_user_id, messages[messages.length - 1]);
         }
       });
     }
-    
-    const convs = usersList.map((user: User) => {
-      return {
-        otherUser: user,
-        lastMessage: existingConvs.get(user.id)
-      };
-    });
+
+    const convs = usersList.map((user: User) => ({
+      otherUser: user,
+      lastMessage: existingConvs.get(user.id),
+    }));
 
     return convs.sort((a: Conversation, b: Conversation) => {
       if (!a.lastMessage && !b.lastMessage) return 0;
       if (!a.lastMessage) return 1;
       if (!b.lastMessage) return -1;
-      return new Date(b.lastMessage.created_at).getTime() - new Date(a.lastMessage.created_at).getTime();
+      return (
+        new Date(b.lastMessage.created_at).getTime() - new Date(a.lastMessage.created_at).getTime()
+      );
     });
   });
 
@@ -110,7 +113,7 @@ export class Chat implements OnInit, OnDestroy {
 
   constructor() {
     this.currentUserId = this.authService.getCurrentUserId()!;
-    
+
     effect(() => {
       const msgs = this.messagesQuery.data();
       if (msgs && msgs.length > 0) {
@@ -123,8 +126,8 @@ export class Chat implements OnInit, OnDestroy {
     this.route.queryParams.subscribe((params) => {
       const rid = +params['receiverId'];
       if (rid) {
+        this.queryClient.removeQueries({ queryKey: ['chatMessages', rid] });
         this.receiverId.set(rid);
-        // Note: messagesQuery is reactive to receiverId, so no manual fetch needed
         this.connectWebSocket();
       }
     });
@@ -137,6 +140,7 @@ export class Chat implements OnInit, OnDestroy {
   }
 
   selectConversation(conv: Conversation) {
+    this.queryClient.removeQueries({ queryKey: ['chatMessages', conv.otherUser.id] });
     this.receiverId.set(conv.otherUser.id);
     this.connectWebSocket();
     this.router.navigate(['/dashboard/chat'], {
@@ -161,17 +165,14 @@ export class Chat implements OnInit, OnDestroy {
 
     this.socket$.subscribe({
       next: (message: Message) => {
-        // Optimistically append the chunk
-        this.queryClient.setQueryData(['chatMessages', rid], (old: Message[] | undefined) => {
-          return old ? [...old, message] : [message];
-        });
-        
-        // Refresh conversations to grab latest history item
+        const rid = this.receiverId();
+        this.queryClient.setQueryData(['chatMessages', rid], (old: Message[] | undefined) =>
+          old ? [...old, message] : [message],
+        );
         this.queryClient.invalidateQueries({ queryKey: ['conversationsData'] });
-        
         this.scrollToBottom();
       },
-      error: (err) => console.error(err),
+      error: (err) => console.error('WebSocket error:', err),
       complete: () => console.log('WebSocket connection closed'),
     });
   }
