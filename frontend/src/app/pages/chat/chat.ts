@@ -71,7 +71,7 @@ export class Chat implements OnInit, OnDestroy {
   users = computed(() => {
     const data = this.usersQuery.data() as any;
     if (!data?.results) return [] as User[];
-    return data.results.filter((user: User) => user.id !== this.currentUserId);
+    return data.results.filter((user: User) => Number(user.id) !== Number(this.currentUserId));
   });
 
   conversations = computed(() => {
