@@ -57,6 +57,10 @@ export class AuthService {
     return this.http.get<any>(`${this.apiUrl}/stats/`);
   }
 
+  forgotPassword(email: string) {
+    return this.http.post(`${this.apiUrl}/forgot-password/`, { email });
+  }
+
   deleteUser(id: number | string) {
     return this.http.delete(`${this.apiUrl}/users/${id}/`);
   }

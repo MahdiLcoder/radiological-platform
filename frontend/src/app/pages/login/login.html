@@ -53,7 +53,7 @@
         <div>
           <div class="flex justify-between mb-2">
             <label class="text-sm font-semibold text-slate-700">Password</label>
-            <a class="text-sm font-semibold text-primary hover:text-primary/80 transition-colors" href="#">Forgot password?</a>
+            <a class="text-sm font-semibold text-primary hover:text-primary/80 transition-colors" routerLink="/forgot-password">Forgot password?</a>
           </div>
           <div class="relative">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">lock</span>
@@ -75,12 +75,6 @@
           @if (loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']) {
             <p class="input-error-text">Master security key is required</p>
           }
-        </div>
-        <div class="flex items-center">
-          <label class="flex items-center gap-3 group cursor-pointer">
-            <input class="h-5 w-5 rounded border-slate-300 bg-white text-primary focus:ring-primary transition-all" type="checkbox"/>
-            <span class="text-sm font-medium text-slate-600 group-hover:text-charcoal transition-colors">Remember this workstation for 30 days</span>
-          </label>
         </div>
 
         @if (loginMutation.isError()) {
@@ -104,13 +98,6 @@
           }
         </button>
       </form>
-
-      <div class="mt-10 pt-8 border-t border-slate-100">
-        <p class="text-center text-sm text-slate-500">
-          Need an account for your department? 
-          <a class="text-primary font-bold hover:text-primary/80 transition-colors" href="#">Contact Sales</a>
-        </p>
-      </div>
     </div>
   </div>
 

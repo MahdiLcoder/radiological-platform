@@ -2,6 +2,7 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from .views import (
+    ForgotPasswordView,
     MeView,
     RegisterView,
     SystemStatsView,
@@ -19,4 +20,5 @@ urlpatterns = [
     path('users/<int:pk>/', UserDetailView.as_view()),
 
     path('stats/', SystemStatsView.as_view()),
+    path('forgot-password/', ForgotPasswordView.as_view()),
 ]

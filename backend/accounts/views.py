@@ -1,8 +1,13 @@
+import secrets
+import string
+
 from django.contrib.auth import get_user_model
 from django.db.models import Count, Q
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from config.email_utils import send_password_reset_email
 
 from accounts.models import AdminProfile, DoctorProfile, RadiologistProfile, UserRole
 
@@ -155,6 +160,45 @@ class UserDetailView(APIView):
 
         user.delete()
         return Response({"detail": "User deleted successfully."}, status=status.HTTP_200_OK)
+
+
+
+class ForgotPasswordView(APIView):
+    """
+    Public endpoint — no authentication required.
+    Accepts { "email": "..." } and sends a newly generated password
+    to that address if a user account exists.
+    Always returns 200 to prevent user enumeration.
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        email = request.data.get('email', '').strip()
+
+        if not email:
+            return Response(
+                {"detail": "Email address is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            user = User.objects.get(email__iexact=email)
+        except User.DoesNotExist:
+            return Response(
+                {"detail": "No account found with this email address. Please check and try again."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Generate a secure 12-character random password
+        alphabet = string.ascii_letters + string.digits + string.punctuation.replace('"', '').replace("'", '')
+        new_password = ''.join(secrets.choice(alphabet) for _ in range(12))
+
+        user.set_password(new_password)
+        user.save(update_fields=['password'])
+
+        send_password_reset_email(user, new_password)
+
+        return _GENERIC_RESPONSE
 
 
 from datetime import datetime, timedelta
