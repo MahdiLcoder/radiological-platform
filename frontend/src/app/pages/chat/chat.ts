@@ -46,6 +46,7 @@ export class Chat implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private chatService = inject(ChatService);
   private queryClient = injectQueryClient();
+  private notificationSound = new Audio('notification.mp3');
 
   receiverId = signal<number | null>(null);
   currentUserId!: number;
@@ -169,6 +170,10 @@ export class Chat implements OnInit, OnDestroy {
         );
         this.queryClient.invalidateQueries({ queryKey: ['conversationsData'] });
         this.scrollToBottom();
+
+        if (Number(message.sender_id) !== Number(this.currentUserId)) {
+          this.notificationSound.play().catch(() => {});
+        }
       },
       error: (err) => console.error('WebSocket error:', err),
       complete: () => console.log('WebSocket connection closed'),
@@ -189,8 +194,8 @@ export class Chat implements OnInit, OnDestroy {
   }
 
   isMine(message: Message): boolean {
-  return Number(message.sender_id) === Number(this.currentUserId);
-}
+    return Number(message.sender_id) === Number(this.currentUserId);
+  }
 
   private scrollToBottom() {
     setTimeout(() => {
