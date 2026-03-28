@@ -27,10 +27,16 @@ export class EditProfile {
   showConfirmPassword = false;
   
   passwordError = '';
+  successMessage = '';
 
-  toggleOldPassword() { this.showOldPassword = !this.showOldPassword; }
-  toggleNewPassword() { this.showNewPassword = !this.showNewPassword; }
-  toggleConfirmPassword() { this.showConfirmPassword = !this.showConfirmPassword; }
+  toggleOldPassword() { this.showOldPassword = !this.showOldPassword; this.clearMessages(); }
+  toggleNewPassword() { this.showNewPassword = !this.showNewPassword; this.clearMessages(); }
+  toggleConfirmPassword() { this.showConfirmPassword = !this.showConfirmPassword; this.clearMessages(); }
+
+  clearMessages() {
+    this.passwordError = '';
+    this.successMessage = '';
+  }
 
   profileQuery = injectQuery(() => ({
     queryKey: ['profile'],
@@ -48,19 +54,28 @@ export class EditProfile {
   constructor() {}
 
   saveChanges(id: number | string, formData: any) {
-    this.passwordError = '';
+    this.clearMessages();
     const payload = { ...formData };
     
-    // We only send password fields if user is trying to update it
+    // Comprehensive Password Integrity Logic
     if (this.newPassword || this.oldPassword || this.confirmPassword) {
-      if (this.newPassword !== this.confirmPassword) {
-        this.passwordError = 'New password and confirm password do not match.';
-        return; // Halt if they don't match
-      }
       if (!this.oldPassword) {
-        this.passwordError = 'Old password is required.';
+        this.passwordError = 'Current master key is required to authorize rotation.';
         return;
       }
+      if (!this.newPassword) {
+        this.passwordError = 'New security sequence must be defined.';
+        return;
+      }
+      if (this.newPassword.length < 8) {
+        this.passwordError = 'Security protocol requires at least 8 characters.';
+        return;
+      }
+      if (this.newPassword !== this.confirmPassword) {
+        this.passwordError = 'Credential confirmation sequence mismatch.';
+        return;
+      }
+      
       payload.old_password = this.oldPassword;
       payload.new_password = this.newPassword;
     }
@@ -75,14 +90,18 @@ export class EditProfile {
         if (error.error && error.error.detail) {
           this.passwordError = error.error.detail;
         } else {
-          this.passwordError = 'Failed to update profile or password.';
+          this.passwordError = 'Failed to synchronize profile with central registry.';
         }
       },
       onSuccess: () => {
-        // Clear passwords on success
+        this.successMessage = 'Profile credentials successfully synchronized.';
+        // Clear sensitive inputs
         this.oldPassword = '';
         this.newPassword = '';
         this.confirmPassword = '';
+        
+        // Auto-clear success message after 5 seconds
+        setTimeout(() => this.successMessage = '', 5000);
       }
     });
   }

@@ -55,6 +55,7 @@
                                         class="premium-input-field w-full" 
                                         type="text" 
                                         [(ngModel)]="profile.first_name"
+                                        (ngModelChange)="clearMessages()"
                                         name="firstName"
                                         placeholder="First Name"
                                     />
@@ -65,6 +66,7 @@
                                         class="premium-input-field w-full" 
                                         type="text" 
                                         [(ngModel)]="profile.last_name"
+                                        (ngModelChange)="clearMessages()"
                                         name="lastName"
                                         placeholder="Last Name"
                                     />
@@ -75,6 +77,7 @@
                                         class="premium-input-field w-full" 
                                         type="email" 
                                         [(ngModel)]="profile.email"
+                                        (ngModelChange)="clearMessages()"
                                         name="email"
                                         placeholder="email@institution.com"
                                     />
@@ -85,6 +88,7 @@
                                         class="premium-input-field w-full" 
                                         type="text" 
                                         [(ngModel)]="profile.phone"
+                                        (ngModelChange)="clearMessages()"
                                         name="phone"
                                         placeholder="+1 (555) 000-0000"
                                     />
@@ -172,6 +176,13 @@
                                     {{ passwordError }}
                                 </div>
                             }
+
+                            @if (successMessage) {
+                                <div class="bg-emerald-50 text-emerald-600 px-5 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-emerald-100 flex items-center gap-3 animate-in fade-in zoom-in duration-500">
+                                    <span class="material-symbols-outlined text-[18px]">verified_user</span>
+                                    {{ successMessage }}
+                                </div>
+                            }
                             
                             <div class="space-y-3">
                                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Master Authorization Key</label>
@@ -180,6 +191,7 @@
                                         class="premium-input-field w-full pr-14" 
                                         [type]="showOldPassword ? 'text' : 'password'" 
                                         [(ngModel)]="oldPassword"
+                                        (ngModelChange)="clearMessages()"
                                         placeholder="Existing Password Sequence"
                                     />
                                     <button type="button" (click)="toggleOldPassword()" class="pw-toggle">
@@ -196,6 +208,7 @@
                                             class="premium-input-field w-full pr-14" 
                                             [type]="showNewPassword ? 'text' : 'password'" 
                                             [(ngModel)]="newPassword"
+                                            (ngModelChange)="clearMessages()"
                                             placeholder="Min 8 Characters"
                                         />
                                         <button type="button" (click)="toggleNewPassword()" class="pw-toggle">
@@ -211,6 +224,7 @@
                                             class="premium-input-field w-full pr-14" 
                                             [type]="showConfirmPassword ? 'text' : 'password'" 
                                             [(ngModel)]="confirmPassword"
+                                            (ngModelChange)="clearMessages()"
                                             placeholder="Repeat Sequence"
                                         />
                                         <button type="button" (click)="toggleConfirmPassword()" class="pw-toggle">

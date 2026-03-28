@@ -97,15 +97,25 @@ class UserDetailView(APIView):
         new_password = request.data.get('new_password')
         old_password = request.data.get('old_password')
 
-        if new_password:
+        if new_password or old_password:
+            if not new_password:
+                return Response(
+                    {"detail": "New password is required sequence."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             if not old_password:
                 return Response(
-                    {"detail": "Old password is required to set a new password."},
+                    {"detail": "Old password is required to set a new password sequence."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if len(new_password) < 8:
+                return Response(
+                    {"detail": "New password sequence must be at least 8 characters long."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             if not user.check_password(old_password):
                 return Response(
-                    {"detail": "Incorrect old password."},
+                    {"detail": "Incorrect old password sequence provided."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             user.set_password(new_password)
