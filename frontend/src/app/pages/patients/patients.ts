@@ -8,11 +8,12 @@ import { lastValueFrom } from 'rxjs';
 
 import { WelcomeSection } from '../../components/welcome-section/welcome-section';
 import { WorklistTable, WorklistItem } from '../../components/worklist-table/worklist-table';
+import { FiltersSection, TabConfig } from '../../components/filters-section/filters-section';
 
 @Component({
   selector: 'app-patients',
   standalone: true,
-  imports: [CommonModule, FormsModule, WelcomeSection, WorklistTable],
+  imports: [CommonModule, FormsModule, WelcomeSection, WorklistTable, FiltersSection],
   templateUrl: './patients.html',
   styleUrl: './patients.css',
 })
@@ -20,6 +21,12 @@ export class Patients {
   private patientService = inject(PatientService);
 
   tableColumns: string[] = ['Patient Identity', 'Registry Reference', 'Clinical Demographics', 'Creation Date', 'Actions'];
+
+  filterTabs: TabConfig[] = [
+    { key: 'ALL', label: 'Master Directory', icon: 'clinical_notes' },
+    { key: 'RECENT', label: 'Recent Syncs', icon: 'history' },
+    { key: 'PRIORITY', label: 'Critical', icon: 'emergency' }
+  ];
 
   searchQuery = signal('');
   activeTab = signal<'ALL'|'RECENT'|'PRIORITY'>('ALL');

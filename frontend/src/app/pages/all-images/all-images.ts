@@ -6,12 +6,13 @@ import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 import { AnalysisService } from '../../services/analysisService';
 
+import { FiltersSection, SelectFilterConfig, ActionButtonConfig } from '../../components/filters-section/filters-section';
 import { WelcomeSection } from '../../components/welcome-section/welcome-section';
 
 @Component({
   selector: 'app-all-images',
   standalone: true,
-  imports: [WorklistTable, RouterModule, FormsModule, WelcomeSection],
+  imports: [WorklistTable, RouterModule, FormsModule, WelcomeSection, FiltersSection],
   templateUrl: './all-images.html',
   styleUrl: './all-images.css',
 })
@@ -19,6 +20,29 @@ export class AllImages {
   private analysisService = inject(AnalysisService);
 
   tableColumns: string[] = ['Patient Details', 'Modality', 'Upload Date', 'AI Status', 'Actions'];
+
+  filterSelects: SelectFilterConfig[] = [
+    {
+      key: 'modality',
+      icon: 'radiology',
+      placeholder: 'All Modalities',
+      options: ['X-Ray', 'CT Scan', 'MRI']
+    },
+    {
+      key: 'status',
+      icon: 'analytics',
+      placeholder: 'All Lifecycle',
+      options: [
+        { label: 'Queue: Pending', value: 'Pending' },
+        { label: 'Pipeline: Analyzed', value: 'Analyzed' },
+        { label: 'Session: Validated', value: 'Validated' }
+      ]
+    }
+  ];
+
+  filterActions: ActionButtonConfig[] = [
+    { label: 'REFRESH', icon: 'sync', actionKey: 'refresh' }
+  ];
 
   // Filters
   searchQuery = signal('');

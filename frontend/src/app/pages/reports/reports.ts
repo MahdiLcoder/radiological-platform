@@ -2,7 +2,7 @@ import { Component, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WelcomeSection } from '../../components/welcome-section/welcome-section';
-import { FiltersSection, FilterField } from '../../components/filters-section/filters-section';
+import { FiltersSection, SelectFilterConfig, ActionButtonConfig } from '../../components/filters-section/filters-section';
 import { ReportCard, Report } from '../../components/report-card/report-card';
 import { ReportService, ReportApiItem } from '../../services/reportService';
 import { injectQuery } from '@tanstack/angular-query-experimental';
@@ -11,7 +11,7 @@ import { lastValueFrom } from 'rxjs';
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, WelcomeSection, ReportCard],
+  imports: [CommonModule, FormsModule, WelcomeSection, ReportCard, FiltersSection],
   templateUrl: './reports.html',
   styleUrl: './reports.css',
 })
@@ -19,6 +19,27 @@ export class Reports {
   private reportService = inject(ReportService);
 
   // Filters
+  filterSelects: SelectFilterConfig[] = [
+    {
+      key: 'modality',
+      icon: 'radiology',
+      options: ['All Modalities', 'MRI', 'CT Scan', 'X-Ray']
+    },
+    {
+      key: 'date',
+      icon: 'calendar_month',
+      options: [
+        { label: 'All Time', value: 'All Time' },
+        { label: '7 Days', value: 'Last 7 Days' },
+        { label: '30 Days', value: 'Last 30 Days' }
+      ]
+    }
+  ];
+
+  filterActions: ActionButtonConfig[] = [
+    { label: 'SYNCHRONIZE', icon: 'sync', actionKey: 'sync' }
+  ];
+
   modalityFilter = signal('All Modalities');
   dateFilter = signal('All Time');
   patientIdFilter = signal('');

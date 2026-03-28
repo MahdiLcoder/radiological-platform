@@ -1,45 +1,82 @@
-<div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-  <div class="flex flex-wrap items-end gap-4">
-    
-    @for (filter of filters(); track filter.label) {
-      <div class="flex-1 min-w-[200px]">
-        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-          {{ filter.label }}
-        </label>
-        
-        @if (filter.type === 'select') {
-          <div class="relative">
-            <select class="w-full appearance-none bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-primary focus:border-primary">
-              @for (opt of filter.options; track opt) {
-                <option>{{ opt }}</option>
-              }
-            </select>
-            @if (filter.icon) {
-              <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">{{ filter.icon }}</span>
-            } @else {
-              <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
-            }
-          </div>
-        } @else if (filter.type === 'text') {
-          <div class="relative">
-            <input 
-              class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-primary focus:border-primary" 
-              [placeholder]="filter.placeholder || ''" 
-              type="text"
-            />
-            @if (filter.icon) {
-              <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">{{ filter.icon }}</span>
-            }
-          </div>
-        }
+<div class="clinical-filter-console mt-[-1.5rem] relative z-10 animate-in fade-in zoom-in-95 duration-700 delay-200">
+  <div class="console-group">
+    @if (showSearch()) {
+      <div class="console-input-wrapper group">
+        <span class="material-symbols-outlined absolute left-3 text-slate-400 group-focus-within:text-primary transition-colors text-xl">{{ searchIcon() }}</span>
+        <input
+          [ngModel]="searchValue()"
+          (ngModelChange)="onSearchChange($event)"
+          class="console-input !w-80"
+          [placeholder]="searchPlaceholder()"
+          type="text"
+        />
       </div>
     }
 
-    <button class="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-6 rounded-lg transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
-      @if (buttonIcon()) {
-        <span class="material-symbols-outlined text-sm">{{ buttonIcon() }}</span>
+    @for (filter of selectFilters(); track filter.key) {
+      <div class="console-select-wrapper group">
+        @if (filter.icon) {
+          <span class="material-symbols-outlined console-select-icon">{{ filter.icon }}</span>
+        }
+        <select
+          [ngModel]="getSelectValue(filter.key)"
+          (ngModelChange)="onSelectChange(filter.key, $event)"
+          class="console-select !pr-10"
+          [ngClass]="{'!pl-10': filter.icon}"
+        >
+          @if (filter.placeholder !== undefined) {
+             <option value="">{{ filter.placeholder }}</option>
+          }
+           
+          @for (opt of filter.options; track getOptionValue(opt)) {
+            <option [value]="getOptionValue(opt)">{{ getOptionLabel(opt) }}</option>
+          }
+        </select>
+        <span class="material-symbols-outlined console-select-arrow">expand_more</span>
+      </div>
+    }
+  </div>
+
+  @if (tabs() && tabs().length > 0) {
+    <div class="console-tab-group">
+      @for (tab of tabs(); track tab.key) {
+        <button
+          (click)="onTabClick(tab.key)"
+          [class.is-active]="activeTab() === tab.key"
+          class="console-tab"
+        >
+          @if (tab.icon) {
+             <span class="material-symbols-outlined text-[18px]">{{ tab.icon }}</span>
+          }
+          {{ tab.label }}
+        </button>
       }
-      {{ buttonText() }}
-    </button>
+    </div>
+  }
+
+  <div class="console-group">
+    @if (statsHtml()) {
+       <div class="registry-stats text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mr-4" [innerHTML]="statsHtml()">
+       </div>
+    }
+
+    @for (btn of actionButtons(); track btn.actionKey) {
+      <button (click)="actionClicked.emit(btn.actionKey)" class="console-action-btn">
+         @if (btn.icon) {
+            <span class="material-symbols-outlined text-[18px]">{{ btn.icon }}</span>
+         }
+         {{ btn.label }}
+      </button>
+    }
+
+    @if (showReset()) {
+      <button 
+        (click)="resetClicked.emit()" 
+        class="console-reset-btn"
+        [title]="resetTitle()"
+      >
+        <span class="material-symbols-outlined">refresh</span>
+      </button>
+    }
   </div>
 </div>

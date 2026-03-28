@@ -5,63 +5,17 @@
   ></app-welcome-section>
 
   <!-- Clinical Filter Console -->
-  <div class="clinical-filter-console mt-[-1.5rem] relative z-10 animate-in fade-in zoom-in-95 duration-700 delay-200">
-    <div class="console-group">
-      <div class="console-input-wrapper group">
-        <span class="material-symbols-outlined absolute left-3 text-slate-400 group-focus-within:text-primary transition-colors text-xl">person_search</span>
-        <input
-          [ngModel]="patientIdFilter()"
-          (ngModelChange)="patientIdFilter.set($event); onFilterChange()"
-          class="console-input !w-64"
-          placeholder="Subject Name/MRN..."
-          type="text"
-        />
-      </div>
-
-      <div class="console-select-wrapper group">
-        <span class="material-symbols-outlined console-select-icon">radiology</span>
-        <select
-          [ngModel]="modalityFilter()"
-          (ngModelChange)="modalityFilter.set($event); onFilterChange()"
-          class="console-select !pl-10 !pr-10"
-        >
-          <option value="All Modalities">All Modalities</option>
-          <option value="MRI">MRI</option>
-          <option value="CT Scan">CT Scan</option>
-          <option value="X-Ray">X-Ray</option>
-        </select>
-        <span class="material-symbols-outlined console-select-arrow">expand_more</span>
-      </div>
-
-      <div class="console-select-wrapper group">
-        <span class="material-symbols-outlined console-select-icon">calendar_month</span>
-        <select
-          [ngModel]="dateFilter()"
-          (ngModelChange)="dateFilter.set($event); onFilterChange()"
-          class="console-select !pl-10 !pr-10"
-        >
-          <option value="All Time">All Time</option>
-          <option value="Last 7 Days">7 Days</option>
-          <option value="Last 30 Days">30 Days</option>
-        </select>
-        <span class="material-symbols-outlined console-select-arrow">expand_more</span>
-      </div>
-    </div>
-
-    <div class="console-group">
-      <button (click)="reportsQuery.refetch()" class="console-action-btn">
-         <span class="material-symbols-outlined">sync</span>
-         SYNCHRONIZE
-      </button>
-      <button 
-        (click)="patientIdFilter.set(''); modalityFilter.set('All Modalities'); dateFilter.set('All Time'); onFilterChange()" 
-        class="console-reset-btn"
-        title="Reset Console"
-      >
-        <span class="material-symbols-outlined">refresh</span>
-      </button>
-    </div>
-  </div>
+  <app-filters-section
+    [searchPlaceholder]="'Subject Name/MRN...'"
+    [searchIcon]="'person_search'"
+    [(searchValue)]="patientIdFilter"
+    [selectFilters]="filterSelects"
+    [selectValues]="{ modality: modalityFilter(), date: dateFilter() }"
+    (filterChange)="$event.key === 'modality' ? modalityFilter.set($event.value) : $event.key === 'date' ? dateFilter.set($event.value) : null; onFilterChange()"
+    [actionButtons]="filterActions"
+    (actionClicked)="$event === 'sync' ? reportsQuery.refetch() : null"
+    [showReset]="false"
+  ></app-filters-section>
 
   <!-- Evidence Grid -->
   <div class="min-h-96 mt-10">

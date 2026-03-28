@@ -8,57 +8,15 @@
   ></app-welcome-section>
 
   <!-- Clinical Filter Console -->
-  <div class="clinical-filter-console mt-[-1.5rem] relative z-10 animate-in fade-in zoom-in-95 duration-700 delay-200">
-    <div class="console-group">
-      <div class="console-input-wrapper group">
-        <span class="material-symbols-outlined absolute left-3 text-slate-400 group-focus-within:text-primary transition-colors text-xl">person_search</span>
-        <input
-          [ngModel]="searchQuery()"
-          (ngModelChange)="searchQuery.set($event); onFilterChange()"
-          class="console-input !w-80"
-          placeholder="Search by MRN, Name..."
-          type="text"
-        />
-      </div>
-    </div>
-
-    <div class="console-tab-group">
-      <button
-        (click)="activeTab.set('ALL'); onFilterChange()"
-        [class.is-active]="activeTab() === 'ALL'"
-        class="console-tab"
-      >
-        <span class="material-symbols-outlined text-[18px]">clinical_notes</span>
-        Master Directory
-      </button>
-      <button
-        (click)="activeTab.set('RECENT'); onFilterChange()"
-        [class.is-active]="activeTab() === 'RECENT'"
-        class="console-tab"
-      >
-        <span class="material-symbols-outlined text-[18px]">history</span>
-        Recent Syncs
-      </button>
-      <button
-        (click)="activeTab.set('PRIORITY'); onFilterChange()"
-        [class.is-active]="activeTab() === 'PRIORITY'"
-        class="console-tab"
-      >
-        <span class="material-symbols-outlined text-[18px]">emergency</span>
-        Critical
-      </button>
-    </div>
-
-    <div class="console-group">
-      <button 
-        (click)="searchQuery.set(''); activeTab.set('ALL'); onFilterChange()" 
-        class="console-reset-btn"
-        title="Reset Console"
-      >
-        <span class="material-symbols-outlined">refresh</span>
-      </button>
-    </div>
-  </div>
+  <app-filters-section
+    [searchPlaceholder]="'Search by MRN, Name...'"
+    [searchIcon]="'person_search'"
+    [(searchValue)]="searchQuery"
+    [tabs]="filterTabs"
+    [(activeTab)]="activeTab"
+    (filterChange)="onFilterChange()"
+    (resetClicked)="searchQuery.set(''); activeTab.set('ALL'); onFilterChange()"
+  ></app-filters-section>
 
   <!-- Records Repository -->
   <div class="clinical-list-area mt-8 min-h-[400px]">

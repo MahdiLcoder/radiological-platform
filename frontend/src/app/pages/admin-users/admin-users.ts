@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -7,11 +7,12 @@ import { lastValueFrom } from 'rxjs';
 import { AuthService } from '../../services/authService';
 
 import { WelcomeSection } from '../../components/welcome-section/welcome-section';
+import { FiltersSection, SelectFilterConfig } from '../../components/filters-section/filters-section';
 
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, WelcomeSection],
+  imports: [CommonModule, RouterModule, FormsModule, WelcomeSection, FiltersSection],
   templateUrl: './admin-users.html',
   styleUrl: './admin-users.css',
 })
@@ -37,6 +38,19 @@ export class AdminUsers {
   searchTerm = signal('');
   selectedRole = signal('');
 
+  filterSelects: SelectFilterConfig[] = [
+    {
+      key: 'role',
+      icon: 'filter_list',
+      placeholder: 'All Roles',
+      options: [
+        { label: 'Admin', value: 'admin' },
+        { label: 'Radiologist', value: 'radiologist' },
+        { label: 'Doctor', value: 'doctor' }
+      ]
+    }
+  ];
+
   // Queries
   profileQuery = injectQuery(() => ({
     queryKey: ['current_profile'],
@@ -52,6 +66,12 @@ export class AdminUsers {
       this.searchTerm() || undefined
     )),
   }));
+
+  filterStats = computed(() => {
+     const data: any = this.usersQuery.data();
+     if (!data) return '';
+     return `Displaying <span class="text-slate-900">${data.results?.length || 0}</span> of <span class="text-slate-900">${data.count || 0}</span> Professionals`;
+  });
 
 
   nextPage() {

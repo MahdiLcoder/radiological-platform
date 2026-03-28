@@ -17,50 +17,16 @@
   </div>
 
   <!-- Filter Console (User Content with Professional Styling) -->
-  <div class="clinical-filter-console mt-[-1.5rem] relative z-20 animate-in fade-in zoom-in-95 duration-700 delay-200">
-    <div class="console-group">
-      <div class="console-input-wrapper group">
-        <span class="material-symbols-outlined absolute left-3 text-slate-400 group-focus-within:text-primary transition-colors text-xl">search</span>
-        <input
-          [ngModel]="searchTerm()"
-          (ngModelChange)="searchTerm.set($event); onFilterChange()"
-          class="console-input !w-96"
-          placeholder="Search professionals by name, email or username..."
-          type="text"
-        />
-      </div>
-
-      <div class="console-select-wrapper group">
-        <span class="material-symbols-outlined console-select-icon">filter_list</span>
-        <select
-          [ngModel]="selectedRole()"
-          (ngModelChange)="selectedRole.set($event); onFilterChange()"
-          class="console-select !pl-10 !pr-10"
-        >
-          <option value="">All Roles</option>
-          <option value="admin">Admin</option>
-          <option value="radiologist">Radiologist</option>
-          <option value="doctor">Doctor</option>
-        </select>
-        <span class="material-symbols-outlined console-select-arrow">expand_more</span>
-      </div>
-    </div>
-
-    <div class="console-group">
-      <div class="registry-stats text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mr-4">
-         @if (usersQuery.data(); as users) {
-             Displaying <span class="text-slate-900">{{ users.results.length }}</span> of <span class="text-slate-900">{{ users.count }}</span> Professionals
-         }
-      </div>
-      <button 
-        (click)="searchTerm.set(''); selectedRole.set(''); onFilterChange()" 
-        class="console-reset-btn"
-        title="Reset Console"
-      >
-        <span class="material-symbols-outlined">refresh</span>
-      </button>
-    </div>
-  </div>
+  <app-filters-section
+    [searchPlaceholder]="'Search professionals by name, email or username...'"
+    [searchIcon]="'search'"
+    [(searchValue)]="searchTerm"
+    [selectFilters]="filterSelects"
+    [selectValues]="{ role: selectedRole() }"
+    (filterChange)="$event.key === 'role' ? selectedRole.set($event.value) : null; onFilterChange()"
+    [statsHtml]="filterStats()"
+    (resetClicked)="searchTerm.set(''); selectedRole.set(''); onFilterChange()"
+  ></app-filters-section>
 
   <!-- Management Interface (Professional Registry Table) -->
   <div class="mt-10 bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-black/[0.02] overflow-hidden">
