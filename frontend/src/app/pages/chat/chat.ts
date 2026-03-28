@@ -126,7 +126,6 @@ export class Chat implements OnInit, OnDestroy {
     this.route.queryParams.subscribe((params) => {
       const rid = +params['receiverId'];
       if (rid) {
-        this.queryClient.removeQueries({ queryKey: ['chatMessages', rid] });
         this.receiverId.set(rid);
         this.connectWebSocket();
       }
@@ -140,7 +139,6 @@ export class Chat implements OnInit, OnDestroy {
   }
 
   selectConversation(conv: Conversation) {
-    this.queryClient.removeQueries({ queryKey: ['chatMessages', conv.otherUser.id] });
     this.receiverId.set(conv.otherUser.id);
     this.connectWebSocket();
     this.router.navigate(['/dashboard/chat'], {
