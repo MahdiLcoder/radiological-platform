@@ -23,8 +23,8 @@ export class Patients {
   tableColumns: string[] = ['Patient Identity', 'Registry Reference', 'Clinical Demographics', 'Creation Date', 'Actions'];
 
   filterTabs: TabConfig[] = [
-    { key: 'ALL', label: 'Master Directory', icon: 'clinical_notes' },
-    { key: 'RECENT', label: 'Recent Syncs', icon: 'history' },
+    { key: 'ALL', label: 'All', icon: 'clinical_notes' },
+    { key: 'RECENT', label: 'Recent', icon: 'history' },
     { key: 'PRIORITY', label: 'Critical', icon: 'emergency' }
   ];
 
