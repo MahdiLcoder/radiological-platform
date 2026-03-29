@@ -44,7 +44,7 @@ export class Sidebar {
       roles: ['admin', 'radiologist', 'doctor'],
     },
     { label: 'Patient Records', icon: 'groups', link: '/dashboard/patients', roles: ['doctor'] },
-    { label: 'Chat', icon: 'chat', link: '/dashboard/chat', roles: ['radiologist', 'doctor'] },
+    { label: 'Chat', icon: 'chat', link: '/dashboard/chat', roles: ['radiologist', 'doctor', 'admin'] },
   ];
 
   profileQuery = injectQuery(() => ({

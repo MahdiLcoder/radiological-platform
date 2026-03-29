@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { PaginatedResponse } from '../models/pagination';
+import { PaginatedResponse } from '../types';
 
 export interface ReportApiItem {
   id: string;

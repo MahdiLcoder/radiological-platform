@@ -1,26 +1,9 @@
 import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { User, Message, Conversation } from '../../types';
 
-export interface User {
-  id: number;
-  username: string;
-  first_name: string;
-  last_name: string;
-  role: string;
-}
-
-export interface Message {
-  id?: number;
-  sender_id: number | string;
-  receiver_id: number | string;
-  content: string;
-  created_at: string;
-}
-
-export interface Conversation {
-  otherUser: User;
-  lastMessage?: Message;
-}
+// Re-export types for consumers of this component
+export type { User, Message, Conversation } from '../../types';
 
 @Component({
   selector: 'app-chat-sidebar',

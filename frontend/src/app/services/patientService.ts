@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { PaginatedResponse } from '../models/pagination';
+import { PaginatedResponse } from '../types';
 
 export interface Patient {
   id?: string;
@@ -35,7 +35,7 @@ export class PatientService {
 
   getAll(params: any = {}): Observable<PaginatedResponse<Patient[]>> {
     let httpParams = new HttpParams();
-    Object.keys(params).forEach(key => {
+    Object.keys(params).forEach((key) => {
       if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
         httpParams = httpParams.append(key, params[key]);
       }

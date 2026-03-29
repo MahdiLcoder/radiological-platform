@@ -16,17 +16,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { injectQuery, injectQueryClient } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
-import { ChatService, Message } from '../../services/chat.service';
-import { ChatSidebarComponent, Conversation } from '../../components/chat-sidebar/chat-sidebar';
+import { ChatService } from '../../services/chat.service';
+import { ChatSidebarComponent } from '../../components/chat-sidebar/chat-sidebar';
 import { ChatAreaComponent } from '../../components/chat-area/chat-area';
-
-interface User {
-  id: number;
-  username: string;
-  first_name: string;
-  last_name: string;
-  role: string;
-}
+import { User, Conversation, Message } from '../../types';
 
 @Component({
   selector: 'app-chat',

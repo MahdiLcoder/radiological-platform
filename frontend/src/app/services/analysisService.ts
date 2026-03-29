@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { PaginatedResponse } from '../models/pagination';
+import { PaginatedResponse } from '../types';
 
 export interface AnalysisResult {
   id: string;
@@ -22,8 +22,6 @@ export interface AnalysisResult {
   confidence: number;
   analyzed_at: string;
 }
-
-
 
 export interface UploadResponse {
   id: string;
@@ -53,7 +51,7 @@ export class AnalysisService {
     formData.append('image', file);
     formData.append('patient', patientId);
     formData.append('modality', modality);
-    
+
     return this.http.post<UploadResponse>(`${this.imagesApiUrl}/upload/`, formData);
   }
 
@@ -63,12 +61,14 @@ export class AnalysisService {
 
   getAllImages(params: any = {}): Observable<PaginatedResponse<UploadResponse[]>> {
     let httpParams = new HttpParams();
-    Object.keys(params).forEach(key => {
+    Object.keys(params).forEach((key) => {
       if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
         httpParams = httpParams.append(key, params[key]);
       }
     });
-    return this.http.get<PaginatedResponse<UploadResponse[]>>(`${this.imagesApiUrl}/`, { params: httpParams });
+    return this.http.get<PaginatedResponse<UploadResponse[]>>(`${this.imagesApiUrl}/`, {
+      params: httpParams,
+    });
   }
 
   runPrediction(imageId: string): Observable<AnalysisResult> {
@@ -79,9 +79,9 @@ export class AnalysisService {
     return this.http.get<AnalysisResult>(`${this.inferenceApiUrl}/${imageId}/`);
   }
 
-  createDiagnosis(data: { 
-    image: string; 
-    ai_prediction?: string; 
+  createDiagnosis(data: {
+    image: string;
+    ai_prediction?: string;
     action: 'accepted' | 'modified' | 'rejected';
     final_finding?: string;
     clinical_notes?: string;
@@ -91,12 +91,14 @@ export class AnalysisService {
 
   getAllFindings(params: any = {}): Observable<PaginatedResponse<AnalysisResult[]>> {
     let httpParams = new HttpParams();
-    Object.keys(params).forEach(key => {
+    Object.keys(params).forEach((key) => {
       if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
         httpParams = httpParams.append(key, params[key]);
       }
     });
-    return this.http.get<PaginatedResponse<AnalysisResult[]>>(`${this.inferenceApiUrl}/all-findings/`, { params: httpParams });
+    return this.http.get<PaginatedResponse<AnalysisResult[]>>(
+      `${this.inferenceApiUrl}/all-findings/`,
+      { params: httpParams },
+    );
   }
 }
-

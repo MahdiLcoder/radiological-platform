@@ -1,18 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-
-export interface Message {
-  sender_id: number;
-  receiver_id: number;
-  content: string;
-  created_at: string;
-}
-
-export interface Conversation {
-  other_user_id: number;
-  messages: Message[];
-}
+import { Message, ChatConversation } from '../types';
 
 @Injectable({
   providedIn: 'root',
@@ -21,8 +10,8 @@ export class ChatService {
   private apiUrl = 'http://localhost:8000/api/chat';
   private http = inject(HttpClient);
 
-  getConversations(): Observable<Conversation[]> {
-    return this.http.get<Conversation[]>(`${this.apiUrl}/messages/`);
+  getConversations(): Observable<ChatConversation[]> {
+    return this.http.get<ChatConversation[]>(`${this.apiUrl}/messages/`);
   }
 
   getMessages(userId: number): Observable<Message[]> {

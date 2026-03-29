@@ -3,27 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LoadingStateComponent } from '../loading-state/loading-state';
 import { EmptyStateComponent } from '../empty-state/empty-state';
+import { User, Message, Conversation } from '../../types';
 
-export interface User {
-  id: number;
-  username: string;
-  first_name: string;
-  last_name: string;
-  role: string;
-}
-
-export interface Message {
-  id?: number;
-  sender_id: number | string;
-  receiver_id: number | string;
-  content: string;
-  created_at: string;
-}
-
-export interface Conversation {
-  otherUser: User;
-  lastMessage?: Message;
-}
+export type { User, Message, Conversation } from '../../types';
 
 @Component({
   selector: 'app-chat-area',
@@ -55,6 +37,59 @@ export class ChatAreaComponent {
     return Number(message.sender_id) === Number(this.currentUserId());
   }
 
+  isFirstInGroup(message: Message, index: number): boolean {
+    if (index === 0) return true;
+    const messages = this.messages();
+    return messages[index - 1].sender_id !== message.sender_id;
+  }
+
+  isLastInGroup(message: Message, index: number): boolean {
+    const messages = this.messages();
+    if (index === messages.length - 1) return true;
+    return messages[index + 1].sender_id !== message.sender_id;
+  }
+
+  getMessageBubbleClasses(message: Message, index: number): string {
+    const isMine = this.isMine(message);
+    const isFirst = this.isFirstInGroup(message, index);
+    const isLast = this.isLastInGroup(message, index);
+
+    const baseClasses = isMine
+      ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/30'
+      : 'bg-white text-slate-800 shadow-sm border border-slate-200/60';
+
+    // Messenger-style border radius logic
+    if (isMine) {
+      if (isFirst && isLast) {
+        // Single message - standard bubble with tail
+        return `${baseClasses} rounded-2xl rounded-tr-md`;
+      } else if (isFirst) {
+        // First in group - top rounded, small bottom-right for connection
+        return `${baseClasses} rounded-2xl rounded-tr-md rounded-br-lg`;
+      } else if (isLast) {
+        // Last in group - tail on right, rounded elsewhere
+        return `${baseClasses} rounded-2xl rounded-tr-md rounded-br-sm`;
+      } else {
+        // Middle message - flat right side to connect
+        return `${baseClasses} rounded-2xl rounded-tr-md rounded-br-lg`;
+      }
+    } else {
+      if (isFirst && isLast) {
+        // Single message
+        return `${baseClasses} rounded-2xl rounded-tl-md`;
+      } else if (isFirst) {
+        // First in group
+        return `${baseClasses} rounded-2xl rounded-tl-md rounded-bl-lg`;
+      } else if (isLast) {
+        // Last in group
+        return `${baseClasses} rounded-2xl rounded-tl-md rounded-bl-sm`;
+      } else {
+        // Middle message
+        return `${baseClasses} rounded-2xl rounded-tl-md rounded-bl-lg`;
+      }
+    }
+  }
+
   sendMessage(): void {
     if (this.newMessage.trim() && this.receiverId()) {
       this.messageSent.emit(this.newMessage);
@@ -62,9 +97,10 @@ export class ChatAreaComponent {
     }
   }
 
-  onKeyUp(event: KeyboardEvent): void {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
+  onKeyUp(event: Event): void {
+    const keyboardEvent = event as KeyboardEvent;
+    if (keyboardEvent.key === 'Enter' && !keyboardEvent.shiftKey) {
+      keyboardEvent.preventDefault();
       this.sendMessage();
     }
   }
