@@ -9,8 +9,6 @@ from rest_framework.views import APIView
 
 from config.email_utils import send_password_reset_email
 
-from accounts.models import AdminProfile, DoctorProfile, RadiologistProfile, UserRole
-
 from .permissions import IsAdmin, IsRadiologist, IsDoctor
 from .serializers import RegisterSerializer, UserSerializer
 
@@ -83,72 +81,11 @@ class UserDetailView(APIView):
         if not user:
             return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        new_role = request.data.get('role')
-        if new_role is not None:
-            valid_roles = [r for r, _ in User.role.field.choices]
-            if new_role not in valid_roles:
-                return Response(
-                    {"detail": f"Invalid role. Choose from: {valid_roles}"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            user.role = new_role
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
-        # Update other User fields
-        allowed_user_fields = ['first_name', 'last_name', 'email', 'phone']
-        for field in allowed_user_fields:
-            if field in request.data:
-                setattr(user, field, request.data[field])
-
-        new_password = request.data.get('new_password')
-        old_password = request.data.get('old_password')
-
-        if new_password or old_password:
-            if not new_password:
-                return Response(
-                    {"detail": "New password is required sequence."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            if not old_password:
-                return Response(
-                    {"detail": "Old password is required to set a new password sequence."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            if len(new_password) < 8:
-                return Response(
-                    {"detail": "New password sequence must be at least 8 characters long."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            if not user.check_password(old_password):
-                return Response(
-                    {"detail": "Incorrect old password sequence provided."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            user.set_password(new_password)
-
-        user.save()
-
-        if user.role == UserRole.ADMIN:
-            allowed = ['department']
-            update_data = {f'set__{k}': v for k, v in request.data.items() if k in allowed}
-            if update_data:
-                AdminProfile.objects(user_id=user.id).update_one(**update_data)
-
-        elif user.role == UserRole.RADIOLOGIST:
-            allowed = ['medical_license_number', 'years_of_experience']
-            update_data = {f'set__{k}': v for k, v in request.data.items() if k in allowed}
-            if update_data:
-                RadiologistProfile.objects(user_id=user.id).update_one(**update_data)
-
-        elif user.role == UserRole.DOCTOR:
-            allowed = ['specialty', 'medical_license_number', 'clinic']
-            update_data = {f'set__{k}': v for k, v in request.data.items() if k in allowed}
-            if update_data:
-                DoctorProfile.objects(user_id=user.id).update_one(**update_data)
-
-        return Response(
-            {"detail": "User updated successfully.", "user": UserSerializer(user).data},
-            status=status.HTTP_200_OK,
-        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request, pk):
         user = self.get_user(pk)
