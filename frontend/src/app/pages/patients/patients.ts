@@ -9,71 +9,94 @@ import { lastValueFrom } from 'rxjs';
 import { WelcomeSection } from '../../components/welcome-section/welcome-section';
 import { WorklistTable, WorklistItem } from '../../components/worklist-table/worklist-table';
 import { FiltersSection, TabConfig } from '../../components/filters-section/filters-section';
+import { LoadingStateComponent } from '../../components/loading-state/loading-state';
+import { ErrorStateComponent } from '../../components/error-state/error-state';
+import { EmptyStateComponent } from '../../components/empty-state/empty-state';
 
 @Component({
   selector: 'app-patients',
   standalone: true,
-  imports: [CommonModule, FormsModule, WelcomeSection, WorklistTable, FiltersSection],
+  imports: [
+    CommonModule,
+    FormsModule,
+    WelcomeSection,
+    WorklistTable,
+    FiltersSection,
+    LoadingStateComponent,
+    ErrorStateComponent,
+    EmptyStateComponent,
+  ],
   templateUrl: './patients.html',
   styleUrl: './patients.css',
 })
 export class Patients {
   private patientService = inject(PatientService);
 
-  tableColumns: string[] = ['Patient Identity', 'Registry Reference', 'Clinical Demographics', 'Creation Date', 'Actions'];
+  tableColumns: string[] = [
+    'Patient Identity',
+    'Registry Reference',
+    'Clinical Demographics',
+    'Creation Date',
+    'Actions',
+  ];
 
   filterTabs: TabConfig[] = [
     { key: 'ALL', label: 'All', icon: 'clinical_notes' },
     { key: 'RECENT', label: 'Recent', icon: 'history' },
-    { key: 'PRIORITY', label: 'Critical', icon: 'emergency' }
+    { key: 'PRIORITY', label: 'Critical', icon: 'emergency' },
   ];
 
   searchQuery = signal('');
-  activeTab = signal<'ALL'|'RECENT'|'PRIORITY'>('ALL');
+  activeTab = signal<'ALL' | 'RECENT' | 'PRIORITY'>('ALL');
   currentPage = signal(1);
 
   patientsQuery = injectQuery(() => ({
     queryKey: ['patients', this.searchQuery(), this.activeTab(), this.currentPage()],
-    queryFn: () => lastValueFrom(
-      this.patientService.getAll({
-        search: this.searchQuery(),
-        tab: this.activeTab(),
-        page: this.currentPage(),
-        page_size: 10
-      })
-    ),
+    queryFn: () =>
+      lastValueFrom(
+        this.patientService.getAll({
+          search: this.searchQuery(),
+          tab: this.activeTab(),
+          page: this.currentPage(),
+          page_size: 10,
+        }),
+      ),
   }));
 
   worklistData = computed<WorklistItem[]>(() => {
     const data: any = this.patientsQuery.data();
     const results = data?.results || [];
-    
+
     return results.map((patient: Patient) => {
       const initials = this.getInitials(patient.first_name, patient.last_name);
       const name = `${patient.first_name} ${patient.last_name}`;
       const age = this.calculateAge(patient.date_of_birth);
-      const gender = patient.gender === 'M' ? 'Male' : (patient.gender === 'F' ? 'Female' : 'Other');
+      const gender = patient.gender === 'M' ? 'Male' : patient.gender === 'F' ? 'Female' : 'Other';
       const createdAt = new Date(patient.created_at || Date.now());
-      
+
       return {
         id: patient.id || 'N/A',
         patient: {
           initials,
           name,
           id: (patient.id || 'N/A').substring(0, 12).toUpperCase(),
-          isEmergency: false
+          isEmergency: false,
         },
         modality: `REF-${(patient.id?.substring(0, 6) || 'NA').toUpperCase()}`,
         uploadDate: {
-          time: createdAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-          date: createdAt.toLocaleDateString([], {month: 'short', day: 'numeric', year: 'numeric'})
+          time: createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          date: createdAt.toLocaleDateString([], {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+          }),
         },
         aiStatus: `${gender} • ${age}Y`,
         action: {
           type: 'view',
           text: 'Browse Scans',
-          link: ['/dashboard/patient-detail', patient.id]
-        }
+          link: ['/dashboard/patient-detail', patient.id],
+        },
       };
     });
   });
@@ -83,13 +106,13 @@ export class Patients {
 
   nextPage() {
     if (this.currentPage() < this.totalPages()) {
-      this.currentPage.update(p => p + 1);
+      this.currentPage.update((p) => p + 1);
     }
   }
 
   prevPage() {
     if (this.currentPage() > 1) {
-      this.currentPage.update(p => p - 1);
+      this.currentPage.update((p) => p - 1);
     }
   }
 

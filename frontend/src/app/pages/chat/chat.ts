@@ -2,12 +2,12 @@ import {
   Component,
   OnInit,
   OnDestroy,
-  ViewChild,
-  ElementRef,
   inject,
   signal,
   computed,
   effect,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WebSocketSubject } from 'rxjs/webSocket';
@@ -17,6 +17,8 @@ import { FormsModule } from '@angular/forms';
 import { injectQuery, injectQueryClient } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 import { ChatService, Message } from '../../services/chat.service';
+import { ChatSidebarComponent, Conversation } from '../../components/chat-sidebar/chat-sidebar';
+import { ChatAreaComponent } from '../../components/chat-area/chat-area';
 
 interface User {
   id: number;
@@ -26,15 +28,10 @@ interface User {
   role: string;
 }
 
-interface Conversation {
-  otherUser: User;
-  lastMessage?: Message;
-}
-
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ChatSidebarComponent, ChatAreaComponent],
   templateUrl: './chat.html',
   styleUrl: './chat.css',
 })
@@ -50,7 +47,6 @@ export class Chat implements OnInit, OnDestroy {
 
   receiverId = signal<number | null>(null);
   currentUserId!: number;
-  newMessage = '';
   private socket$!: WebSocketSubject<any>;
 
   usersQuery = injectQuery(() => ({
@@ -112,6 +108,11 @@ export class Chat implements OnInit, OnDestroy {
     return this.conversations().find((c: Conversation) => c.otherUser.id === rid);
   });
 
+  messages = computed(() => {
+    const data = this.messagesQuery.data();
+    return data || [];
+  });
+
   constructor() {
     this.currentUserId = this.authService.getCurrentUserId()!;
 
@@ -139,7 +140,11 @@ export class Chat implements OnInit, OnDestroy {
     }
   }
 
-  selectConversation(conv: Conversation) {
+  onConversationSelected(conv: Conversation): void {
+    this.selectConversation(conv);
+  }
+
+  selectConversation(conv: Conversation): void {
     this.receiverId.set(conv.otherUser.id);
     this.connectWebSocket();
     this.router.navigate(['/dashboard/chat'], {
@@ -147,12 +152,7 @@ export class Chat implements OnInit, OnDestroy {
     });
   }
 
-  getUserInitials(user?: User): string {
-    if (!user || !user.first_name || !user.last_name) return '';
-    return (user.first_name[0] + user.last_name[0]).toUpperCase();
-  }
-
-  connectWebSocket() {
+  connectWebSocket(): void {
     if (this.socket$) {
       this.socket$.complete();
     }
@@ -180,24 +180,19 @@ export class Chat implements OnInit, OnDestroy {
     });
   }
 
-  sendMessage() {
+  onMessageSent(messageContent: string): void {
     const rid = this.receiverId();
-    if (this.newMessage.trim() && rid) {
+    if (messageContent.trim() && rid) {
       const messageData = {
-        message: this.newMessage,
+        message: messageContent,
         sender_id: this.currentUserId,
         receiver_id: rid,
       };
       this.socket$.next(messageData);
-      this.newMessage = '';
     }
   }
 
-  isMine(message: Message): boolean {
-    return Number(message.sender_id) === Number(this.currentUserId);
-  }
-
-  private scrollToBottom() {
+  scrollToBottom(): void {
     setTimeout(() => {
       if (this.messagesContainer) {
         this.messagesContainer.nativeElement.scrollTop =

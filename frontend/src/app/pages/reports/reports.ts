@@ -2,16 +2,32 @@ import { Component, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WelcomeSection } from '../../components/welcome-section/welcome-section';
-import { FiltersSection, SelectFilterConfig, ActionButtonConfig } from '../../components/filters-section/filters-section';
+import {
+  FiltersSection,
+  SelectFilterConfig,
+  ActionButtonConfig,
+} from '../../components/filters-section/filters-section';
 import { ReportCard, Report } from '../../components/report-card/report-card';
 import { ReportService, ReportApiItem } from '../../services/reportService';
+import { LoadingStateComponent } from '../../components/loading-state/loading-state';
+import { ErrorStateComponent } from '../../components/error-state/error-state';
+import { EmptyStateComponent } from '../../components/empty-state/empty-state';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, WelcomeSection, ReportCard, FiltersSection],
+  imports: [
+    CommonModule,
+    FormsModule,
+    WelcomeSection,
+    ReportCard,
+    FiltersSection,
+    LoadingStateComponent,
+    ErrorStateComponent,
+    EmptyStateComponent,
+  ],
   templateUrl: './reports.html',
   styleUrl: './reports.css',
 })
@@ -23,7 +39,7 @@ export class Reports {
     {
       key: 'modality',
       icon: 'radiology',
-      options: ['All Modalities', 'MRI', 'CT Scan', 'X-Ray']
+      options: ['All Modalities', 'MRI', 'CT Scan', 'X-Ray'],
     },
     {
       key: 'date',
@@ -31,14 +47,12 @@ export class Reports {
       options: [
         { label: 'All Time', value: 'All Time' },
         { label: '7 Days', value: 'Last 7 Days' },
-        { label: '30 Days', value: 'Last 30 Days' }
-      ]
-    }
+        { label: '30 Days', value: 'Last 30 Days' },
+      ],
+    },
   ];
 
-  filterActions: ActionButtonConfig[] = [
-    { label: 'SYNCHRONIZE', icon: 'sync', actionKey: 'sync' }
-  ];
+  filterActions: ActionButtonConfig[] = [{ label: 'SYNCHRONIZE', icon: 'sync', actionKey: 'sync' }];
 
   modalityFilter = signal('All Modalities');
   dateFilter = signal('All Time');

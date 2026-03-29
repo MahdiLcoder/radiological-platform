@@ -5,14 +5,21 @@ import { AuthService } from '../../services/authService';
 import { injectQuery, injectMutation, QueryClient } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-
+import { LoadingStateComponent } from '../../components/loading-state/loading-state';
+import { ErrorStateComponent } from '../../components/error-state/error-state';
 
 @Component({
   selector: 'app-edit-profile',
   standalone: true,
-  imports: [CommonModule, RouterLink, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    RouterLink,
+    ReactiveFormsModule,
+    LoadingStateComponent,
+    ErrorStateComponent,
+  ],
   templateUrl: './edit-profile.html',
-  styleUrl: './edit-profile.css'
+  styleUrl: './edit-profile.css',
 })
 export class EditProfile {
   private authService = inject(AuthService);
@@ -20,11 +27,11 @@ export class EditProfile {
   private fb = inject(FormBuilder);
 
   profileForm: FormGroup;
-  
+
   showOldPassword = false;
   showNewPassword = false;
   showConfirmPassword = false;
-  
+
   passwordError = '';
   successMessage = '';
 
@@ -34,33 +41,36 @@ export class EditProfile {
   }));
 
   updateProfileMutation = injectMutation(() => ({
-    mutationFn: ({ id, data }: { id: number | string; data: any }) => 
+    mutationFn: ({ id, data }: { id: number | string; data: any }) =>
       lastValueFrom(this.authService.updateProfile(id, data)),
     onSuccess: () => {
       this.queryClient.invalidateQueries({ queryKey: ['profile'] });
-    }
+    },
   }));
 
   constructor() {
-    this.profileForm = this.fb.group({
-      first_name: ['', [Validators.required]],
-      last_name: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.required]],
-      role: [{ value: '', disabled: true }],
-      username: [{ value: '', disabled: true }],
-      id: [{ value: '', disabled: true }],
-      // Role-specific fields
-      specialty: [''],
-      medical_license_number: [''],
-      clinic: [''],
-      years_of_experience: [null],
-      department: [''],
-      // Password section
-      oldPassword: [''],
-      newPassword: ['', [Validators.minLength(8)]],
-      confirmPassword: ['']
-    }, { validators: this.passwordMatchValidator });
+    this.profileForm = this.fb.group(
+      {
+        first_name: ['', [Validators.required]],
+        last_name: ['', [Validators.required]],
+        email: ['', [Validators.required, Validators.email]],
+        phone: ['', [Validators.required]],
+        role: [{ value: '', disabled: true }],
+        username: [{ value: '', disabled: true }],
+        id: [{ value: '', disabled: true }],
+        // Role-specific fields
+        specialty: [''],
+        medical_license_number: [''],
+        clinic: [''],
+        years_of_experience: [null],
+        department: [''],
+        // Password section
+        oldPassword: [''],
+        newPassword: ['', [Validators.minLength(8)]],
+        confirmPassword: [''],
+      },
+      { validators: this.passwordMatchValidator },
+    );
 
     // Sync form with query data
     effect(() => {
@@ -79,7 +89,7 @@ export class EditProfile {
     const experience = this.profileForm.get('years_of_experience');
     const department = this.profileForm.get('department');
 
-    [specialty, license, clinic, experience, department].forEach(c => c?.clearValidators());
+    [specialty, license, clinic, experience, department].forEach((c) => c?.clearValidators());
 
     if (role === 'doctor') {
       specialty?.setValidators([Validators.required]);
@@ -92,7 +102,9 @@ export class EditProfile {
       department?.setValidators([Validators.required]);
     }
 
-    [specialty, license, clinic, experience, department].forEach(c => c?.updateValueAndValidity());
+    [specialty, license, clinic, experience, department].forEach((c) =>
+      c?.updateValueAndValidity(),
+    );
   }
 
   private passwordMatchValidator(group: FormGroup) {
@@ -108,9 +120,18 @@ export class EditProfile {
     return null;
   }
 
-  toggleOldPassword() { this.showOldPassword = !this.showOldPassword; this.clearMessages(); }
-  toggleNewPassword() { this.showNewPassword = !this.showNewPassword; this.clearMessages(); }
-  toggleConfirmPassword() { this.showConfirmPassword = !this.showConfirmPassword; this.clearMessages(); }
+  toggleOldPassword() {
+    this.showOldPassword = !this.showOldPassword;
+    this.clearMessages();
+  }
+  toggleNewPassword() {
+    this.showNewPassword = !this.showNewPassword;
+    this.clearMessages();
+  }
+  toggleConfirmPassword() {
+    this.showConfirmPassword = !this.showConfirmPassword;
+    this.clearMessages();
+  }
 
   clearMessages() {
     this.passwordError = '';
@@ -119,19 +140,22 @@ export class EditProfile {
 
   saveChanges(id: number | string) {
     this.clearMessages();
-    
+
     if (this.profileForm.invalid) {
       this.profileForm.markAllAsTouched();
       const errors = this.profileForm.errors;
-      if (errors?.['passwordMismatch']) this.passwordError = 'Credential confirmation sequence mismatch.';
-      else if (errors?.['oldPasswordRequired']) this.passwordError = 'Current master key is required to authorize rotation.';
-      else if (errors?.['newPasswordRequired']) this.passwordError = 'New security sequence must be defined.';
+      if (errors?.['passwordMismatch'])
+        this.passwordError = 'Credential confirmation sequence mismatch.';
+      else if (errors?.['oldPasswordRequired'])
+        this.passwordError = 'Current master key is required to authorize rotation.';
+      else if (errors?.['newPasswordRequired'])
+        this.passwordError = 'New security sequence must be defined.';
       return;
     }
 
     const value = this.profileForm.getRawValue();
     const payload = { ...value };
-    
+
     if (value.newPassword) {
       payload.old_password = value.oldPassword;
       payload.new_password = value.newPassword;
@@ -141,16 +165,19 @@ export class EditProfile {
     delete payload.newPassword;
     delete payload.confirmPassword;
 
-    this.updateProfileMutation.mutate({ id, data: payload }, {
-      onError: (error: any) => {
-        this.passwordError = error.error?.detail || 'Failed to synchronize profile with central registry.';
+    this.updateProfileMutation.mutate(
+      { id, data: payload },
+      {
+        onError: (error: any) => {
+          this.passwordError =
+            error.error?.detail || 'Failed to synchronize profile with central registry.';
+        },
+        onSuccess: () => {
+          this.successMessage = 'Profile credentials successfully synchronized.';
+          this.profileForm.patchValue({ oldPassword: '', newPassword: '', confirmPassword: '' });
+          setTimeout(() => (this.successMessage = ''), 5000);
+        },
       },
-      onSuccess: () => {
-        this.successMessage = 'Profile credentials successfully synchronized.';
-        this.profileForm.patchValue({ oldPassword: '', newPassword: '', confirmPassword: '' });
-        setTimeout(() => this.successMessage = '', 5000);
-      }
-    });
+    );
   }
 }
-

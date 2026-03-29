@@ -9,11 +9,24 @@ import { lastValueFrom } from 'rxjs';
 import { PatientService, Patient } from '../../services/patientService';
 import { ReportService, ReportApiItem } from '../../services/reportService';
 import { WorklistTable, WorklistItem } from '../../components/worklist-table/worklist-table';
+import { LoadingStateComponent } from '../../components/loading-state/loading-state';
+import { ErrorStateComponent } from '../../components/error-state/error-state';
+import { EmptyStateComponent } from '../../components/empty-state/empty-state';
 
 @Component({
   selector: 'app-doctor',
   standalone: true,
-  imports: [CommonModule, RouterModule, WelcomeSection, StatsSummary, ReportCard, WorklistTable],
+  imports: [
+    CommonModule,
+    RouterModule,
+    WelcomeSection,
+    StatsSummary,
+    ReportCard,
+    WorklistTable,
+    LoadingStateComponent,
+    ErrorStateComponent,
+    EmptyStateComponent,
+  ],
   templateUrl: './doctor.html',
   styleUrl: './doctor.css',
 })
@@ -37,10 +50,10 @@ export class Doctor {
   // ── Stats cards ───────────────────────────────────────────────────
   summaryStats = computed<StatItem[]>(() => {
     const patientData: any = this.patientsQuery.data();
-    const reportData: any  = this.reportsQuery.data();
+    const reportData: any = this.reportsQuery.data();
 
     const totalPatients = patientData?.count ?? 0;
-    const totalReports  = reportData?.count  ?? 0;
+    const totalReports = reportData?.count ?? 0;
 
     return [
       {
@@ -77,33 +90,33 @@ export class Doctor {
   worklistData = computed<WorklistItem[]>(() => {
     const data: any = this.patientsQuery.data();
     const results = data?.results ?? [];
-    
+
     return results.map((patient: Patient) => {
       const initials = this.getInitials(patient.first_name, patient.last_name);
       const name = `${patient.first_name} ${patient.last_name}`;
       const age = this.calculateAge(patient.date_of_birth);
-      const gender = patient.gender === 'M' ? 'M' : (patient.gender === 'F' ? 'F' : 'O');
+      const gender = patient.gender === 'M' ? 'M' : patient.gender === 'F' ? 'F' : 'O';
       const createdAt = new Date(patient.created_at || new Date());
-      
+
       return {
         id: patient.id || 'N/A',
         patient: {
           initials,
           name,
           id: (patient.id || 'N/A').substring(0, 8).toUpperCase(),
-          isEmergency: false
+          isEmergency: false,
         },
         modality: `REF-${(patient.id?.substring(0, 6) || 'NA').toUpperCase()}`,
         uploadDate: {
-          time: createdAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-          date: createdAt.toLocaleDateString([], {month: 'short', day: 'numeric'})
+          time: createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          date: createdAt.toLocaleDateString([], { month: 'short', day: 'numeric' }),
         },
         aiStatus: `${gender} • ${age}Y`,
         action: {
           type: 'view',
           text: 'Open File',
-          link: ['/dashboard/patient-detail', patient.id]
-        }
+          link: ['/dashboard/patient-detail', patient.id],
+        },
       };
     });
   });
@@ -112,7 +125,7 @@ export class Doctor {
   recentReports = computed<Report[]>(() => {
     const data: any = this.reportsQuery.data();
     const items: ReportApiItem[] = data?.results ?? [];
-    return items.map(item => ({
+    return items.map((item) => ({
       id: item.id,
       patientName: item.image?.patient_name ?? 'Unknown Patient',
       modality: this.normalizeModality(item.image?.modality),
@@ -120,7 +133,11 @@ export class Doctor {
       diagnosis: item.diagnosis?.final_finding ?? 'No finding recorded',
       doctor: item.doctor || `Radiologist #${item.generated_by}`,
       date: item.generated_at
-        ? new Date(item.generated_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+        ? new Date(item.generated_at).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })
         : '—',
       validated: true,
       reportId: item.id,
@@ -136,7 +153,11 @@ export class Doctor {
     const today = new Date();
     const birth = new Date(dob);
     let age = today.getFullYear() - birth.getFullYear();
-    if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) age--;
+    if (
+      today.getMonth() < birth.getMonth() ||
+      (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())
+    )
+      age--;
     return age;
   }
 
@@ -150,10 +171,14 @@ export class Doctor {
 
   private mapActionToStatus(action: string | undefined): 'Critical' | 'Moderate' | 'Normal' {
     switch (action) {
-      case 'accepted': return 'Normal';
-      case 'modified': return 'Moderate';
-      case 'rejected': return 'Critical';
-      default:         return 'Normal';
+      case 'accepted':
+        return 'Normal';
+      case 'modified':
+        return 'Moderate';
+      case 'rejected':
+        return 'Critical';
+      default:
+        return 'Normal';
     }
   }
 }

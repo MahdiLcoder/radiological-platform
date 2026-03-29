@@ -45,19 +45,19 @@
         </header>
 
         @if (patientsQuery.isPending()) {
-           <div class="p-10 flex flex-col items-center justify-center gap-4 bg-white/50 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-black/[0.02]">
-              <div class="w-8 h-8 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div>
-              <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Syncing Registry...</p>
-           </div>
+           <app-loading-state message="Syncing Registry..."></app-loading-state>
         } @else if (patientsQuery.isError()) {
-           <div class="p-10 text-center bg-rose-50/30 border border-rose-100 rounded-3xl">
-              <span class="material-symbols-outlined text-rose-500 text-3xl mb-2">gpp_maybe</span>
-              <button (click)="patientsQuery.refetch()" class="action-link-btn !mx-auto !text-[8px]">RETRY SYNC</button>
-           </div>
+           <app-error-state
+              message="Registry Sync Failed"
+              actionText="Retry Sync"
+              (retry)="patientsQuery.refetch()">
+           </app-error-state>
         } @else if (worklistData().length === 0) {
-           <div class="p-10 text-center bg-white/50 border-2 border-dashed border-slate-200 rounded-[2.5rem] shadow-xl shadow-black/[0.01]">
-              <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Registry Empty</p>
-           </div>
+           <app-empty-state
+              icon="folder_open"
+              title="Registry Empty"
+              description="No patient records found in the system.">
+           </app-empty-state>
         } @else {
            <app-worklist-table 
              [columns]="tableColumns" 

@@ -1,0 +1,57 @@
+<div class="px-6 py-5 border-b border-slate-200 shrink-0">
+  <h3 class="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+    <span class="material-symbols-outlined text-indigo-500">forum</span>
+    Clinical Discussions
+  </h3>
+  <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Direct Messaging</p>
+</div>
+
+<div class="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
+  <div
+    *ngFor="let conv of conversations()"
+    class="flex items-center gap-4 p-3 rounded-2xl cursor-pointer transition-all duration-200 border border-transparent"
+    [ngClass]="
+      conv.otherUser.id === selectedConversationId()
+        ? 'bg-indigo-50/50 border-indigo-100 shadow-sm'
+        : 'hover:bg-slate-50 hover:border-slate-200'
+    "
+    (click)="selectConversation(conv)"
+  >
+    <!-- Avatar -->
+    <div
+      class="size-12 rounded-2xl bg-gradient-to-br from-indigo-100 to-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 font-black shadow-inner shrink-0 relative"
+    >
+      {{ getUserInitials(conv.otherUser) }}
+      <span
+        class="absolute -bottom-1 -right-1 size-3.5 bg-emerald-400 border-2 border-white rounded-full"
+      ></span>
+    </div>
+
+    <!-- Info -->
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center justify-between mb-0.5">
+        <h4 class="text-sm font-black text-slate-900 truncate">
+          {{ conv.otherUser.first_name }} {{ conv.otherUser.last_name }}
+        </h4>
+        <span
+          *ngIf="conv.lastMessage"
+          class="text-[10px] font-bold text-slate-400 uppercase tracking-widest shrink-0"
+        >
+          {{ conv.lastMessage.created_at | date: 'shortTime' }}
+        </span>
+      </div>
+      <p class="text-[11px] font-bold uppercase tracking-widest text-indigo-500/80 mb-1">
+        {{ conv.otherUser.role }}
+      </p>
+      <p class="text-xs text-slate-500 truncate font-medium max-w-[90%]">
+        <ng-container *ngIf="conv.lastMessage; else noMessages">
+          <span *ngIf="isMine(conv.lastMessage)" class="text-slate-400 font-bold">You: </span>
+          {{ conv.lastMessage.content }}
+        </ng-container>
+        <ng-template #noMessages>
+          <span class="italic text-slate-400">Start a discussion...</span>
+        </ng-template>
+      </p>
+    </div>
+  </div>
+</div>

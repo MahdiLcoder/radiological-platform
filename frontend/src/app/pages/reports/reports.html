@@ -11,7 +11,14 @@
     [(searchValue)]="patientIdFilter"
     [selectFilters]="filterSelects"
     [selectValues]="{ modality: modalityFilter(), date: dateFilter() }"
-    (filterChange)="$event.key === 'modality' ? modalityFilter.set($event.value) : $event.key === 'date' ? dateFilter.set($event.value) : null; onFilterChange()"
+    (filterChange)="
+      $event.key === 'modality'
+        ? modalityFilter.set($event.value)
+        : $event.key === 'date'
+          ? dateFilter.set($event.value)
+          : null;
+      onFilterChange()
+    "
     [actionButtons]="filterActions"
     (actionClicked)="$event === 'sync' ? reportsQuery.refetch() : null"
     [showReset]="false"
@@ -20,16 +27,14 @@
   <!-- Evidence Grid -->
   <div class="min-h-96 mt-10">
     @if (reportsQuery.isPending()) {
-       <div class="p-32 flex flex-col items-center justify-center gap-4 bg-white/50 rounded-3xl border border-slate-100 italic">
-          <div class="w-10 h-10 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div>
-          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">Accessing Clinical Evidence...</p>
-       </div>
+      <app-loading-state message="Accessing Clinical Evidence..."></app-loading-state>
     } @else if (reportsQuery.isError()) {
-       <div class="p-20 text-center bg-rose-50/20 border border-dashed border-rose-200 rounded-3xl">
-          <span class="material-symbols-outlined text-rose-500 text-6xl mb-4">gpp_maybe</span>
-          <h3 class="text-xl font-extrabold text-slate-900 tracking-tight">Repository Isolation</h3>
-          <button (click)="reportsQuery.refetch()" class="mt-8 action-btn-pax mx-auto">Re-target Repository</button>
-       </div>
+      <app-error-state
+        message="Repository Isolation"
+        actionText="Re-target Repository"
+        (retry)="reportsQuery.refetch()"
+      >
+      </app-error-state>
     } @else {
       @if (reports().length > 0) {
         <div class="reports-grid animate-in fade-in duration-500">
@@ -40,32 +45,47 @@
 
         <!-- Clinical Pager -->
         <footer class="clinical-pager mt-10 pt-6 border-t border-slate-100">
-           <div class="registry-stats text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              Index: <span class="text-slate-900">{{ ((currentPage() - 1) * 10) + 1 }}-{{ ((currentPage() - 1) * 10) + reports().length }}</span> OF <span class="text-slate-900">{{ totalItems() }}</span> REPORTS
-           </div>
-           
-           <div class="pager-controls flex items-center gap-2">
-              <button class="step-btn" [disabled]="currentPage() === 1" (click)="prevPage()">
-                 <span class="material-symbols-outlined">chevron_left</span>
-              </button>
-              <div class="page-indicator">BLOCK {{ currentPage() }} OF {{ totalPages() || 1 }}</div>
-              <button class="step-btn" [disabled]="currentPage() === totalPages()" (click)="nextPage()">
-                 <span class="material-symbols-outlined">chevron_right</span>
-              </button>
-           </div>
+          <div
+            class="registry-stats text-[10px] font-bold text-slate-400 uppercase tracking-widest"
+          >
+            Index:
+            <span class="text-slate-900"
+              >{{ (currentPage() - 1) * 10 + 1 }}-{{
+                (currentPage() - 1) * 10 + reports().length
+              }}</span
+            >
+            OF <span class="text-slate-900">{{ totalItems() }}</span> REPORTS
+          </div>
+
+          <div class="pager-controls flex items-center gap-2">
+            <button class="step-btn" [disabled]="currentPage() === 1" (click)="prevPage()">
+              <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <div class="page-indicator">BLOCK {{ currentPage() }} OF {{ totalPages() || 1 }}</div>
+            <button
+              class="step-btn"
+              [disabled]="currentPage() === totalPages()"
+              (click)="nextPage()"
+            >
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
         </footer>
       } @else {
-        <div class="p-32 text-center bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem] flex flex-col items-center gap-4">
-           <div class="size-20 rounded-full bg-slate-200/50 flex items-center justify-center text-slate-400 mb-2">
-              <span class="material-symbols-outlined text-5xl">inventory_2</span>
-           </div>
-           <h3 class="text-xl font-extrabold text-slate-900 tracking-tight">Zero Repository Matches</h3>
-           <p class="text-sm text-slate-500 font-medium max-w-sm mx-auto">The specified criteria returned no validated diagnostic findings from the archive.</p>
-           <button (click)="patientIdFilter.set(''); modalityFilter.set('All Modalities'); dateFilter.set('All Time'); onFilterChange()" class="mt-4 action-btn-pax">
-              <span class="material-symbols-outlined">refresh</span>
-              Reset Filter Console
-           </button>
-        </div>
+        <app-empty-state
+          icon="inventory_2"
+          title="Zero Repository Matches"
+          description="The specified criteria returned no validated diagnostic findings from the archive."
+          actionText="Reset Filter Console"
+          actionIcon="refresh"
+          (actionClick)="
+            patientIdFilter.set('');
+            modalityFilter.set('All Modalities');
+            dateFilter.set('All Time');
+            onFilterChange()
+          "
+        >
+        </app-empty-state>
       }
     }
   </div>

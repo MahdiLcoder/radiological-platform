@@ -8,11 +8,13 @@ import { AnalysisService } from '../../services/analysisService';
 
 import { FiltersSection, SelectFilterConfig, ActionButtonConfig } from '../../components/filters-section/filters-section';
 import { WelcomeSection } from '../../components/welcome-section/welcome-section';
+import { LoadingStateComponent } from '../../components/loading-state/loading-state';
+import { ErrorStateComponent } from '../../components/error-state/error-state';
 
 @Component({
   selector: 'app-all-images',
   standalone: true,
-  imports: [WorklistTable, RouterModule, FormsModule, WelcomeSection, FiltersSection],
+  imports: [WorklistTable, RouterModule, FormsModule, WelcomeSection, FiltersSection, LoadingStateComponent, ErrorStateComponent],
   templateUrl: './all-images.html',
   styleUrl: './all-images.css',
 })

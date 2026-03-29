@@ -1,183 +1,237 @@
 @if (statsQuery.data(); as stats) {
-<div class="flex flex-col gap-10 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[1400px] mx-auto pb-12">
-  <!-- Dynamic Hero Section -->
-  <div class="relative overflow-hidden rounded-[2.5rem] bg-white border border-slate-200 p-8 shadow-sm">
-    <div class="absolute inset-0 -z-10 pointer-events-none">
-      <div class="absolute top-0 right-0 w-[400px] h-full bg-primary/5 blur-[80px] rounded-full"></div>
-    </div>
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-      <div>
-        <h1 class="text-3xl font-black text-slate-900 tracking-tight">Analytics Executive Dashboard</h1>
-        <p class="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-2 opacity-60">System Throughput & Diagnostic Precision Metrics</p>
-      </div>
-      <div class="flex items-center gap-3">
-         <div class="flex flex-col items-end">
-            <span class="text-[9px] font-black text-primary uppercase tracking-widest">PACS NODE STATUS</span>
-            <span class="text-xs font-black text-slate-900 uppercase">Operational • 0.4ms Latency</span>
-         </div>
-         <div class="size-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.5)]"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Clinical KPI Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    <!-- Total Volume -->
-    <div class="medical-card p-6 flex flex-col justify-between group hover:border-primary/30">
-      <div class="flex justify-between items-start">
-        <div class="size-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center border border-orange-100 group-hover:scale-110 transition-transform">
-           <span class="material-symbols-outlined">data_exploration</span>
-        </div>
-        <span class="px-2.5 py-1 bg-green-50 text-green-600 text-[9px] font-black rounded-full border border-green-100 uppercase">+{{ (stats.images.total / 100) | number:'1.1-1' }}% Growth</span>
-      </div>
-      <div class="mt-6">
-         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Digital Scans</p>
-         <p class="text-4xl font-black text-slate-900 tracking-tighter">{{ stats.images.total | number }}</p>
-      </div>
-    </div>
-
-    <!-- AI Precision -->
-    <div class="medical-card p-6 flex flex-col justify-between group hover:border-blue-300">
-      <div class="flex justify-between items-start">
-        <div class="size-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 group-hover:scale-110 transition-transform">
-           <span class="material-symbols-outlined">psychology</span>
-        </div>
-        <span class="px-2.5 py-1 bg-blue-50 text-blue-600 text-[9px] font-black rounded-full border border-blue-100 uppercase">High Reliability</span>
-      </div>
-      <div class="mt-6">
-         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Avg AI Confidence</p>
-         <p class="text-4xl font-black text-slate-900 tracking-tighter">{{ (stats.findings.avg_confidence * 100) | number:'1.1-1' }}%</p>
-      </div>
-    </div>
-
-    <!-- Validated Count -->
-    <div class="medical-card p-6 flex flex-col justify-between group hover:border-emerald-300">
-      <div class="flex justify-between items-start">
-        <div class="size-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 group-hover:scale-110 transition-transform">
-           <span class="material-symbols-outlined">verified</span>
-        </div>
-        <span class="px-2.5 py-1 bg-emerald-50 text-emerald-600 text-[9px] font-black rounded-full border border-emerald-100 uppercase">
-           {{ ((stats.images.by_status['validated'] || 0) / (stats.images.total || 1) * 100) | number:'1.0-0' }}% Completion
-        </span>
-      </div>
-      <div class="mt-6">
-         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Validated Diagnostics</p>
-         <p class="text-4xl font-black text-slate-900 tracking-tighter">{{ stats.images.by_status['validated'] || 0 | number }}</p>
-      </div>
-    </div>
-
-    <!-- Total Staff -->
-    <div class="medical-card p-6 flex flex-col justify-between group hover:border-indigo-300">
-      <div class="flex justify-between items-start">
-        <div class="size-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100 group-hover:scale-110 transition-transform">
-           <span class="material-symbols-outlined">diversity_3</span>
-        </div>
-      </div>
-      <div class="mt-6">
-         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Verified Professionals</p>
-         <p class="text-4xl font-black text-slate-900 tracking-tighter">{{ stats.users.total | number }}</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Primary Analytics Section -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- Scan Trend (Bar Chart) -->
-    <div class="medical-card p-8 lg:col-span-2">
-      <div class="flex items-center justify-between mb-8">
-        <div class="flex flex-col">
-           <h3 class="text-lg font-black text-slate-900 tracking-tight">Throughput Velocity</h3>
-           <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Daily Scan Acquisition Volume</p>
-        </div>
-        <div class="flex items-center gap-2 px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl">
-           <div class="size-3 rounded-full bg-primary/20 flex items-center justify-center">
-              <div class="size-1.5 rounded-full bg-primary"></div>
-           </div>
-           <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest">Total Volume</span>
-        </div>
-      </div>
-      <div echarts [options]="trendOptions()" class="h-80 w-full"></div>
-    </div>
-
-    <!-- Reliability Gauge -->
-    <div class="medical-card p-8 flex flex-col">
-      <div class="flex items-center justify-between mb-8">
-         <div class="flex flex-col">
-            <h3 class="text-lg font-black text-slate-900 tracking-tight">AI Confidence</h3>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Weighted System Precision</p>
-         </div>
-         <span class="material-symbols-outlined text-primary text-2xl">verified_user</span>
-      </div>
-      <div class="flex-1 flex flex-col items-center justify-center">
-         <div echarts [options]="confidenceOptions()" class="h-64 w-full"></div>
-         <p class="text-center text-[11px] text-slate-500 font-medium px-4 opacity-70">Heuristic accuracy aggregate based on physician validation feedback.</p>
-      </div>
-    </div>
-
-    <!-- Modality Distribution -->
-    <div class="medical-card p-8 lg:col-span-2">
-      <div class="flex items-center justify-between mb-8">
-         <div class="flex flex-col">
-            <h3 class="text-lg font-black text-slate-900 tracking-tight">Modality Flow</h3>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Cross-Protocol Imaging Distribution</p>
-         </div>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-5 gap-10 items-center">
-        <div echarts [options]="modalityOptions()" class="h-72 w-full md:col-span-3"></div>
-        <div class="md:col-span-2 space-y-5">
-          @for (item of stats.images.by_modality | keyvalue; track item.key) {
-            <div class="group">
-              <div class="flex justify-between text-[11px] mb-2 font-black">
-                <span class="text-slate-900 uppercase tracking-tighter">{{ item.key }}</span>
-                <span class="text-primary tracking-tighter">{{ ((item.value / stats.images.total) * 100) | number:'1.0-1' }}%</span>
-              </div>
-              <div class="h-2.5 bg-slate-50 border border-slate-100 rounded-full overflow-hidden">
-                <div 
-                  class="h-full rounded-full transition-all duration-1000 shadow-[0_0_8px_rgba(30,64,175,0.1)]" 
-                  [ngClass]="getModalityColor(item.key.toString())"
-                  [style.width.%]="(item.value / stats.images.total) * 100"
-                ></div>
-              </div>
-            </div>
-          }
-        </div>
-      </div>
-    </div>
-
-    <!-- Status Pie -->
-    <div class="medical-card p-8">
-      <div class="flex items-center justify-between mb-8">
-         <div class="flex flex-col">
-            <h3 class="text-lg font-black text-slate-900 tracking-tight">Data Pipeline</h3>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Lifecycle Tracking</p>
-         </div>
-         <span class="material-symbols-outlined text-slate-400">query_stats</span>
-      </div>
-      <div echarts [options]="statusOptions()" class="h-80 w-full"></div>
-    </div>
-  </div>
-</div>
-
-} @else if (statsQuery.isError()) {
-  <div class="flex flex-col items-center justify-center h-96 space-y-4">
-    <div class="size-16 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 flex items-center justify-center">
-      <span class="material-symbols-outlined text-3xl">error</span>
-    </div>
-    <div class="text-center">
-      <h3 class="text-lg font-bold text-slate-900 dark:text-white">Failed to load analytics</h3>
-      <p class="text-slate-500 dark:text-slate-400 max-w-xs mx-auto">There was an error fetching the latest statistics from the server.</p>
-    </div>
-    <button 
-      (click)="statsQuery.refetch()"
-      class="px-6 py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-all shadow-sm shadow-primary/20"
+  <div
+    class="flex flex-col gap-10 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[1400px] mx-auto pb-12"
+  >
+    <!-- Dynamic Hero Section -->
+    <div
+      class="relative overflow-hidden rounded-[2.5rem] bg-white border border-slate-200 p-8 shadow-sm"
     >
-      Retry Connection
-    </button>
+      <div class="absolute inset-0 -z-10 pointer-events-none">
+        <div
+          class="absolute top-0 right-0 w-[400px] h-full bg-primary/5 blur-[80px] rounded-full"
+        ></div>
+      </div>
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+        <div>
+          <h1 class="text-3xl font-black text-slate-900 tracking-tight">
+            Analytics Executive Dashboard
+          </h1>
+          <p class="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-2 opacity-60">
+            System Throughput & Diagnostic Precision Metrics
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="flex flex-col items-end">
+            <span class="text-[9px] font-black text-primary uppercase tracking-widest"
+              >PACS NODE STATUS</span
+            >
+            <span class="text-xs font-black text-slate-900 uppercase"
+              >Operational • 0.4ms Latency</span
+            >
+          </div>
+          <div
+            class="size-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.5)]"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clinical KPI Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Total Volume -->
+      <div class="medical-card p-6 flex flex-col justify-between group hover:border-primary/30">
+        <div class="flex justify-between items-start">
+          <div
+            class="size-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center border border-orange-100 group-hover:scale-110 transition-transform"
+          >
+            <span class="material-symbols-outlined">data_exploration</span>
+          </div>
+          <span
+            class="px-2.5 py-1 bg-green-50 text-green-600 text-[9px] font-black rounded-full border border-green-100 uppercase"
+            >+{{ stats.images.total / 100 | number: '1.1-1' }}% Growth</span
+          >
+        </div>
+        <div class="mt-6">
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+            Total Digital Scans
+          </p>
+          <p class="text-4xl font-black text-slate-900 tracking-tighter">
+            {{ stats.images.total | number }}
+          </p>
+        </div>
+      </div>
+
+      <!-- AI Precision -->
+      <div class="medical-card p-6 flex flex-col justify-between group hover:border-blue-300">
+        <div class="flex justify-between items-start">
+          <div
+            class="size-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 group-hover:scale-110 transition-transform"
+          >
+            <span class="material-symbols-outlined">psychology</span>
+          </div>
+          <span
+            class="px-2.5 py-1 bg-blue-50 text-blue-600 text-[9px] font-black rounded-full border border-blue-100 uppercase"
+            >High Reliability</span
+          >
+        </div>
+        <div class="mt-6">
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+            Avg AI Confidence
+          </p>
+          <p class="text-4xl font-black text-slate-900 tracking-tighter">
+            {{ stats.findings.avg_confidence * 100 | number: '1.1-1' }}%
+          </p>
+        </div>
+      </div>
+
+      <!-- Validated Count -->
+      <div class="medical-card p-6 flex flex-col justify-between group hover:border-emerald-300">
+        <div class="flex justify-between items-start">
+          <div
+            class="size-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 group-hover:scale-110 transition-transform"
+          >
+            <span class="material-symbols-outlined">verified</span>
+          </div>
+          <span
+            class="px-2.5 py-1 bg-emerald-50 text-emerald-600 text-[9px] font-black rounded-full border border-emerald-100 uppercase"
+          >
+            {{
+              ((stats.images.by_status['validated'] || 0) / (stats.images.total || 1)) * 100
+                | number: '1.0-0'
+            }}% Completion
+          </span>
+        </div>
+        <div class="mt-6">
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+            Validated Diagnostics
+          </p>
+          <p class="text-4xl font-black text-slate-900 tracking-tighter">
+            {{ stats.images.by_status['validated'] || 0 | number }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Total Staff -->
+      <div class="medical-card p-6 flex flex-col justify-between group hover:border-indigo-300">
+        <div class="flex justify-between items-start">
+          <div
+            class="size-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100 group-hover:scale-110 transition-transform"
+          >
+            <span class="material-symbols-outlined">diversity_3</span>
+          </div>
+        </div>
+        <div class="mt-6">
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+            Verified Professionals
+          </p>
+          <p class="text-4xl font-black text-slate-900 tracking-tighter">
+            {{ stats.users.total | number }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Primary Analytics Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Scan Trend (Bar Chart) -->
+      <div class="medical-card p-8 lg:col-span-2">
+        <div class="flex items-center justify-between mb-8">
+          <div class="flex flex-col">
+            <h3 class="text-lg font-black text-slate-900 tracking-tight">Throughput Velocity</h3>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+              Daily Scan Acquisition Volume
+            </p>
+          </div>
+          <div
+            class="flex items-center gap-2 px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl"
+          >
+            <div class="size-3 rounded-full bg-primary/20 flex items-center justify-center">
+              <div class="size-1.5 rounded-full bg-primary"></div>
+            </div>
+            <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest"
+              >Total Volume</span
+            >
+          </div>
+        </div>
+        <div echarts [options]="trendOptions()" class="h-80 w-full"></div>
+      </div>
+
+      <!-- Reliability Gauge -->
+      <div class="medical-card p-8 flex flex-col">
+        <div class="flex items-center justify-between mb-8">
+          <div class="flex flex-col">
+            <h3 class="text-lg font-black text-slate-900 tracking-tight">AI Confidence</h3>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+              Weighted System Precision
+            </p>
+          </div>
+          <span class="material-symbols-outlined text-primary text-2xl">verified_user</span>
+        </div>
+        <div class="flex-1 flex flex-col items-center justify-center">
+          <div echarts [options]="confidenceOptions()" class="h-64 w-full"></div>
+          <p class="text-center text-[11px] text-slate-500 font-medium px-4 opacity-70">
+            Heuristic accuracy aggregate based on physician validation feedback.
+          </p>
+        </div>
+      </div>
+
+      <!-- Modality Distribution -->
+      <div class="medical-card p-8 lg:col-span-2">
+        <div class="flex items-center justify-between mb-8">
+          <div class="flex flex-col">
+            <h3 class="text-lg font-black text-slate-900 tracking-tight">Modality Flow</h3>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+              Cross-Protocol Imaging Distribution
+            </p>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-10 items-center">
+          <div echarts [options]="modalityOptions()" class="h-72 w-full md:col-span-3"></div>
+          <div class="md:col-span-2 space-y-5">
+            @for (item of stats.images.by_modality | keyvalue; track item.key) {
+              <div class="group">
+                <div class="flex justify-between text-[11px] mb-2 font-black">
+                  <span class="text-slate-900 uppercase tracking-tighter">{{ item.key }}</span>
+                  <span class="text-primary tracking-tighter"
+                    >{{ (item.value / stats.images.total) * 100 | number: '1.0-1' }}%</span
+                  >
+                </div>
+                <div class="h-2.5 bg-slate-50 border border-slate-100 rounded-full overflow-hidden">
+                  <div
+                    class="h-full rounded-full transition-all duration-1000 shadow-[0_0_8px_rgba(30,64,175,0.1)]"
+                    [ngClass]="getModalityColor(item.key.toString())"
+                    [style.width.%]="(item.value / stats.images.total) * 100"
+                  ></div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Pie -->
+      <div class="medical-card p-8">
+        <div class="flex items-center justify-between mb-8">
+          <div class="flex flex-col">
+            <h3 class="text-lg font-black text-slate-900 tracking-tight">Data Pipeline</h3>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+              Lifecycle Tracking
+            </p>
+          </div>
+          <span class="material-symbols-outlined text-slate-400">query_stats</span>
+        </div>
+        <div echarts [options]="statusOptions()" class="h-80 w-full"></div>
+      </div>
+    </div>
   </div>
+} @else if (statsQuery.isError()) {
+  <app-error-state
+    message="Failed to load analytics"
+    description="There was an error fetching the latest statistics from the server."
+    actionText="Retry Connection"
+    (retry)="statsQuery.refetch()"
+  >
+  </app-error-state>
 } @else {
-  <div class="flex items-center justify-center h-64">
-    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-  </div>
+  <app-loading-state message="Loading analytics..."></app-loading-state>
 }
-
-

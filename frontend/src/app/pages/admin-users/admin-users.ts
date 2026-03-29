@@ -7,12 +7,25 @@ import { lastValueFrom } from 'rxjs';
 import { AuthService } from '../../services/authService';
 
 import { WelcomeSection } from '../../components/welcome-section/welcome-section';
-import { FiltersSection, SelectFilterConfig } from '../../components/filters-section/filters-section';
+import {
+  FiltersSection,
+  SelectFilterConfig,
+} from '../../components/filters-section/filters-section';
+import { LoadingStateComponent } from '../../components/loading-state/loading-state';
+import { EmptyStateComponent } from '../../components/empty-state/empty-state';
 
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, WelcomeSection, FiltersSection],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    WelcomeSection,
+    FiltersSection,
+    LoadingStateComponent,
+    EmptyStateComponent,
+  ],
   templateUrl: './admin-users.html',
   styleUrl: './admin-users.css',
 })
@@ -25,7 +38,7 @@ export class AdminUsers {
   isEditModalOpen = signal(false);
   isDeleteModalOpen = signal(false);
   isSuccessModalOpen = signal(false);
-  
+
   editingUser = signal<any>(null);
   userToDelete = signal<any>(null);
   successMessage = signal('');
@@ -46,9 +59,9 @@ export class AdminUsers {
       options: [
         { label: 'Admin', value: 'admin' },
         { label: 'Radiologist', value: 'radiologist' },
-        { label: 'Doctor', value: 'doctor' }
-      ]
-    }
+        { label: 'Doctor', value: 'doctor' },
+      ],
+    },
   ];
 
   // Queries
@@ -59,38 +72,39 @@ export class AdminUsers {
 
   usersQuery = injectQuery(() => ({
     queryKey: ['admin_users', this.currentPage(), this.selectedRole(), this.searchTerm()],
-    queryFn: () => lastValueFrom(this.authService.getUsers(
-      this.selectedRole() || undefined,
-      this.currentPage(),
-      this.pageSize(),
-      this.searchTerm() || undefined
-    )),
+    queryFn: () =>
+      lastValueFrom(
+        this.authService.getUsers(
+          this.selectedRole() || undefined,
+          this.currentPage(),
+          this.pageSize(),
+          this.searchTerm() || undefined,
+        ),
+      ),
   }));
 
   filterStats = computed(() => {
-     const data: any = this.usersQuery.data();
-     if (!data) return '';
-     return `Displaying <span class="text-slate-900">${data.results?.length || 0}</span> of <span class="text-slate-900">${data.count || 0}</span> Professionals`;
+    const data: any = this.usersQuery.data();
+    if (!data) return '';
+    return `Displaying <span class="text-slate-900">${data.results?.length || 0}</span> of <span class="text-slate-900">${data.count || 0}</span> Professionals`;
   });
-
 
   nextPage() {
     const data = this.usersQuery.data();
     if (data?.next) {
-      this.currentPage.update(p => p + 1);
+      this.currentPage.update((p) => p + 1);
     }
   }
 
   prevPage() {
     if (this.currentPage() > 1) {
-      this.currentPage.update(p => p - 1);
+      this.currentPage.update((p) => p - 1);
     }
   }
 
   onFilterChange() {
     this.currentPage.set(1);
   }
-
 
   // Mutations
   updateUserMutation = injectMutation(() => ({
@@ -149,14 +163,32 @@ export class AdminUsers {
     this.editingUser.set(null);
   }
 
-
   saveEdit() {
     const user = this.editingUser();
     if (user) {
-      const { id, first_name, last_name, email, role, department, medical_license_number, years_of_experience, clinic } = user;
+      const {
+        id,
+        first_name,
+        last_name,
+        email,
+        role,
+        department,
+        medical_license_number,
+        years_of_experience,
+        clinic,
+      } = user;
       this.updateUserMutation.mutate({
         id,
-        payload: { first_name, last_name, email, role, department, medical_license_number, years_of_experience, clinic }
+        payload: {
+          first_name,
+          last_name,
+          email,
+          role,
+          department,
+          medical_license_number,
+          years_of_experience,
+          clinic,
+        },
       });
     }
   }
@@ -166,14 +198,16 @@ export class AdminUsers {
     return new Date(dateStr).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   }
 
   getRoleClass(role: string) {
     switch (role) {
-      case 'admin': return 'bg-primary/10 text-primary border-primary/20';
-      default: return 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700';
+      case 'admin':
+        return 'bg-primary/10 text-primary border-primary/20';
+      default:
+        return 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700';
     }
   }
 

@@ -14,33 +14,41 @@
     [(searchValue)]="searchQuery"
     [selectFilters]="filterSelects"
     [selectValues]="{ modality: selectedModality(), status: selectedStatus() }"
-    (filterChange)="$event.key === 'modality' ? selectedModality.set($event.value) : $event.key === 'status' ? selectedStatus.set($event.value) : null; onFilterChange()"
+    (filterChange)="
+      $event.key === 'modality'
+        ? selectedModality.set($event.value)
+        : $event.key === 'status'
+          ? selectedStatus.set($event.value)
+          : null;
+      onFilterChange()
+    "
     [actionButtons]="filterActions"
     (actionClicked)="$event === 'refresh' ? imagesQuery.refetch() : null"
-    (resetClicked)="searchQuery.set(''); selectedModality.set(''); selectedStatus.set(''); onFilterChange()"
+    (resetClicked)="
+      searchQuery.set(''); selectedModality.set(''); selectedStatus.set(''); onFilterChange()
+    "
   ></app-filters-section>
 
   <div class="min-h-96 mt-10">
     @if (imagesQuery.isPending()) {
-       <div class="p-32 flex flex-col items-center justify-center gap-4 bg-white/50 rounded-3xl border border-slate-100">
-          <div class="w-10 h-10 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div>
-          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">Accessing Secure Archive...</p>
-       </div>
+      <app-loading-state message="Accessing Secure Archive..."></app-loading-state>
     } @else if (imagesQuery.isError()) {
-       <div class="p-20 text-center bg-rose-50/20 border border-dashed border-rose-200 rounded-3xl">
-          <span class="material-symbols-outlined text-rose-500 text-6xl mb-4">cloud_off</span>
-          <h3 class="text-xl font-extrabold text-slate-900 tracking-tight">Archive Offline</h3>
-          <button (click)="imagesQuery.refetch()" class="mt-8 action-btn-pax mx-auto">Retry Protocol</button>
-       </div>
+      <app-error-state
+        message="Archive Offline"
+        actionText="Retry Protocol"
+        (retry)="imagesQuery.refetch()"
+      >
+      </app-error-state>
     } @else {
-      <app-worklist-table 
-        [columns]="tableColumns" 
+      <app-worklist-table
+        [columns]="tableColumns"
         [data]="worklistData()"
         [totalItems]="totalItems()"
         [currentPage]="currentPage()"
         [totalPages]="totalPages()"
         (prevPage)="prevPage()"
-        (nextPage)="nextPage()">
+        (nextPage)="nextPage()"
+      >
       </app-worklist-table>
     }
   </div>

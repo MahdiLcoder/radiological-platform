@@ -6,11 +6,13 @@ import { lastValueFrom } from 'rxjs';
 import { AuthService } from '../../services/authService';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { EChartsOption } from 'echarts';
+import { LoadingStateComponent } from '../../components/loading-state/loading-state';
+import { ErrorStateComponent } from '../../components/error-state/error-state';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, NgxEchartsModule],
+  imports: [CommonModule, NgxEchartsModule, LoadingStateComponent, ErrorStateComponent],
   templateUrl: './admin.html',
   styleUrl: './admin.css',
 })
