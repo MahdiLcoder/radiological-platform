@@ -48,6 +48,18 @@ export class EditProfile {
     },
   }));
 
+  uploadImageMutation = injectMutation(() => ({
+    mutationFn: (file: File) => lastValueFrom(this.authService.uploadProfileImage(file)),
+    onSuccess: () => {
+      this.queryClient.invalidateQueries({ queryKey: ['profile'] });
+      this.successMessage = 'Profile image updated successfully.';
+      setTimeout(() => (this.successMessage = ''), 5000);
+    },
+    onError: () => {
+      this.passwordError = 'Failed to upload profile image. Please try again.';
+    },
+  }));
+
   constructor() {
     this.profileForm = this.fb.group(
       {
@@ -136,6 +148,21 @@ export class EditProfile {
   clearMessages() {
     this.passwordError = '';
     this.successMessage = '';
+  }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    if (!file.name.toLowerCase().match(/\.(jpg|jpeg|png)$/)) {
+      this.passwordError = 'Invalid file type. Allowed: JPG, JPEG, PNG.';
+      return;
+    }
+
+    this.clearMessages();
+    this.uploadImageMutation.mutate(file);
+    input.value = '';
   }
 
   saveChanges(id: number | string) {

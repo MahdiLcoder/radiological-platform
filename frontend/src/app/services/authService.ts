@@ -51,6 +51,12 @@ export class AuthService {
     return this.http.patch(`${this.apiUrl}/users/${id}/`, profileData);
   }
 
+  uploadProfileImage(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('image', file);
+    return this.http.post(`${this.apiUrl}/me/upload-image/`, formData);
+  }
+
   getUsers(
     role?: string,
     page: number = 1,

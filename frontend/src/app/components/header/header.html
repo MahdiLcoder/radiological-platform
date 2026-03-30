@@ -39,11 +39,17 @@
             <p class="text-[9px] text-slate-400 font-bold mt-1.5 uppercase tracking-widest">{{ profile.role }}</p>
           </div>
           <div class="size-10 rounded-xl ring-4 ring-primary/5 border-2 border-primary/10 overflow-hidden shadow-sm shadow-primary/10 group-hover:scale-105 transition-transform">
-            <img
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxmcDMztQDCY-3bjozN55Kn1K9jz5TK_NTSt1RX6fRx1kiEQKOcn8NZbLUCN8zp8S7DlxblnorTXZKknMI9BgvK72aniQR50gZisL4B-eJdNA1qRTJyV-bsrXe7NGDVM86zKmzNBZjpFPFFOzmgnndxvvbHFWhaBLhmv8xxATJ9BtlTBU05igqAB7L9QVNB65NOvN1sSt9uu6eO7HjxwBhoiJLjC77QqAZpv5x9UkSy-hgFMHIRnjkp2hVP1u8dNtt9A4DnQFifzM"
-              alt="Clinician profile"
-              class="h-full w-full object-cover"
-            />
+            @if (profile.profile_image) {
+              <img
+                [src]="profile.profile_image"
+                alt="Clinician profile"
+                class="h-full w-full object-cover"
+              />
+            } @else {
+              <div class="h-full w-full flex items-center justify-center bg-primary/10 text-primary font-black text-xs">
+                {{ profile.first_name?.charAt(0) || profile.username.charAt(0) || '?' }}{{ profile.last_name?.charAt(0) || '' }}
+              </div>
+            }
           </div>
           <span class="material-symbols-outlined text-slate-400 text-lg transition-transform duration-200" [class.rotate-180]="isMenuOpen()">
             expand_more

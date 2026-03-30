@@ -44,6 +44,7 @@ class DoctorProfile(me.Document):
 class User(AbstractUser):
     role = models.CharField(max_length=20, choices=UserRole.choices, default=UserRole.DOCTOR)
     phone = models.CharField(max_length=20, blank=True)
+    profile_image = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     ROLE_MAP = {

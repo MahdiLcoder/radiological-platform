@@ -33,11 +33,17 @@
     @if (profileQuery.data(); as profile) {
       <div class="profile-card-mini group" routerLink="/dashboard/profile">
         <div class="avatar-ring-outer">
-           <img
-             src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=256&h=256&auto=format&fit=crop"
-             alt="Specialist Avatar"
-             class="avatar-image"
-           />
+           @if (profile.profile_image) {
+             <img
+               [src]="profile.profile_image"
+               alt="Specialist Avatar"
+               class="avatar-image"
+             />
+           } @else {
+             <div class="avatar-image flex items-center justify-center bg-primary/10 text-primary font-black text-sm">
+               {{ profile.first_name?.charAt(0) || profile.username?.charAt(0) || '?' }}{{ profile.last_name?.charAt(0) || '' }}
+             </div>
+           }
         </div>
         <div class="flex-1 min-w-0">
           <p class="text-[10px] font-black text-slate-900 truncate uppercase tracking-widest">

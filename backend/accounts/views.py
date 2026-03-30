@@ -1,11 +1,13 @@
 import secrets
 import string
+import logging
 
 from django.contrib.auth import get_user_model
 from django.db.models import Count, Q
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+import cloudinary.uploader
 
 from config.email_utils import send_password_reset_email
 
@@ -130,6 +132,51 @@ class ForgotPasswordView(APIView):
         send_password_reset_email(user, new_password)
 
         return _GENERIC_RESPONSE
+
+
+logger = logging.getLogger(__name__)
+
+
+class ProfileImageUploadView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        image_file = request.FILES.get('image')
+
+        if not image_file:
+            return Response(
+                {"detail": "No image file provided."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not image_file.name.lower().endswith(('.jpg', '.jpeg', '.png')):
+            return Response(
+                {"detail": "Invalid file extension. Allowed: jpg, jpeg, png."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            upload_result = cloudinary.uploader.upload(
+                image_file,
+                folder=f"profile_images/{request.user.id}",
+                resource_type='image',
+                transformation=[
+                    {'width': 256, 'height': 256, 'crop': 'fill', 'gravity': 'face'}
+                ],
+            )
+            image_url = upload_result["secure_url"]
+
+            serializer = UserSerializer(request.user, data={'profile_image': image_url}, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error(f"Error uploading profile image: {e}", exc_info=True)
+            return Response(
+                {"detail": "Failed to upload profile image."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 from datetime import datetime, timedelta
