@@ -66,17 +66,15 @@ export class EditProfile {
         first_name: ['', [Validators.required]],
         last_name: ['', [Validators.required]],
         email: ['', [Validators.required, Validators.email]],
-        phone: ['', [Validators.required]],
+        phone: ['', [Validators.required, Validators.pattern(/^\+?[\d\s\-\(\)]{7,20}$/)]],
         role: [{ value: '', disabled: true }],
         username: [{ value: '', disabled: true }],
         id: [{ value: '', disabled: true }],
-        // Role-specific fields
         specialty: [''],
         medical_license_number: [''],
         clinic: [''],
         years_of_experience: [null],
         department: [''],
-        // Password section
         oldPassword: [''],
         newPassword: ['', [Validators.minLength(8)]],
         confirmPassword: [''],
@@ -84,7 +82,6 @@ export class EditProfile {
       { validators: this.passwordMatchValidator },
     );
 
-    // Sync form with query data
     effect(() => {
       const profile = this.profileQuery.data();
       if (profile) {
@@ -172,11 +169,11 @@ export class EditProfile {
       this.profileForm.markAllAsTouched();
       const errors = this.profileForm.errors;
       if (errors?.['passwordMismatch'])
-        this.passwordError = 'Credential confirmation sequence mismatch.';
+        this.passwordError = 'New password and confirmation do not match.';
       else if (errors?.['oldPasswordRequired'])
-        this.passwordError = 'Current master key is required to authorize rotation.';
+        this.passwordError = 'Current password is required to change your password.';
       else if (errors?.['newPasswordRequired'])
-        this.passwordError = 'New security sequence must be defined.';
+        this.passwordError = 'New password is required.';
       return;
     }
 
@@ -196,11 +193,10 @@ export class EditProfile {
       { id, data: payload },
       {
         onError: (error: any) => {
-          this.passwordError =
-            error.error?.detail || 'Failed to synchronize profile with central registry.';
+          this.passwordError = error.error?.detail || 'Failed to save profile changes. Please try again.';
         },
         onSuccess: () => {
-          this.successMessage = 'Profile credentials successfully synchronized.';
+          this.successMessage = 'Profile updated successfully.';
           this.profileForm.patchValue({ oldPassword: '', newPassword: '', confirmPassword: '' });
           setTimeout(() => (this.successMessage = ''), 5000);
         },

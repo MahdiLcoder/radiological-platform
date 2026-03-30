@@ -77,10 +77,10 @@
           }
         </div>
 
-        @if (loginMutation.isError()) {
+        @if (loginError()) {
           <div class="p-4 bg-red-50 border border-red-100 rounded-lg flex items-center gap-3 animate-in shake duration-300">
             <span class="material-symbols-outlined text-red-500">error</span>
-            <span class="text-sm font-bold text-red-600">Authentication failed. Verify credentials and try again.</span>
+            <span class="text-sm font-bold text-red-600">{{ loginError() }}</span>
           </div>
         }
 

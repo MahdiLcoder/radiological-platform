@@ -1,3 +1,5 @@
+import re
+
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
@@ -6,16 +8,24 @@ from .models import AdminProfile, RadiologistProfile, DoctorProfile, UserRole
 
 User = get_user_model()
 
+PHONE_REGEX = r'^\+?[\d\s\-\(\)]{7,20}$'
+
 
 class RegisterSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=True)
     password = serializers.CharField(write_only=True, min_length=8)
+    phone = serializers.RegexField(
+        regex=PHONE_REGEX,
+        required=False,
+        allow_blank=True,
+        error_messages={'invalid': 'Enter a valid phone number (digits, spaces, dashes, parentheses allowed).'},
+    )
 
     department = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     medical_license_number = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     years_of_experience = serializers.IntegerField(required=False, allow_null=True)
     specialty = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     clinic = serializers.CharField(required=False, allow_blank=True, allow_null=True)
-
 
     class Meta:
         model = User
@@ -26,6 +36,30 @@ class RegisterSerializer(serializers.ModelSerializer):
             'medical_license_number', 'years_of_experience',
             'specialty', 'clinic',
         ]
+
+    def validate(self, attrs):
+        role = attrs.get('role')
+        errors = {}
+
+        if role == UserRole.DOCTOR:
+            if not attrs.get('specialty'):
+                errors['specialty'] = 'Specialty is required for doctors.'
+            if not attrs.get('medical_license_number'):
+                errors['medical_license_number'] = 'Medical license number is required for doctors.'
+            if not attrs.get('clinic'):
+                errors['clinic'] = 'Clinic is required for doctors.'
+        elif role == UserRole.RADIOLOGIST:
+            if not attrs.get('medical_license_number'):
+                errors['medical_license_number'] = 'Medical license number is required for radiologists.'
+            if attrs.get('years_of_experience') is None:
+                errors['years_of_experience'] = 'Years of experience is required for radiologists.'
+        elif role == UserRole.ADMIN:
+            if not attrs.get('department'):
+                errors['department'] = 'Department is required for administrators.'
+
+        if errors:
+            raise serializers.ValidationError(errors)
+        return attrs
 
     def create(self, validated_data):
         department = validated_data.pop('department', None)
@@ -64,8 +98,15 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=True)
     old_password = serializers.CharField(write_only=True, required=False)
     new_password = serializers.CharField(write_only=True, required=False, min_length=8)
+    phone = serializers.RegexField(
+        regex=PHONE_REGEX,
+        required=False,
+        allow_blank=True,
+        error_messages={'invalid': 'Enter a valid phone number (digits, spaces, dashes, parentheses allowed).'},
+    )
 
     department = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     medical_license_number = serializers.CharField(required=False, allow_blank=True, allow_null=True)
@@ -87,11 +128,33 @@ class UserSerializer(serializers.ModelSerializer):
 
         if old_password or new_password:
             if not old_password:
-                raise serializers.ValidationError({'old_password': 'Old password is required to set a new password.'})
+                raise serializers.ValidationError({'old_password': 'Current password is required to set a new password.'})
             if not new_password:
                 raise serializers.ValidationError({'new_password': 'New password is required.'})
             if not self.instance.check_password(old_password):
-                raise serializers.ValidationError({'old_password': 'Incorrect old password.'})
+                raise serializers.ValidationError({'old_password': 'Current password is incorrect.'})
+
+        role = attrs.get('role', getattr(self.instance, 'role', None))
+        errors = {}
+
+        if role == UserRole.DOCTOR:
+            if not attrs.get('specialty'):
+                errors['specialty'] = 'Specialty is required for doctors.'
+            if not attrs.get('medical_license_number'):
+                errors['medical_license_number'] = 'Medical license number is required for doctors.'
+            if not attrs.get('clinic'):
+                errors['clinic'] = 'Clinic is required for doctors.'
+        elif role == UserRole.RADIOLOGIST:
+            if not attrs.get('medical_license_number'):
+                errors['medical_license_number'] = 'Medical license number is required for radiologists.'
+            if attrs.get('years_of_experience') is None:
+                errors['years_of_experience'] = 'Years of experience is required for radiologists.'
+        elif role == UserRole.ADMIN:
+            if not attrs.get('department'):
+                errors['department'] = 'Department is required for administrators.'
+
+        if errors:
+            raise serializers.ValidationError(errors)
 
         attrs['_new_password'] = new_password
         return attrs

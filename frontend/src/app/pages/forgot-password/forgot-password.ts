@@ -33,8 +33,13 @@ export class ForgotPassword {
       this.errorMessage.set(null);
     },
     onError: (err: any) => {
-      const msg = err?.error?.detail ?? 'Something went wrong. Please try again later.';
-      this.errorMessage.set(msg);
+      const detail = err?.error?.detail;
+      if (typeof detail === 'object') {
+        const first = Object.values(detail)[0];
+        this.errorMessage.set(Array.isArray(first) ? first[0] : String(first));
+      } else {
+        this.errorMessage.set(detail ?? 'Something went wrong. Please try again later.');
+      }
     },
   }));
 

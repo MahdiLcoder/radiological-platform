@@ -1,5 +1,4 @@
 <div class="admin-users-page animate-in fade-in slide-in-from-bottom-4 duration-500">
-  <!-- Interactive Header Stack (User Content with Professional Design) -->
   <div class="header-stack mb-8">
     <nav
       class="flex items-center gap-2 text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-6"
@@ -20,7 +19,6 @@
     ></app-welcome-section>
   </div>
 
-  <!-- Filter Console (User Content with Professional Styling) -->
   <app-filters-section
     [searchPlaceholder]="'Search professionals by name, email or username...'"
     [searchIcon]="'search'"
@@ -32,7 +30,6 @@
     (resetClicked)="searchTerm.set(''); selectedRole.set(''); onFilterChange()"
   ></app-filters-section>
 
-  <!-- Management Interface (Professional Registry Table) -->
   <div
     class="mt-10 bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-black/[0.02] overflow-hidden"
   >
@@ -170,7 +167,6 @@
         </table>
       </div>
 
-      <!-- Footer Pager -->
       <footer
         class="px-8 py-5 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between"
       >
@@ -211,7 +207,6 @@
     }
   </div>
 
-  <!-- Modal Header -->
   @if (isEditModalOpen()) {
     <div class="modal-overlay animate-in fade-in duration-300">
       <div class="modal-content animate-in zoom-in-95 duration-300">
@@ -227,82 +222,156 @@
           </button>
         </header>
 
-        <div class="modal-body space-y-6">
+        <form [formGroup]="editForm" (ngSubmit)="saveEdit()" class="modal-body space-y-6">
+          @if (serverError()) {
+            <div class="p-3 bg-red-50 border border-red-100 text-red-600 rounded-lg flex items-center gap-2 text-sm">
+              <span class="material-symbols-outlined text-lg">error</span>
+              {{ serverError() }}
+            </div>
+          }
+
           <div class="grid grid-cols-2 gap-4">
             <div class="form-group">
               <label class="form-label">First Name</label>
-              <input type="text" [(ngModel)]="editingUser().first_name" class="form-input" />
+              <input
+                type="text"
+                formControlName="first_name"
+                class="form-input"
+                [class.input-invalid]="editForm.get('first_name')?.touched && editForm.get('first_name')?.invalid"
+              />
+              @if (editForm.get('first_name')?.touched && editForm.get('first_name')?.errors?.['required']) {
+                <p class="input-error-text mt-1">First name is required</p>
+              }
             </div>
             <div class="form-group">
               <label class="form-label">Last Name</label>
-              <input type="text" [(ngModel)]="editingUser().last_name" class="form-input" />
+              <input
+                type="text"
+                formControlName="last_name"
+                class="form-input"
+                [class.input-invalid]="editForm.get('last_name')?.touched && editForm.get('last_name')?.invalid"
+              />
+              @if (editForm.get('last_name')?.touched && editForm.get('last_name')?.errors?.['required']) {
+                <p class="input-error-text mt-1">Last name is required</p>
+              }
             </div>
           </div>
 
           <div class="form-group">
             <label class="form-label">Email Address</label>
-            <input type="email" [(ngModel)]="editingUser().email" class="form-input" />
+            <input
+              type="email"
+              formControlName="email"
+              class="form-input"
+              [class.input-invalid]="editForm.get('email')?.touched && editForm.get('email')?.invalid"
+            />
+            @if (editForm.get('email')?.touched) {
+              @if (editForm.get('email')?.errors?.['required']) {
+                <p class="input-error-text mt-1">Email is required</p>
+              } @else if (editForm.get('email')?.errors?.['email']) {
+                <p class="input-error-text mt-1">Enter a valid email address</p>
+              }
+            }
           </div>
 
           <div class="form-group">
             <label class="form-label">Professional Role</label>
             <div class="select-box-premium w-full">
-              <select [(ngModel)]="editingUser().role" class="premium-select w-full">
+              <select
+                formControlName="role"
+                class="premium-select w-full"
+                [class.input-invalid]="editForm.get('role')?.touched && editForm.get('role')?.invalid"
+              >
                 <option value="admin">Admin</option>
                 <option value="radiologist">Radiologist</option>
                 <option value="doctor">Doctor</option>
               </select>
               <span class="material-symbols-outlined select-arrow">expand_more</span>
             </div>
+            @if (editForm.get('role')?.touched && editForm.get('role')?.errors?.['required']) {
+              <p class="input-error-text mt-1">Role is required</p>
+            }
           </div>
 
-          @if (editingUser().role === 'admin') {
+          @if (editForm.get('role')?.value === 'admin') {
             <div class="form-group">
               <label class="form-label">Department</label>
               <input
                 type="text"
-                [(ngModel)]="editingUser().department"
+                formControlName="department"
                 class="form-input"
                 placeholder="e.g. IT, HR"
+                [class.input-invalid]="editForm.get('department')?.touched && editForm.get('department')?.invalid"
               />
+              @if (editForm.get('department')?.touched && editForm.get('department')?.errors?.['required']) {
+                <p class="input-error-text mt-1">Department is required for admins</p>
+              }
             </div>
           }
 
-          @if (editingUser().role === 'radiologist' || editingUser().role === 'doctor') {
+          @if (editForm.get('role')?.value === 'radiologist' || editForm.get('role')?.value === 'doctor') {
             <div class="form-group">
               <label class="form-label">Medical License Number</label>
               <input
                 type="text"
-                [(ngModel)]="editingUser().medical_license_number"
+                formControlName="medical_license_number"
                 class="form-input"
+                [class.input-invalid]="editForm.get('medical_license_number')?.touched && editForm.get('medical_license_number')?.invalid"
               />
+              @if (editForm.get('medical_license_number')?.touched && editForm.get('medical_license_number')?.errors?.['required']) {
+                <p class="input-error-text mt-1">License number is required</p>
+              }
             </div>
           }
 
-          @if (editingUser().role === 'doctor') {
+          @if (editForm.get('role')?.value === 'doctor') {
             <div class="grid grid-cols-2 gap-4">
               <div class="form-group">
                 <label class="form-label">Specialty</label>
-                <input type="text" [(ngModel)]="editingUser().department" class="form-input" />
+                <input
+                  type="text"
+                  formControlName="specialty"
+                  class="form-input"
+                  [class.input-invalid]="editForm.get('specialty')?.touched && editForm.get('specialty')?.invalid"
+                />
+                @if (editForm.get('specialty')?.touched && editForm.get('specialty')?.errors?.['required']) {
+                  <p class="input-error-text mt-1">Specialty is required</p>
+                }
               </div>
               <div class="form-group">
                 <label class="form-label">Clinic / Hospital</label>
-                <input type="text" [(ngModel)]="editingUser().clinic" class="form-input" />
+                <input
+                  type="text"
+                  formControlName="clinic"
+                  class="form-input"
+                  [class.input-invalid]="editForm.get('clinic')?.touched && editForm.get('clinic')?.invalid"
+                />
+                @if (editForm.get('clinic')?.touched && editForm.get('clinic')?.errors?.['required']) {
+                  <p class="input-error-text mt-1">Clinic is required</p>
+                }
               </div>
             </div>
           }
 
-          @if (editingUser().role === 'radiologist') {
+          @if (editForm.get('role')?.value === 'radiologist') {
             <div class="form-group">
               <label class="form-label">Years of Experience</label>
               <input
                 type="number"
-                [(ngModel)]="editingUser().years_of_experience"
+                formControlName="years_of_experience"
                 class="form-input"
+                [class.input-invalid]="editForm.get('years_of_experience')?.touched && editForm.get('years_of_experience')?.invalid"
               />
+              @if (editForm.get('years_of_experience')?.touched) {
+                @if (editForm.get('years_of_experience')?.errors?.['required']) {
+                  <p class="input-error-text mt-1">Years of experience is required</p>
+                } @else if (editForm.get('years_of_experience')?.errors?.['min']) {
+                  <p class="input-error-text mt-1">Value must be 0 or greater</p>
+                }
+              }
             </div>
           }
-        </div>
+        </form>
 
         <footer class="modal-footer">
           <button
@@ -328,7 +397,6 @@
     </div>
   }
 
-  <!-- Delete Confirmation Modal (Simplified) -->
   @if (isDeleteModalOpen()) {
     <div class="modal-overlay animate-in fade-in duration-300">
       <div class="modal-content text-center max-w-sm animate-in zoom-in-95 duration-300">
@@ -366,7 +434,6 @@
     </div>
   }
 
-  <!-- Success Notification (User Snippet Style) -->
   @if (isSuccessModalOpen()) {
     <div
       class="fixed top-8 left-1/2 -translate-x-1/2 z-[100] animate-in slide-in-from-top-full duration-700"

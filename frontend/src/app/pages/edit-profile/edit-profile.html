@@ -171,11 +171,12 @@
                     formControlName="phone"
                     placeholder="+1 (555) 000-0000"
                   />
-                  @if (
-                    profileForm.get('phone')?.touched &&
-                    profileForm.get('phone')?.errors?.['required']
-                  ) {
-                    <p class="input-error-text">Contact sequence is mandatory</p>
+                  @if (profileForm.get('phone')?.touched) {
+                    @if (profileForm.get('phone')?.errors?.['required']) {
+                      <p class="input-error-text">Phone number is required</p>
+                    } @else if (profileForm.get('phone')?.errors?.['pattern']) {
+                      <p class="input-error-text">Enter a valid phone number (e.g. +1 555-000-0000)</p>
+                    }
                   }
                 </div>
               </div>
@@ -336,9 +337,9 @@
                 />
                 @if (profileForm.get('years_of_experience')?.touched) {
                   @if (profileForm.get('years_of_experience')?.errors?.['required']) {
-                    <p class="input-error-text">Exprience metrics required</p>
+                    <p class="input-error-text">Years of experience is required</p>
                   } @else if (profileForm.get('years_of_experience')?.errors?.['min']) {
-                    <p class="input-error-text">Invalid temporal reference</p>
+                    <p class="input-error-text">Value must be 0 or greater</p>
                   }
                 }
               </div>
@@ -456,7 +457,7 @@
                     profileForm.get('newPassword')?.touched &&
                     profileForm.get('newPassword')?.errors?.['minlength']
                   ) {
-                    <p class="input-error-text">Security protocol requires 8+ characters</p>
+                    <p class="input-error-text">Password must be at least 8 characters</p>
                   }
                 </div>
 

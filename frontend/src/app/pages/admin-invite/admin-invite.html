@@ -76,9 +76,9 @@
                             />
                             @if (inviteForm.get('email')?.touched) {
                                 @if (inviteForm.get('email')?.errors?.['required']) {
-                                    <p class="input-error-text">Institutional email mandatory</p>
+                                    <p class="input-error-text">Email address is required</p>
                                 } @else if (inviteForm.get('email')?.errors?.['email']) {
-                                    <p class="input-error-text">Invalid email sequence</p>
+                                    <p class="input-error-text">Enter a valid email address</p>
                                 }
                             }
                         </div>
@@ -154,9 +154,9 @@
                             <div class="space-y-3">
                                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">Years of Protocol Experience</label>
                                 <input class="premium-input-field w-full" [class.input-invalid]="inviteForm.get('years_of_experience')?.touched && inviteForm.get('years_of_experience')?.invalid" type="number" formControlName="years_of_experience" placeholder="e.g. 10" />
-                                @if (inviteForm.get('years_of_experience')?.touched && inviteForm.get('years_of_experience')?.invalid) {
-                                    <p class="input-error-text">Valid temporal metrics required</p>
-                                }
+                            @if (inviteForm.get('years_of_experience')?.touched && inviteForm.get('years_of_experience')?.invalid) {
+                                <p class="input-error-text">Enter a valid number (0 or greater)</p>
+                            }
                             </div>
                         } @else if (inviteForm.get('role')?.value === 'admin') {
                             <div class="space-y-3">

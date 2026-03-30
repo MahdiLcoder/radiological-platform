@@ -19,7 +19,6 @@ export class AdminInvite {
   private router = inject(Router);
   private fb = inject(FormBuilder);
 
-  // Modal States
   isSuccessModalOpen = signal(false);
   isErrorModalOpen = signal(false);
   errorMessage = signal('');
@@ -41,7 +40,6 @@ export class AdminInvite {
       clinic: ['']
     });
 
-    // Dynamic role-based validation
     this.inviteForm.get('role')?.valueChanges.subscribe(role => {
       this.updateValidators(role);
     });
@@ -83,7 +81,7 @@ export class AdminInvite {
     mutationFn: (data: any) => {
       const password = this.generatePassword();
       this.generatedPassword.set(password);
-      
+
       const cleanedData = Object.entries(data).reduce((acc: any, [key, value]) => {
         if (value !== null && value !== '') {
           acc[key] = value;
@@ -91,10 +89,7 @@ export class AdminInvite {
         return acc;
       }, {});
 
-      const payload = {
-        ...cleanedData,
-        password: password
-      };
+      const payload = { ...cleanedData, password: password };
       return lastValueFrom(this.authService.register(payload));
     },
 
@@ -102,8 +97,15 @@ export class AdminInvite {
       this.isSuccessModalOpen.set(true);
     },
     onError: (error: any) => {
-      const detail = error.error?.detail || error.error?.message || 'An unexpected error occurred';
-      this.errorMessage.set(typeof detail === 'string' ? detail : JSON.stringify(detail));
+      const detail = error.error?.detail;
+      if (typeof detail === 'object') {
+        const msg = Object.entries(detail)
+          .map(([key, val]) => key.replace(/_/g, ' ') + ': ' + (Array.isArray(val) ? val[0] : val))
+          .join('. ');
+        this.errorMessage.set(msg);
+      } else {
+        this.errorMessage.set(detail || error.error?.message || 'An unexpected error occurred');
+      }
       this.isErrorModalOpen.set(true);
     }
   }));
@@ -129,5 +131,3 @@ export class AdminInvite {
     this.router.navigate(['/dashboard/admin/users']);
   }
 }
-
-

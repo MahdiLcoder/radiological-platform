@@ -1,5 +1,4 @@
 <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
-  <!-- Header section inside content -->
   <div class="mb-8">
     <div class="flex items-center gap-2 mb-2 text-primary">
       <span class="material-symbols-outlined">{{ isEditMode ? 'edit_square' : 'person_add' }}</span>
@@ -9,15 +8,14 @@
     <p class="text-slate-500">{{ isEditMode ? 'Update patient details to keep records current.' : 'Enter personal and medical details to create a new patient profile.' }}</p>
   </div>
 
-  @if (patientMutation.isError()) {
+  @if (serverError()) {
     <div class="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
       <span class="material-symbols-outlined">error</span>
-      <p class="text-sm font-bold">Failed to {{ isEditMode ? 'update' : 'register' }} patient. Please check your input.</p>
+      <p class="text-sm font-bold">{{ serverError() }}</p>
     </div>
   }
 
   <form [formGroup]="patientForm" (ngSubmit)="onSubmit()" class="space-y-6">
-    <!-- Personal Information -->
     <section class="bg-white p-8 rounded-xl border border-slate-200 shadow-sm">
       <div class="flex items-center gap-2 mb-8">
         <span class="material-symbols-outlined text-primary">badge</span>
@@ -33,8 +31,8 @@
             placeholder="e.g. John"
             type="text"
           />
-          @if (patientForm.get('first_name')?.touched && patientForm.get('first_name')?.errors?.['required']) {
-            <p class="input-error-text">First name is mandatory</p>
+          @if (getFieldError('first_name')) {
+            <p class="input-error-text">{{ getFieldError('first_name') }}</p>
           }
         </div>
         <div class="space-y-2">
@@ -46,8 +44,8 @@
             placeholder="e.g. Doe"
             type="text"
           />
-          @if (patientForm.get('last_name')?.touched && patientForm.get('last_name')?.errors?.['required']) {
-            <p class="input-error-text">Last name is mandatory</p>
+          @if (getFieldError('last_name')) {
+            <p class="input-error-text">{{ getFieldError('last_name') }}</p>
           }
         </div>
         <div class="space-y-2">
@@ -58,8 +56,8 @@
             [class.input-invalid]="patientForm.get('date_of_birth')?.touched && patientForm.get('date_of_birth')?.invalid"
             type="date"
           />
-          @if (patientForm.get('date_of_birth')?.touched && patientForm.get('date_of_birth')?.errors?.['required']) {
-            <p class="input-error-text">Date of birth is mandatory</p>
+          @if (getFieldError('date_of_birth')) {
+            <p class="input-error-text">{{ getFieldError('date_of_birth') }}</p>
           }
         </div>
         <div class="grid grid-cols-2 gap-4">
@@ -80,15 +78,14 @@
                 >expand_more</span
               >
             </div>
-            @if (patientForm.get('gender')?.touched && patientForm.get('gender')?.errors?.['required']) {
-              <p class="input-error-text mt-2">Gender is mandatory</p>
+            @if (getFieldError('gender')) {
+              <p class="input-error-text mt-2">{{ getFieldError('gender') }}</p>
             }
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Contact Information -->
     <section class="bg-white p-8 rounded-xl border border-slate-200 shadow-sm">
       <div class="flex items-center gap-2 mb-8">
         <span class="material-symbols-outlined text-primary">contact_page</span>
@@ -109,8 +106,8 @@
               type="tel"
             />
           </div>
-          @if (patientForm.get('phone')?.touched && patientForm.get('phone')?.errors?.['required']) {
-            <p class="input-error-text">Contact number is mandatory</p>
+          @if (getFieldError('phone')) {
+            <p class="input-error-text">{{ getFieldError('phone') }}</p>
           }
         </div>
         <div class="space-y-2">
@@ -127,15 +124,14 @@
               type="email"
             />
           </div>
-          @if (patientForm.get('email')?.touched && patientForm.get('email')?.errors?.['email']) {
-            <p class="input-error-text">Invalid email contact format</p>
+          @if (getFieldError('email')) {
+            <p class="input-error-text">{{ getFieldError('email') }}</p>
           }
         </div>
       </div>
     </section>
 
 
-    <!-- Form Actions -->
     <div class="flex items-center justify-end gap-4 pb-12 pt-4">
       <button
         class="px-6 py-3 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-all"

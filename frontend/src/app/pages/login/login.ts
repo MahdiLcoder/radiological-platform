@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/authService';
@@ -18,6 +18,7 @@ export class Login {
 
   showPassword = false;
   loginForm: FormGroup;
+  loginError = signal<string | null>(null);
 
   constructor() {
     this.loginForm = this.fb.group({
@@ -32,9 +33,18 @@ export class Login {
     onSuccess: () => {
       this.router.navigate(['/dashboard']);
     },
+    onError: (err: any) => {
+      const detail = err?.error?.detail;
+      if (detail && typeof detail === 'string') {
+        this.loginError.set(detail);
+      } else {
+        this.loginError.set('Invalid username or password. Please try again.');
+      }
+    },
   }));
 
   onLogin(): void {
+    this.loginError.set(null);
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;

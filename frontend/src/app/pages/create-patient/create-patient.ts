@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, effect } from '@angular/core';
+import { Component, OnInit, inject, effect, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { PatientService, Patient } from '../../services/patientService';
@@ -23,6 +23,8 @@ export class CreatePatient implements OnInit {
   isEditMode = false;
   patientId: string | null = null;
   title = 'Register New Patient';
+  serverError = signal<string | null>(null);
+  fieldErrors = signal<Record<string, string>>({});
 
   patientQuery = injectQuery(() => ({
     queryKey: ['patient', this.patientId],
@@ -31,16 +33,22 @@ export class CreatePatient implements OnInit {
   }));
 
   patientMutation = injectMutation(() => ({
-    mutationFn: (patientData: any) => 
-      this.isEditMode 
+    mutationFn: (patientData: any) =>
+      this.isEditMode
         ? lastValueFrom(this.patientService.update(this.patientId!, patientData))
         : lastValueFrom(this.patientService.create(patientData)),
     onSuccess: () => {
       this.router.navigate(['/dashboard/patients']);
     },
     onError: (err: any) => {
-      console.error(`Error ${this.isEditMode ? 'updating' : 'creating'} patient:`, err);
-    }
+      const detail = err?.error?.detail;
+      if (typeof detail === 'object') {
+        this.fieldErrors.set(detail);
+        this.serverError.set('Please correct the highlighted fields.');
+      } else {
+        this.serverError.set(detail || 'Failed to save patient. Please try again.');
+      }
+    },
   }));
 
   constructor() {
@@ -71,19 +79,35 @@ export class CreatePatient implements OnInit {
       last_name: ['', [Validators.required]],
       date_of_birth: ['', [Validators.required]],
       gender: ['', [Validators.required]],
-      phone: ['', [Validators.required]],
+      phone: ['', [Validators.required, Validators.pattern(/^\+?[\d\s\-\(\)]{7,20}$/)]],
       email: ['', [Validators.email]]
     });
   }
 
   onSubmit(): void {
+    this.serverError.set(null);
+    this.fieldErrors.set({});
+
     if (this.patientForm.valid) {
       this.patientMutation.mutate(this.patientForm.value);
     } else {
-      Object.keys(this.patientForm.controls).forEach(key => {
-        const control = this.patientForm.get(key);
-        control?.markAsTouched();
-      });
+      this.patientForm.markAllAsTouched();
     }
+  }
+
+  getFieldError(fieldName: string): string | null {
+    const control = this.patientForm.get(fieldName);
+    if (control?.touched && control?.errors) {
+      if (control.errors['required']) return this.formatFieldName(fieldName) + ' is required';
+      if (control.errors['email']) return 'Enter a valid email address';
+      if (control.errors['pattern']) return 'Enter a valid phone number (e.g. +1 555-000-0000)';
+    }
+    const serverFieldErrors = this.fieldErrors();
+    if (serverFieldErrors[fieldName]) return serverFieldErrors[fieldName];
+    return null;
+  }
+
+  private formatFieldName(field: string): string {
+    return field.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   }
 }
