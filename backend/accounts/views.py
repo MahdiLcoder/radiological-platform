@@ -166,11 +166,10 @@ class ProfileImageUploadView(APIView):
             )
             image_url = upload_result["secure_url"]
 
-            serializer = UserSerializer(request.user, data={'profile_image': image_url}, partial=True)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
+            request.user.profile_image = image_url
+            request.user.save(update_fields=['profile_image'])
 
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({"profile_image": image_url}, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error(f"Error uploading profile image: {e}", exc_info=True)
             return Response(
