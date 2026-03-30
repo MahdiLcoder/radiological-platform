@@ -41,6 +41,13 @@
                   </span>
                 </div>
               </div>
+              <a
+                [routerLink]="['/dashboard/edit-patient', patient.id]"
+                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-50 hover:border-slate-300 transition-colors shrink-0"
+              >
+                <span class="material-symbols-outlined text-[18px]">edit_square</span>
+                Edit Patient
+              </a>
             </div>
 
             <!-- Summary Stats -->
