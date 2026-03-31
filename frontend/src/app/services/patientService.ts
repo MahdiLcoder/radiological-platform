@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PaginatedResponse } from '../types';
+import { environment } from '../../environments/environment';
 
 export interface Patient {
   id?: string;
@@ -30,7 +31,7 @@ export interface Patient {
   providedIn: 'root',
 })
 export class PatientService {
-  private apiUrl: string = 'http://localhost:8000/api/patients';
+  private apiUrl: string = `${environment.apiUrl}/patients`;
   private http = inject(HttpClient);
 
   getAll(params: any = {}): Observable<PaginatedResponse<Patient[]>> {

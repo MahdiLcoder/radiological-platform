@@ -2,12 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Message, ChatConversation } from '../types';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatService {
-  private apiUrl = 'http://localhost:8000/api/chat';
+  private apiUrl = `${environment.apiUrl}/chat`;
   private http = inject(HttpClient);
 
   getConversations(): Observable<ChatConversation[]> {

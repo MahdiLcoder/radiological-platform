@@ -178,7 +178,7 @@
                     (click)="cancel()"
                     class="h-12 px-8 flex items-center justify-center text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-50 rounded-2xl transition-all"
                 >
-                    Discard Provisioning
+                    Discard Invitation
                 </button>
                 <button 
                     type="submit"
@@ -187,10 +187,10 @@
                 >
                     @if (inviteMutation.isPending()) {
                         <span class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                        <span class="text-[10px] font-black uppercase tracking-widest">Provisioning...</span>
+                        <span class="text-[10px] font-black uppercase tracking-widest">Inviting...</span>
                     } @else {
                         <span class="material-symbols-outlined text-lg">send</span>
-                        <span class="text-[10px] font-black uppercase tracking-widest">Execute Provisioning</span>
+                        <span class="text-[10px] font-black uppercase tracking-widest">Send Invitation</span>
                     }
                 </button>
             </div>

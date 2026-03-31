@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PaginatedResponse } from '../types';
+import { environment } from '../../environments/environment';
 
 export interface ReportApiItem {
   id: string;
@@ -27,16 +28,14 @@ export interface ReportApiItem {
 })
 export class ReportService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:8000/api/reports';
+  private baseUrl = `${environment.apiUrl}/reports`;
 
-  /** Generate (or return cached) report for a given diagnosis ID */
   generateReport(diagnosisId: string): Observable<ReportApiItem> {
     return this.http.post<ReportApiItem>(`${this.baseUrl}/generate/`, {
       diagnosis_id: diagnosisId,
     });
   }
 
-  /** List all reports */
   getReports(params: any = {}): Observable<PaginatedResponse<ReportApiItem[]>> {
     let httpParams = new HttpParams();
     Object.keys(params).forEach(key => {
@@ -47,12 +46,10 @@ export class ReportService {
     return this.http.get<PaginatedResponse<ReportApiItem[]>>(`${this.baseUrl}/`, { params: httpParams });
   }
 
-  /** Get a single report by ID */
   getReport(id: string): Observable<ReportApiItem> {
     return this.http.get<ReportApiItem>(`${this.baseUrl}/${id}/`);
   }
 
-  /** Download PDF — triggers file save */
   downloadReport(id: string): void {
     this.http
       .get(`${this.baseUrl}/${id}/download/`, { responseType: 'blob' })
@@ -66,12 +63,10 @@ export class ReportService {
       });
   }
 
-  /** Find the report associated with a given radiology image ID */
   getReportByImageId(imageId: string): Observable<ReportApiItem> {
     return this.http.get<ReportApiItem>(`${this.baseUrl}/by-image/${imageId}/`);
   }
 
-  /** Download PDF for the report linked to a given image ID */
   downloadReportByImageId(imageId: string): void {
     this.getReportByImageId(imageId).subscribe({
       next: (report) => this.downloadReport(report.id),

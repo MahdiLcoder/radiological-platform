@@ -8,19 +8,17 @@ import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 import { AnalysisService } from '../../services/analysisService';
 
-import { CommonModule, DatePipe, PercentPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-radiologist',
   imports: [
-    CommonModule, 
-    WelcomeSection, 
-    StatsSummary, 
-    WorklistTable, 
-    RouterModule, 
-    RadiologyCharts, 
-    DatePipe,
-    PercentPipe
+    CommonModule,
+    WelcomeSection,
+    StatsSummary,
+    WorklistTable,
+    RouterModule,
+    RadiologyCharts,
   ],
   templateUrl: './radiologist.html',
   styleUrl: './radiologist.css',
@@ -33,11 +31,6 @@ export class Radiologist {
   imagesQuery = injectQuery(() => ({
     queryKey: ['recent_images_radiologist'],
     queryFn: () => lastValueFrom(this.analysisService.getAllImages({ page_size: 5 })),
-  }));
-
-  findingsQuery = injectQuery(() => ({
-    queryKey: ['recent_findings_feed'],
-    queryFn: () => lastValueFrom(this.analysisService.getAllFindings({ page_size: 5 })),
   }));
 
   summaryStats = computed<StatItem[]>(() => {

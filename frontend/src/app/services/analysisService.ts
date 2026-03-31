@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PaginatedResponse } from '../types';
+import { environment } from '../../environments/environment';
 
 export interface AnalysisResult {
   id: string;
@@ -43,8 +44,8 @@ export interface UploadResponse {
 })
 export class AnalysisService {
   private http = inject(HttpClient);
-  private imagesApiUrl = 'http://localhost:8000/api/images';
-  private inferenceApiUrl = 'http://localhost:8000/api/inference';
+  private imagesApiUrl = `${environment.apiUrl}/images`;
+  private inferenceApiUrl = `${environment.apiUrl}/inference`;
 
   uploadImage(file: File, patientId: string, modality: string): Observable<UploadResponse> {
     const formData = new FormData();
@@ -89,16 +90,4 @@ export class AnalysisService {
     return this.http.post<any>(`http://localhost:8000/api/diagnosis/`, data);
   }
 
-  getAllFindings(params: any = {}): Observable<PaginatedResponse<AnalysisResult[]>> {
-    let httpParams = new HttpParams();
-    Object.keys(params).forEach((key) => {
-      if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
-        httpParams = httpParams.append(key, params[key]);
-      }
-    });
-    return this.http.get<PaginatedResponse<AnalysisResult[]>>(
-      `${this.inferenceApiUrl}/all-findings/`,
-      { params: httpParams },
-    );
-  }
 }

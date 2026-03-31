@@ -41,31 +41,7 @@
 
       <!-- Specialist Sidebar -->
       <aside class="sidebar-container space-y-8 lg:col-span-4">
-         <!-- System Activity Feed -->
-         <section class="activity-feed space-y-6">
-            
-            <div class="flex flex-col gap-3">
-               @if (findingsQuery.data(); as findings) {
-                  @for (finding of findings.results; track finding.id) {
-                     <div class="activity-card group">
-                        <div class="flex items-center gap-3">
-                           <div class="size-9 rounded-xl bg-primary/5 text-primary flex items-center justify-center border border-primary/10">
-                              <span class="material-symbols-outlined text-lg">{{ finding.confidence > 0.8 ? 'check_circle' : 'psychology_alt' }}</span>
-                           </div>
-                           <div class="flex-1 min-w-0">
-                              <h4 class="text-[11px] font-black text-slate-900 truncate uppercase tracking-tight">{{ finding.top_finding }}</h4>
-                              <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{{ finding.analyzed_at | date:'HH:mm' }} • {{ finding.confidence | percent }} Match</p>
-                           </div>
-                        </div>
-                     </div>
-                  } @empty {
-                     <div class="p-6 text-center border-2 border-dashed border-slate-100 rounded-3xl opacity-40">
-                        <p class="text-[9px] font-black uppercase tracking-widest">No recent alerts</p>
-                     </div>
-                  }
-               }
-            </div>
-         </section>
+
 
          <!-- Diagnostic Volume Analytics -->
          <section class="analytics-container space-y-6">
