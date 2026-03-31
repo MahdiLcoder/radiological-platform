@@ -10,7 +10,6 @@ import { ErrorStateComponent } from '../../components/error-state/error-state';
 
 @Component({
   selector: 'app-edit-profile',
-  standalone: true,
   imports: [
     CommonModule,
     RouterLink,

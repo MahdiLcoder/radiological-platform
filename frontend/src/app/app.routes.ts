@@ -40,6 +40,9 @@ export const routes: Routes = [
       },
       {
         path: 'all-images',
+        data: { roles: ['radiologist'] },
+        canMatch: [roleGuard],
+        canActivate: [roleActivateGuard],
         loadComponent: () => import('./pages/all-images/all-images').then((m) => m.AllImages),
       },
       {
@@ -87,20 +90,32 @@ export const routes: Routes = [
       },
       {
         path: 'patients',
+        data: { roles: ['doctor'] },
+        canMatch: [roleGuard],
+        canActivate: [roleActivateGuard],
         loadComponent: () => import('./pages/patients/patients').then((m) => m.Patients),
       },
       {
         path: 'create-patient',
+        data: { roles: ['doctor'] },
+        canMatch: [roleGuard],
+        canActivate: [roleActivateGuard],
         loadComponent: () =>
           import('./pages/create-patient/create-patient').then((m) => m.CreatePatient),
       },
       {
         path: 'patient-detail/:id',
+        data: { roles: ['doctor'] },
+        canMatch: [roleGuard],
+        canActivate: [roleActivateGuard],
         loadComponent: () =>
           import('./pages/patient-detail/patient-detail').then((m) => m.PatientDetail),
       },
       {
         path: 'edit-patient/:id',
+        data: { roles: ['doctor'] },
+        canMatch: [roleGuard],
+        canActivate: [roleActivateGuard],
         loadComponent: () =>
           import('./pages/create-patient/create-patient').then((m) => m.CreatePatient),
       },

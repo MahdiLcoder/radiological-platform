@@ -12,7 +12,6 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-aivalidation',
-  standalone: true,
   imports: [CommonModule, FormsModule, LoadingStateComponent, EmptyStateComponent],
   templateUrl: './aivalidation.html',
   styleUrl: './aivalidation.css',

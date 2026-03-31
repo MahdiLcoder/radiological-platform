@@ -9,7 +9,6 @@ import { AuthService } from '../../services/authService';
 
 @Component({
   selector: 'app-admin-invite',
-  standalone: true,
   imports: [CommonModule, RouterModule, ReactiveFormsModule],
   templateUrl: './admin-invite.html',
   styleUrl: './admin-invite.css',

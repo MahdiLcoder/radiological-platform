@@ -10,7 +10,6 @@ import { WelcomeSection } from '../../components/welcome-section/welcome-section
 
 @Component({
   selector: 'app-upload',
-  standalone: true,
   imports: [ReactiveFormsModule, CommonModule, WelcomeSection],
   templateUrl: './upload.html',
   styleUrl: './upload.css',

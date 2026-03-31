@@ -15,7 +15,6 @@ import { EmptyStateComponent } from '../../components/empty-state/empty-state';
 
 @Component({
   selector: 'app-patients',
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,

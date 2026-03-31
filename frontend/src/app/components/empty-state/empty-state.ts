@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-empty-state',
-  standalone: true,
   imports: [RouterLink, CommonModule],
   templateUrl: './empty-state.html',
   styleUrl: './empty-state.css',

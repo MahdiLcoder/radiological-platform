@@ -18,7 +18,6 @@ export interface UserProfile {
 
 @Component({
   selector: 'app-header',
-  standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './header.html',
   styleUrl: './header.css',

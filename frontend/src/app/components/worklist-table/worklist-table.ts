@@ -24,7 +24,6 @@ export interface WorklistItem {
 
 @Component({
   selector: 'app-worklist-table',
-  standalone: true,
   imports: [RouterModule],
   templateUrl: './worklist-table.html',
   styleUrl: './worklist-table.css',

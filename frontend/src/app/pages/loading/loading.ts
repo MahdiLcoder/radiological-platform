@@ -12,7 +12,6 @@ const roleToPath: Record<string, string> = {
 
 @Component({
   selector: 'app-loading-route',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './loading.html',
   styleUrl: './loading.css',

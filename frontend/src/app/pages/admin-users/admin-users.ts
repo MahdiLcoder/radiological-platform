@@ -16,7 +16,6 @@ import { EmptyStateComponent } from '../../components/empty-state/empty-state';
 
 @Component({
   selector: 'app-admin-users',
-  standalone: true,
   imports: [
     CommonModule,
     RouterModule,

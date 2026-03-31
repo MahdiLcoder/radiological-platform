@@ -5,7 +5,6 @@ import { WorklistItem } from '../worklist-table/worklist-table';
 
 @Component({
   selector: 'app-radiology-charts',
-  standalone: true,
   imports: [CommonModule, NgxEchartsDirective],
   templateUrl: './radiology-charts.html',
   styleUrl: './radiology-charts.css'

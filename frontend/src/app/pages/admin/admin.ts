@@ -11,7 +11,6 @@ import { ErrorStateComponent } from '../../components/error-state/error-state';
 
 @Component({
   selector: 'app-admin',
-  standalone: true,
   imports: [CommonModule, NgxEchartsModule, LoadingStateComponent, ErrorStateComponent],
   templateUrl: './admin.html',
   styleUrl: './admin.css',

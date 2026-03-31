@@ -8,7 +8,6 @@ import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-create-patient',
-  standalone: true,
   imports: [RouterLink, ReactiveFormsModule, CommonModule],
   templateUrl: './create-patient.html',
   styleUrl: './create-patient.css',

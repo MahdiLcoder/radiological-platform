@@ -23,7 +23,6 @@ import { User, Conversation, Message } from '../../types';
 
 @Component({
   selector: 'app-chat',
-  standalone: true,
   imports: [CommonModule, FormsModule, ChatSidebarComponent, ChatAreaComponent],
   templateUrl: './chat.html',
   styleUrl: './chat.css',

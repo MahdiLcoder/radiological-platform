@@ -11,7 +11,6 @@ import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-patient-detail',
-  standalone: true,
   imports: [CommonModule, RouterModule, LoadingStateComponent, ErrorStateComponent, EmptyStateComponent],
   templateUrl: './patient-detail.html',
   styleUrl: './patient-detail.css'

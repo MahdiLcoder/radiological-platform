@@ -8,7 +8,6 @@ import { CommonModule, UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-sidebar',
-  standalone: true,
   imports: [CommonModule, RouterLink, RouterLinkActive, UpperCasePipe],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css',

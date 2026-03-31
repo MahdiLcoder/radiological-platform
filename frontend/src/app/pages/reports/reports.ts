@@ -17,7 +17,6 @@ import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-reports',
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,

@@ -9,7 +9,6 @@ export type { User, Message, Conversation } from '../../types';
 
 @Component({
   selector: 'app-chat-area',
-  standalone: true,
   imports: [CommonModule, FormsModule, LoadingStateComponent, EmptyStateComponent],
   templateUrl: './chat-area.html',
   styleUrl: './chat-area.css',

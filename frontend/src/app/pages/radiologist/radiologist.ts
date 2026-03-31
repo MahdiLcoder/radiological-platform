@@ -12,7 +12,6 @@ import { CommonModule, DatePipe, PercentPipe } from '@angular/common';
 
 @Component({
   selector: 'app-radiologist',
-  standalone: true,
   imports: [
     CommonModule, 
     WelcomeSection, 

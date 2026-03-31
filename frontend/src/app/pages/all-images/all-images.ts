@@ -13,7 +13,6 @@ import { ErrorStateComponent } from '../../components/error-state/error-state';
 
 @Component({
   selector: 'app-all-images',
-  standalone: true,
   imports: [WorklistTable, RouterModule, FormsModule, WelcomeSection, FiltersSection, LoadingStateComponent, ErrorStateComponent],
   templateUrl: './all-images.html',
   styleUrl: './all-images.css',

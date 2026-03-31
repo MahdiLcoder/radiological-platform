@@ -7,7 +7,6 @@ export type { User, Message, Conversation } from '../../types';
 
 @Component({
   selector: 'app-chat-sidebar',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './chat-sidebar.html',
   styleUrl: './chat-sidebar.css',
