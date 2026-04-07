@@ -87,7 +87,6 @@ export class AnalysisService {
     final_finding?: string;
     clinical_notes?: string;
   }): Observable<any> {
-    return this.http.post<any>(`http://localhost:8000/api/diagnosis/`, data);
+    return this.http.post<any>(`${environment.apiUrl}/diagnosis/`, data);
   }
-
 }

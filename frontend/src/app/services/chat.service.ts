@@ -18,4 +18,8 @@ export class ChatService {
   getMessages(userId: number): Observable<Message[]> {
     return this.http.get<Message[]>(`${this.apiUrl}/users/${userId}/messages/`);
   }
+
+  markConversationAsRead(userId: number): Observable<{ updated: number }> {
+    return this.http.post<{ updated: number }>(`${this.apiUrl}/users/${userId}/read/`, {});
+  }
 }

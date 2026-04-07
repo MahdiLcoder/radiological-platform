@@ -2,7 +2,7 @@ import json
 import datetime
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
-from .models import CaseMessage
+from .models import ChatMessage
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -57,11 +57,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @sync_to_async
     def save_message(self, sender_id, receiver_id, content):
-        msg = CaseMessage(
+        msg = ChatMessage(
             sender_id=sender_id,
             receiver_id=receiver_id,
-            content=content
+            content=content,
+            is_read=False
         )
         msg.save()
-        # Properly attach UTC timezone before converting to ISO string
         return msg.created_at.replace(tzinfo=datetime.timezone.utc).isoformat()

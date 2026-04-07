@@ -119,7 +119,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'username', 'email', 'role', 'first_name', 'last_name', 'phone', 'profile_image', 'created_at',
             'old_password', 'new_password',
-            'department', 'medical_license_number', 'years_of_experience', 'specialty', 'clinic',
+            'department', 'medical_license_number', 'years_of_experience', 'specialty', 'clinic', 'is_active',
         ]
 
     def validate(self, attrs):
@@ -127,6 +127,8 @@ class UserSerializer(serializers.ModelSerializer):
         new_password = attrs.pop('new_password', None)
 
         if old_password or new_password:
+            if not self.instance:
+                raise serializers.ValidationError({'old_password': 'Cannot change password for this operation.'})
             if not old_password:
                 raise serializers.ValidationError({'old_password': 'Current password is required to set a new password.'})
             if not new_password:
@@ -135,52 +137,58 @@ class UserSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({'old_password': 'Current password is incorrect.'})
 
         role = attrs.get('role', getattr(self.instance, 'role', None))
-        errors = {}
+        role_changing = 'role' in attrs
 
-        if role == UserRole.DOCTOR:
-            if not attrs.get('specialty'):
-                errors['specialty'] = 'Specialty is required for doctors.'
-            if not attrs.get('medical_license_number'):
-                errors['medical_license_number'] = 'Medical license number is required for doctors.'
-            if not attrs.get('clinic'):
-                errors['clinic'] = 'Clinic is required for doctors.'
-        elif role == UserRole.RADIOLOGIST:
-            if not attrs.get('medical_license_number'):
-                errors['medical_license_number'] = 'Medical license number is required for radiologists.'
-            if attrs.get('years_of_experience') is None:
-                errors['years_of_experience'] = 'Years of experience is required for radiologists.'
-        elif role == UserRole.ADMIN:
-            if not attrs.get('department'):
-                errors['department'] = 'Department is required for administrators.'
+        if role_changing or self._is_role_specific_field_in_attrs(attrs):
+            errors = {}
 
-        if errors:
-            raise serializers.ValidationError(errors)
+            if role == UserRole.DOCTOR:
+                if not attrs.get('specialty'):
+                    errors['specialty'] = 'Specialty is required for doctors.'
+                if not attrs.get('medical_license_number'):
+                    errors['medical_license_number'] = 'Medical license number is required for doctors.'
+                if not attrs.get('clinic'):
+                    errors['clinic'] = 'Clinic is required for doctors.'
+            elif role == UserRole.RADIOLOGIST:
+                if not attrs.get('medical_license_number'):
+                    errors['medical_license_number'] = 'Medical license number is required for radiologists.'
+                if attrs.get('years_of_experience') is None:
+                    errors['years_of_experience'] = 'Years of experience is required for radiologists.'
+            elif role == UserRole.ADMIN:
+                if not attrs.get('department'):
+                    errors['department'] = 'Department is required for administrators.'
+
+            if errors:
+                raise serializers.ValidationError(errors)
 
         attrs['_new_password'] = new_password
         return attrs
+
+    def _is_role_specific_field_in_attrs(self, attrs):
+        role_fields = ['department', 'medical_license_number', 'years_of_experience', 'specialty', 'clinic']
+        return any(k in attrs for k in role_fields)
 
     def update(self, instance, validated_data):
         new_password = validated_data.pop('_new_password', None)
 
         profile_fields = ['department', 'medical_license_number', 'years_of_experience', 'specialty', 'clinic']
-        profile_data = {k: validated_data.pop(k) for k in profile_fields if k in validated_data}
+        profile_data = {k: validated_data.pop(k) for k in list(profile_fields) if k in validated_data}
 
-        old_values = {f: getattr(instance, f) for f in validated_data}
         previous_role = User.objects.filter(pk=instance.pk).values_list('role', flat=True).first()
 
+        changed_fields = []
         for attr, value in validated_data.items():
-            setattr(instance, attr, value)
+            old_value = getattr(instance, attr, None)
+            if old_value != value:
+                setattr(instance, attr, value)
+                changed_fields.append(attr)
 
         if new_password:
             instance.set_password(new_password)
+            changed_fields.append('password')
 
-        changed = ['password'] if new_password else []
-        changed.extend(f for f, v in old_values.items() if getattr(instance, f) != v)
-
-        if changed:
-            instance.save(update_fields=changed)
-        else:
-            instance.save(update_fields=['password'])
+        if changed_fields:
+            instance.save(update_fields=changed_fields)
 
         instance._sync_mongo_role(previous_role)
 

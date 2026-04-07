@@ -246,6 +246,11 @@ export class AdminUsers {
     this.updateUserMutation.mutate({ id, payload });
   }
 
+  toggleUserStatus(user: any) {
+    const newStatus = !user.is_active;
+    this.updateUserMutation.mutate({ id: user.id, payload: { is_active: newStatus } });
+  }
+
   formatDate(dateStr: string) {
     if (!dateStr) return 'N/A';
     return new Date(dateStr).toLocaleDateString('en-US', {

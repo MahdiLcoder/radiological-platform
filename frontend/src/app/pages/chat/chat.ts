@@ -142,6 +142,19 @@ export class Chat implements OnInit, OnDestroy {
     this.router.navigate(['/dashboard/chat'], {
       queryParams: { receiverId: conv.otherUser.id },
     });
+    this.markAsRead(conv.otherUser.id);
+  }
+
+  private markAsRead(userId: number): void {
+    this.chatService.markConversationAsRead(userId).subscribe({
+      next: () => {
+        this.queryClient.setQueryData(['chatMessages', userId], (old: Message[] | undefined) =>
+          old ? old.map(msg => ({ ...msg, is_read: true })) : [],
+        );
+        this.queryClient.invalidateQueries({ queryKey: ['conversationsData'] });
+      },
+      error: (err) => console.error('Error marking conversation as read:', err),
+    });
   }
 
   connectWebSocket(): void {

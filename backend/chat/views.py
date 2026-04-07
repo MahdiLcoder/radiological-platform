@@ -1,8 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .models import CaseMessage
-from .serializers import CaseMessageSerializer
+from .models import ChatMessage
+from .serializers import ChatMessageSerializer
 
 
 class ConversationHistoryView(APIView):
@@ -10,7 +10,7 @@ class ConversationHistoryView(APIView):
 
     def get(self, request, user_id):
         current_user_id = request.user.id
-        messages = CaseMessage.objects(
+        messages = ChatMessage.objects(
             __raw__={
                 '$or': [
                     {'sender_id': current_user_id, 'receiver_id': user_id},
@@ -18,7 +18,7 @@ class ConversationHistoryView(APIView):
                 ]
             }
         ).order_by('created_at')
-        serializer = CaseMessageSerializer(messages, many=True)
+        serializer = ChatMessageSerializer(messages, many=True)
         return Response(serializer.data)
 
 
@@ -29,7 +29,7 @@ class UserMessagesView(APIView):
         user_id = request.user.id
 
         # Fetch all messages for this user in one query — no N+1
-        messages = CaseMessage.objects(
+        messages = ChatMessage.objects(
             __raw__={'$or': [{'sender_id': user_id}, {'receiver_id': user_id}]}
         ).order_by('-created_at')
 
@@ -49,10 +49,23 @@ class UserMessagesView(APIView):
         for conv in conversations.values():
             # Messages came in descending order; reverse per conversation for chronological display
             conv['messages'].sort(key=lambda m: m.created_at)
-            serializer = CaseMessageSerializer(conv['messages'], many=True)
+            serializer = ChatMessageSerializer(conv['messages'], many=True)
             result.append({
                 'other_user_id': conv['other_user_id'],
                 'messages': serializer.data
             })
 
         return Response(result)
+
+
+class MarkConversationReadView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, user_id):
+        current_user_id = request.user.id
+        updated_count = ChatMessage.objects(
+            sender_id=user_id,
+            receiver_id=current_user_id,
+            is_read=False
+        ).update(set__is_read=True)
+        return Response({'updated': updated_count})
