@@ -56,8 +56,4 @@ export class PatientService {
   update(id: string, patientData: Partial<Patient>): Observable<Patient> {
     return this.http.put<Patient>(`${this.apiUrl}/${id}/`, patientData);
   }
-
-  delete(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}/`);
-  }
 }

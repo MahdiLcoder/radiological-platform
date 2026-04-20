@@ -152,13 +152,3 @@ class PatientDetailView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def delete(self, request, pk):
-        """Delete patient record (admin only)"""
-        if request.user.role != 'admin':
-            return Response({"error": "Only administrators can delete patient records"}, status=status.HTTP_403_FORBIDDEN)
-
-        patient = self.get_object(pk)
-
-        patient.delete()
-        return Response({"message": "Patient record deleted"}, status=status.HTTP_204_NO_CONTENT)

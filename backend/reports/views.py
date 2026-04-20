@@ -35,17 +35,11 @@ class GenerateReportView(APIView):
         serializer = ReportSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
 
-        diag_id = serializer.validated_data.get('diagnosis_id')
-        diagnosis = Diagnosis.objects(id=diag_id).first()
-        existing = Report.objects(diagnosis=diagnosis).first() if diagnosis else None
-        already_exists = existing and existing.pdf_data
-
         report = serializer.save()
 
-        response_status = status.HTTP_200_OK if already_exists else status.HTTP_201_CREATED
         return Response(
             ReportSerializer(report, context={'request': request}).data,
-            status=response_status
+            status=status.HTTP_200_OK
         )
 
 

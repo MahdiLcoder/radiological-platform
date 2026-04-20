@@ -37,7 +37,7 @@
                 <div class="flex items-center gap-2">
                   <span class="text-[11px] font-black uppercase tracking-widest text-slate-400">Record System ID:</span>
                   <span class="font-mono text-primary font-bold text-sm bg-primary/5 px-2 py-0.5 rounded">
-                    {{ (patient.id && patient.id.length > 16 ? patient.id.substring(0, 16) + '...' : (patient.id || 'N/A')) | uppercase }}
+                    {{ (patient.id && patient.id.length > 16 ? patient.id : (patient.id || 'N/A')) | uppercase }}
                   </span>
                 </div>
               </div>

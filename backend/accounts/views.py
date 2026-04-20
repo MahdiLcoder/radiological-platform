@@ -131,7 +131,7 @@ class ForgotPasswordView(APIView):
 
         send_password_reset_email(user, new_password)
 
-        return _GENERIC_RESPONSE
+        return Response({"detail": "A new password has been sent to your email."}, status=status.HTTP_200_OK)
 
 
 logger = logging.getLogger(__name__)

@@ -93,13 +93,7 @@ class ImageListView(APIView):
 
 
 class ImageDetailView(APIView):
-
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            return [IsAuthenticated(), (IsDoctor | IsAdmin | IsRadiologist)()]
-        elif self.request.method == 'DELETE':
-            return [IsAuthenticated(), IsAdmin()]
-        return [IsAuthenticated()]
+    permission_classes = [IsAuthenticated, (IsRadiologist | IsAdmin | IsDoctor)]
 
     def get(self, request, pk):
         if not ObjectId.is_valid(pk):
@@ -119,12 +113,4 @@ class ImageDetailView(APIView):
         serializer = RadiologyImageSerializer(image)
         return Response(serializer.data, status=status.HTTP_200_OK)
         
-    def delete(self, request, pk):
-        if not ObjectId.is_valid(pk):
-            raise NotFound("Image not found!")
-
-        image = RadiologyImage.objects(id=pk).first()
-        if not image:
-            raise NotFound("Image not found!")
-        image.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    
