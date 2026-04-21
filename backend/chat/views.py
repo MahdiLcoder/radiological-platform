@@ -61,7 +61,7 @@ class UserMessagesView(APIView):
 class MarkConversationReadView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, user_id):
+    def patch(self, request, user_id):
         current_user_id = request.user.id
         updated_count = ChatMessage.objects(
             sender_id=user_id,

@@ -140,7 +140,7 @@ logger = logging.getLogger(__name__)
 class ProfileImageUploadView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request):
+    def patch(self, request):
         image_file = request.FILES.get('image')
 
         if not image_file:

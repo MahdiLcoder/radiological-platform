@@ -144,7 +144,7 @@ class PatientDetailView(APIView):
 
         return Response(patient_data, status=status.HTTP_200_OK)
 
-    def put(self, request, pk):
+    def patch(self, request, pk):
         """Update patient record"""
         patient = self.get_object(pk)
 

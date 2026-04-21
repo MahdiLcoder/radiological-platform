@@ -20,6 +20,6 @@ export class ChatService {
   }
 
   markConversationAsRead(userId: number): Observable<{ updated: number }> {
-    return this.http.post<{ updated: number }>(`${this.apiUrl}/users/${userId}/read/`, {});
+    return this.http.patch<{ updated: number }>(`${this.apiUrl}/users/${userId}/read/`, {});
   }
 }
