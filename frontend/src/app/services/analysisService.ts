@@ -73,7 +73,7 @@ export class AnalysisService {
   }
 
   runPrediction(imageId: string): Observable<AnalysisResult> {
-    return this.http.post<AnalysisResult>(`${this.inferenceApiUrl}/${imageId}/run/`, {});
+    return this.http.post<AnalysisResult>(`${this.inferenceApiUrl}/run/`, { image_id: imageId });
   }
 
   getPrediction(imageId: string): Observable<AnalysisResult> {
