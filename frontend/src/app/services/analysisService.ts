@@ -9,7 +9,7 @@ export interface AnalysisResult {
   image?: {
     id: string;
     patient?: {
-      id: string;
+      cin: string;
       first_name: string;
       last_name: string;
     };
@@ -27,7 +27,7 @@ export interface AnalysisResult {
 export interface UploadResponse {
   id: string;
   patient: {
-    id: string;
+    cin: string;
     first_name: string;
     last_name: string;
     uid?: string;
@@ -47,10 +47,10 @@ export class AnalysisService {
   private imagesApiUrl = `${environment.apiUrl}/images`;
   private inferenceApiUrl = `${environment.apiUrl}/inference`;
 
-  uploadImage(file: File, patientId: string, modality: string): Observable<UploadResponse> {
+  uploadImage(file: File, patientCin: string, modality: string): Observable<UploadResponse> {
     const formData = new FormData();
     formData.append('image', file);
-    formData.append('patient', patientId);
+    formData.append('patient', patientCin);
     formData.append('modality', modality);
 
     return this.http.post<UploadResponse>(`${this.imagesApiUrl}/upload/`, formData);

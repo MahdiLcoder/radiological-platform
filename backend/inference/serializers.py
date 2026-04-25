@@ -97,7 +97,7 @@ class AiPredictionsSerializer(serializers.Serializer):
                 try:
                     if instance.image.patient:
                         patient_data = {
-                            "id": str(instance.image.patient.id),
+                            "cin": instance.image.patient.cin,
                             "first_name": instance.image.patient.first_name,
                             "last_name": instance.image.patient.last_name,
                         }

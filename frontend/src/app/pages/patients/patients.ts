@@ -70,18 +70,17 @@ export class Patients {
       const initials = this.getInitials(patient.first_name, patient.last_name);
       const name = `${patient.first_name} ${patient.last_name}`;
       const age = this.calculateAge(patient.date_of_birth);
-      const gender = patient.gender === 'M' ? 'Male' : patient.gender === 'F' ? 'Female' : 'Other';
+      const gender = patient.gender === 'M' ? 'Male' : 'Female';
       const createdAt = new Date(patient.created_at || Date.now());
 
       return {
-        id: patient.id || 'N/A',
+        id: patient.cin,
         patient: {
           initials,
           name,
-          id: (patient.id || 'N/A').substring(0, 12).toUpperCase(),
-          isEmergency: false,
+          patientCin: patient.cin,
         },
-        modality: `REF-${(patient.id?.substring(0, 6) || 'NA').toUpperCase()}`,
+        modality: `CIN-${patient.cin}`,
         uploadDate: {
           time: createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           date: createdAt.toLocaleDateString([], {
@@ -94,7 +93,7 @@ export class Patients {
         action: {
           type: 'view',
           text: 'Browse Scans',
-          link: ['/dashboard/patient-detail', patient.id],
+          link: ['/dashboard/patient-detail', patient.cin],
         },
       };
     });

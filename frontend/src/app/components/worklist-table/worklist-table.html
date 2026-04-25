@@ -15,7 +15,7 @@
       <tbody class="divide-y divide-slate-50">
               @for (item of data(); track item.id) {
                 <tr 
-                  class="group transition-all duration-300 {{ item.patient.isEmergency ? 'bg-rose-50/30' : 'hover:bg-slate-50/50' }}"
+                  class="group transition-all duration-300 hover:bg-slate-50/50"
                 >
                   <td class="px-8 py-6">
                     <div class="flex items-center gap-4">
@@ -32,15 +32,9 @@
                           >
                             {{ item.patient.name }}
                           </a>
-                          @if (item.patient.isEmergency) {
-                            <div class="flex items-center gap-1 px-1.5 py-0.5 rounded bg-rose-500 text-[8px] font-black text-white uppercase tracking-tighter">
-                               <span class="material-symbols-outlined text-[10px]">emergency</span>
-                               Stat
-                            </div>
-                          }
                         </div>
                         <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1.5 opacity-60">
-                          Registry ID: {{ item.patient.id }}
+                          Patient CIN: {{ item.patient.patientCin }}
                         </p>
                       </div>
                     </div>

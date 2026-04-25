@@ -7,7 +7,7 @@ import { AnalysisService } from '../../services/analysisService';
 export interface Report {
   id: string;
   patientName: string;
-  modality: 'MRI' | 'CT Scan' | 'X-Ray';
+  modality: 'MRI' | 'X-Ray' | 'CT';
   status: 'Critical' | 'Moderate' | 'Normal';
   diagnosis: string;
   doctor: string;

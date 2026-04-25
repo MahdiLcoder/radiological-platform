@@ -5,12 +5,12 @@ import { PaginatedResponse } from '../types';
 import { environment } from '../../environments/environment';
 
 export interface Patient {
-  id?: string;
   first_name: string;
   last_name: string;
   date_of_birth?: string;
   gender?: string;
   phone?: string;
+  cin: string;
   email?: string;
   last_visit?: string;
   doctor?: {
@@ -44,16 +44,16 @@ export class PatientService {
     return this.http.get<PaginatedResponse<Patient[]>>(`${this.apiUrl}/`, { params: httpParams });
   }
 
-  getById(id: string, scanOrder: 'desc' | 'asc' = 'desc'): Observable<Patient> {
+  getByCin(cin: string, scanOrder: 'desc' | 'asc' = 'desc'): Observable<Patient> {
     const params = new HttpParams().set('scan_order', scanOrder);
-    return this.http.get<Patient>(`${this.apiUrl}/${id}/`, { params });
+    return this.http.get<Patient>(`${this.apiUrl}/${cin}/`, { params });
   }
 
   create(patientData: Patient): Observable<Patient> {
     return this.http.post<Patient>(`${this.apiUrl}/`, patientData);
   }
 
-  update(id: string, patientData: Partial<Patient>): Observable<Patient> {
-    return this.http.patch<Patient>(`${this.apiUrl}/${id}/`, patientData);
+  update(cin: string, patientData: Partial<Patient>): Observable<Patient> {
+    return this.http.patch<Patient>(`${this.apiUrl}/${cin}/`, patientData);
   }
 }

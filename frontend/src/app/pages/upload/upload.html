@@ -67,18 +67,47 @@
 
       <div class="console-body space-y-6">
         <!-- Patient Cross-Reference -->
-        <div class="form-group" [class.is-invalid]="uploadForm.get('patientId')?.touched && uploadForm.get('patientId')?.invalid">
-          <label class="form-label">Subject Identification (MRN)</label>
-          <div class="premium-input-box group" [class.input-invalid]="uploadForm.get('patientId')?.touched && uploadForm.get('patientId')?.invalid">
+        <div class="form-group" [class.is-invalid]="uploadForm.get('patientCin')?.touched && uploadForm.get('patientCin')?.invalid">
+          <label class="form-label">Subject Identification (CIN)</label>
+          <div class="premium-input-box group relative" [class.input-invalid]="uploadForm.get('patientCin')?.touched && uploadForm.get('patientCin')?.invalid">
             <span class="material-symbols-outlined input-icon group-focus-within:text-primary">person_search</span>
             <input
-              formControlName="patientId"
+              [value]="searchQuery()"
+              (input)="onSearchChange($event)"
+              (blur)="hideResults()"
+              (focus)="showResults.set(true)"
               class="premium-input"
-              placeholder="Assign to Registry ID..."
+              placeholder="Search by CIN or Name..."
               type="text"
             />
+            <input type="hidden" formControlName="patientCin">
+            
+            @if (showResults() && ((patientsQuery.data()?.results?.length ?? 0) > 0 || patientsQuery.isPending())) {
+              <div class="search-results-menu animate-in fade-in zoom-in-95 duration-200">
+                @if (patientsQuery.isPending()) {
+                  <div class="p-4 text-center">
+                    <span class="size-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin inline-block"></span>
+                  </div>
+                } @else {
+                  @for (patient of patientsQuery.data()?.results; track patient.cin) {
+                    <div class="search-item" (mousedown)="selectPatient(patient)">
+                      <div class="flex items-center gap-3">
+                        <div class="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-[10px]">
+                          {{ patient.first_name[0] }}{{ patient.last_name[0] }}
+                        </div>
+                        <div class="flex flex-col text-left">
+                          <span class="text-[11px] font-black text-slate-900 leading-tight">{{ patient.first_name }} {{ patient.last_name }}</span>
+                          <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">CIN: {{ patient.cin }}</span>
+                        </div>
+                      </div>
+                      <span class="material-symbols-outlined text-slate-300 text-sm">chevron_right</span>
+                    </div>
+                  }
+                }
+              </div>
+            }
           </div>
-          @if (uploadForm.get('patientId')?.touched && uploadForm.get('patientId')?.errors?.['required']) {
+          @if (uploadForm.get('patientCin')?.touched && uploadForm.get('patientCin')?.errors?.['required']) {
             <p class="input-error-text">Subject identity is required for ingestion</p>
           }
         </div>
@@ -92,7 +121,7 @@
               class="premium-select w-full"
             >
               <option value="X-Ray">X-Ray (Radiography)</option>
-              <option value="CT Scan">CT (Tomography)</option>
+              <option value="CT">CT (Tomography)</option>
               <option value="MRI">MRI (Magnetic Resonance)</option>
             </select>
             <span class="material-symbols-outlined select-arrow">expand_more</span>
@@ -124,10 +153,10 @@
              </div>
            } @else {
               <div class="text-center space-y-2 opacity-30">
-                 @if (selectedFiles.length === 0 && uploadForm.get('patientId')?.touched) {
+                  @if (selectedFiles.length === 0 && uploadForm.get('patientCin')?.touched) {
                     <span class="material-symbols-outlined text-4xl text-rose-500">warning</span>
                     <p class="text-[9px] font-black uppercase tracking-widest text-rose-500">Missing Scan Artifact</p>
-                 } @else {
+                  } @else {
                     <span class="material-symbols-outlined text-4xl">ifl</span>
                     <p class="text-[9px] font-black uppercase tracking-widest">Pipeline Standby</p>
                  }

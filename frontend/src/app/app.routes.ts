@@ -55,6 +55,9 @@ export const routes: Routes = [
       },
       {
         path: 'upload',
+        data: { roles: ['radiologist'] },
+        canMatch: [roleGuard],
+        canActivate: [roleActivateGuard],
         loadComponent: () => import('./pages/upload/upload').then((m) => m.Upload),
       },
       {
@@ -104,7 +107,7 @@ export const routes: Routes = [
           import('./pages/create-patient/create-patient').then((m) => m.CreatePatient),
       },
       {
-        path: 'patient-detail/:id',
+        path: 'patient-detail/:cin',
         data: { roles: ['doctor'] },
         canMatch: [roleGuard],
         canActivate: [roleActivateGuard],
@@ -112,7 +115,7 @@ export const routes: Routes = [
           import('./pages/patient-detail/patient-detail').then((m) => m.PatientDetail),
       },
       {
-        path: 'edit-patient/:id',
+        path: 'edit-patient/:cin',
         data: { roles: ['doctor'] },
         canMatch: [roleGuard],
         canActivate: [roleActivateGuard],

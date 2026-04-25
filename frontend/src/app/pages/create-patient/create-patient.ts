@@ -20,21 +20,21 @@ export class CreatePatient implements OnInit {
 
   patientForm!: FormGroup;
   isEditMode = false;
-  patientId: string | null = null;
+  patientCin: string | null = null;
   title = 'Register New Patient';
   serverError = signal<string | null>(null);
   fieldErrors = signal<Record<string, string>>({});
 
   patientQuery = injectQuery(() => ({
-    queryKey: ['patient', this.patientId],
-    queryFn: () => lastValueFrom(this.patientService.getById(this.patientId!)),
-    enabled: !!this.patientId,
+    queryKey: ['patient', this.patientCin],
+    queryFn: () => lastValueFrom(this.patientService.getByCin(this.patientCin!)),
+    enabled: !!this.patientCin,
   }));
 
   patientMutation = injectMutation(() => ({
     mutationFn: (patientData: any) =>
       this.isEditMode
-        ? lastValueFrom(this.patientService.update(this.patientId!, patientData))
+        ? lastValueFrom(this.patientService.update(this.patientCin!, patientData))
         : lastValueFrom(this.patientService.create(patientData)),
     onSuccess: () => {
       this.router.navigate(['/dashboard/patients']);
@@ -60,6 +60,7 @@ export class CreatePatient implements OnInit {
           date_of_birth: patient.date_of_birth,
           gender: patient.gender,
           phone: patient.phone,
+          cin: patient.cin,
           email: patient.email
         });
       }
@@ -67,8 +68,8 @@ export class CreatePatient implements OnInit {
   }
 
   ngOnInit(): void {
-    this.patientId = this.route.snapshot.paramMap.get('id');
-    if (this.patientId) {
+    this.patientCin = this.route.snapshot.paramMap.get('cin');
+    if (this.patientCin) {
       this.isEditMode = true;
       this.title = 'Edit Patient Details';
     }
@@ -79,6 +80,7 @@ export class CreatePatient implements OnInit {
       date_of_birth: ['', [Validators.required]],
       gender: ['', [Validators.required]],
       phone: ['', [Validators.required, Validators.pattern(/^\+?[\d\s\-\(\)]{7,20}$/)]],
+      cin: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
       email: ['', [Validators.email]]
     });
   }
@@ -99,7 +101,10 @@ export class CreatePatient implements OnInit {
     if (control?.touched && control?.errors) {
       if (control.errors['required']) return this.formatFieldName(fieldName) + ' is required';
       if (control.errors['email']) return 'Enter a valid email address';
-      if (control.errors['pattern']) return 'Enter a valid phone number (e.g. +1 555-000-0000)';
+      if (control.errors['pattern']) {
+        if (fieldName === 'cin') return 'CIN must be exactly 8 digits';
+        return 'Enter a valid phone number (e.g. +1 555-000-0000)';
+      }
     }
     const serverFieldErrors = this.fieldErrors();
     if (serverFieldErrors[fieldName]) return serverFieldErrors[fieldName];

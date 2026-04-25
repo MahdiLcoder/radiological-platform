@@ -62,6 +62,19 @@
         </div>
         <div class="grid grid-cols-2 gap-4">
           <div class="space-y-2">
+            <label class="text-sm font-bold text-slate-700">CIN <span class="text-red-500">*</span></label>
+            <input
+              formControlName="cin"
+              class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:bg-white outline-none transition-all placeholder:text-slate-400"
+              [class.input-invalid]="patientForm.get('cin')?.touched && patientForm.get('cin')?.invalid"
+              placeholder="National ID"
+              type="text"
+            />
+            @if (getFieldError('cin')) {
+              <p class="input-error-text">{{ getFieldError('cin') }}</p>
+            }
+          </div>
+          <div class="space-y-2">
             <label class="text-sm font-bold text-slate-700">Gender <span class="text-red-500">*</span></label>
             <div class="relative">
               <select

@@ -28,18 +28,18 @@ class RadiologyImageSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         image_file = validated_data.pop('image')
-        patient_id = validated_data.pop('patient')
+        patient_cin = validated_data.pop('patient')
 
         try:
             upload_result = cloudinary.uploader.upload(
                 image_file,
-                folder=f"radiology_images/{patient_id}",
+                folder=f"radiology_images/{patient_cin}",
                 resource_type='image'
             )
             image_url = upload_result["secure_url"]
 
             # Find patient record
-            patient = Patient.objects(id=patient_id).first()
+            patient = Patient.objects(cin=patient_cin).first()
             if not patient:
                 raise serializers.ValidationError({"patient": "Patient not found"})
 
@@ -59,7 +59,7 @@ class RadiologyImageSerializer(serializers.Serializer):
         return {
             "id": str(instance.id),
             "patient":{
-                "id": str(instance.patient.id),
+                "cin": instance.patient.cin,
                 "first_name": instance.patient.first_name,
                 "last_name": instance.patient.last_name,
             }if instance.patient else None,

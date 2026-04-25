@@ -210,8 +210,7 @@ export class Admin {
     const colors: Record<string, string> = {
       'X-Ray': 'bg-[#0d9488]',
       'CT': 'bg-[#1e40af]',
-      'MRI': 'bg-[#6366f1]',
-      'CT Scan': 'bg-[#1e40af]'
+      'MRI': 'bg-[#6366f1]'
     };
     return colors[modality] || 'bg-slate-400';
   }

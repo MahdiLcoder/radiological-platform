@@ -59,15 +59,11 @@ class ImageListView(APIView):
         if search:
             matching_patients = Patient.objects(
                 Q(first_name__icontains=search) | 
-                Q(last_name__icontains=search)
+                Q(last_name__icontains=search) |
+                Q(cin__icontains=search)
             )
             patient_ids = [p.id for p in matching_patients]
-            
-            if ObjectId.is_valid(search):
-                obj_id = ObjectId(search)
-                images = images.filter(Q(patient__in=patient_ids) | Q(id=obj_id))
-            else:
-                images = images.filter(patient__in=patient_ids)
+            images = images.filter(patient__in=patient_ids)
 
         total = images.count()
         

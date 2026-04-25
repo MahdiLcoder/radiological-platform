@@ -88,7 +88,7 @@
       <div
         class="absolute bottom-6 left-6 text-white/70 text-[11px] font-mono space-y-1 bg-black/60 backdrop-blur-sm p-3 rounded-lg border border-white/10"
       >
-        <p>PATIENT ID: {{ image.patient?.id || 'Unknown' }}</p>
+        <p>PATIENT CIN: {{ image.patient?.cin || 'Unknown' }}</p>
         <p>NAME: {{ image.patient?.first_name }} {{ image.patient?.last_name }}</p>
         <p>ACQ: {{ image.modality }} | {{ image.uploaded_at | date:'dd-MMM-yyyy HH:mm' }}</p>
       </div>

@@ -6,8 +6,7 @@ export interface WorklistItem {
   patient: {
     initials: string;
     name: string;
-    id: string;
-    isEmergency?: boolean;
+    patientCin: string;
   };
   modality: string;
   uploadDate: {
@@ -42,7 +41,7 @@ export class WorklistTable {
   getModalityClass(modality: string): string {
     switch (modality) {
       case 'X-Ray': return 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 ring-indigo-700/10';
-      case 'CT Scan': return 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 ring-emerald-700/10';
+      case 'CT': return 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 ring-emerald-700/10';
       case 'MRI': return 'bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 ring-purple-700/10';
       default: return 'bg-slate-50 dark:bg-slate-500/10 text-slate-700 dark:text-slate-400 ring-slate-700/10';
     }

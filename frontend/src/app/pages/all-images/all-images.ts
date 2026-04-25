@@ -98,7 +98,7 @@ export class AllImages {
         patient: {
           initials,
           name,
-          id: p?.id || 'Unknown',
+          patientCin: p?.cin || 'Unknown',
           isEmergency: false
         },
         modality: img.modality,
@@ -109,7 +109,8 @@ export class AllImages {
         aiStatus,
         action: {
           type: actionType,
-          text: actionText
+          text: actionText,
+          link: ['/dashboard/aivalidation', img.id]
         }
       };
     });

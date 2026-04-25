@@ -35,11 +35,11 @@ class PDFService:
         # 2. Patient Information
         elements.append(Paragraph("Patient Information", styles['SectionHeader']))
         patient_name       = report.image.patient.full_name  if report.image and report.image.patient else "N/A"
-        patient_identifier = str(report.image.patient.id) if report.image and report.image.patient else "N/A"
+        patient_identifier = report.image.patient.cin if report.image and report.image.patient else "N/A"
         uploaded_at        = report.image.uploaded_at.strftime('%Y-%m-%d') if report.image and report.image.uploaded_at else "N/A"
 
         patient_data = [
-            ["Patient Name:", patient_name,          "Patient ID:",  patient_identifier],
+            ["Patient Name:", patient_name,          "Patient CIN:",  patient_identifier],
             ["Modality:",     report.image.modality, "Uploaded At:", uploaded_at],
         ]
         t_patient = Table(patient_data, colWidths=[1.2*inch, 2*inch, 1.2*inch, 2*inch])

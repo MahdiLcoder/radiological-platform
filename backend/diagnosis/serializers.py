@@ -63,7 +63,7 @@ class DiagnosisSerializer(serializers.Serializer):
             "image": {
                 "id": str(instance.image.id),
                 "patient_name": instance.image.patient.full_name if instance.image and instance.image.patient else None,
-                "patient": str(instance.image.patient.id) if instance.image and instance.image.patient else None,
+                "patient": instance.image.patient.cin if instance.image and instance.image.patient else None,
                 "modality": instance.image.modality,
             } if instance.image else None,
             "ai_prediction": {

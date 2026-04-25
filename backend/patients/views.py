@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from diagnosis.models import Diagnosis
 from images.models import RadiologyImage
-from accounts.permissions import IsDoctor, IsAdmin
+from accounts.permissions import IsDoctor, IsRadiologist
 from .models import Patient
 from .serializers import PatientSerializer
 
@@ -21,10 +21,13 @@ class PatientListQuerySerializer(serializers.Serializer):
 
 
 class PatientListCreateView(APIView):
-    permission_classes = [IsAuthenticated, (IsDoctor | IsAdmin)]
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated(), IsDoctor()]
+        return [IsAuthenticated(), (IsDoctor | IsRadiologist)()]
 
     def get(self, request):
-        """List patients managed by the current doctor"""
         params = PatientListQuerySerializer(data=request.query_params)
         params.is_valid(raise_exception=True)
 
@@ -33,24 +36,17 @@ class PatientListCreateView(APIView):
         page = params.validated_data['page']
         page_size = params.validated_data['page_size']
 
-        if request.user.role == 'admin':
+        if request.user.role == 'radiologist':
             patients = Patient.objects.all()
         else:
             patients = Patient.objects(doctor_id=request.user.id)
 
         if search:
-            if ObjectId.is_valid(search):
-                obj_id = ObjectId(search)
-                patients = patients.filter(
-                    Q(first_name__icontains=search) | 
-                    Q(last_name__icontains=search) |
-                    Q(id=obj_id)
-                )
-            else:
-                patients = patients.filter(
-                    Q(first_name__icontains=search) | 
-                    Q(last_name__icontains=search)
-                )
+            patients = patients.filter(
+                Q(first_name__icontains=search) | 
+                Q(last_name__icontains=search) |
+                Q(cin__icontains=search)
+            )
 
         if tab == 'RECENT':
             patients = patients.order_by('-created_at')
@@ -75,7 +71,6 @@ class PatientListCreateView(APIView):
         }, status=status.HTTP_200_OK)
 
     def post(self, request):
-        """Create a new patient record"""
         serializer = PatientSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -83,25 +78,20 @@ class PatientListCreateView(APIView):
 
 
 class PatientDetailView(APIView):
-    permission_classes = [IsAuthenticated, (IsDoctor | IsAdmin)]
+    permission_classes = [IsAuthenticated, IsDoctor]
 
-    def get_object(self, pk):
-        """Get patient by ID with permission check"""
-        if not ObjectId.is_valid(pk):
-            raise NotFound("Patient not found")
-
-        patient = Patient.objects(id=pk).first()
+    def get_object(self, cin):
+        patient = Patient.objects(cin=cin).first()
         if not patient:
             raise NotFound("Patient not found")
 
-        if self.request.user.role == 'admin' or patient.doctor_id == self.request.user.id:
+        if patient.doctor_id == self.request.user.id:
             return patient
 
         raise PermissionDenied("You do not have permission to access this patient.")
 
-    def get(self, request, pk):
-        """Get patient details with related medical records"""
-        patient = self.get_object(pk)
+    def get(self, request, cin):
+        patient = self.get_object(cin)
 
         scan_order = request.query_params.get('scan_order', 'desc')
         order_field = 'uploaded_at' if scan_order == 'asc' else '-uploaded_at'
@@ -144,9 +134,8 @@ class PatientDetailView(APIView):
 
         return Response(patient_data, status=status.HTTP_200_OK)
 
-    def patch(self, request, pk):
-        """Update patient record"""
-        patient = self.get_object(pk)
+    def patch(self, request, cin):
+        patient = self.get_object(cin)
 
         serializer = PatientSerializer(patient, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)

@@ -102,8 +102,7 @@ export class Radiologist {
         patient: {
           initials,
           name,
-          id: p?.id || 'Unknown',
-          isEmergency: false
+          patientCin: p?.cin || 'Unknown',
         },
         modality: img.modality,
         uploadDate: {
@@ -113,7 +112,8 @@ export class Radiologist {
         aiStatus,
         action: {
           type: actionType,
-          text: actionText
+          text: actionText,
+          link: ['/dashboard/aivalidation', img.id]
         }
       };
     }).sort((a, b) => new Date(b.uploadDate.date + ' ' + b.uploadDate.time).getTime() - new Date(a.uploadDate.date + ' ' + a.uploadDate.time).getTime());

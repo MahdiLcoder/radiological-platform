@@ -98,14 +98,13 @@ export class Doctor {
       const createdAt = new Date(patient.created_at || new Date());
 
       return {
-        id: patient.id || 'N/A',
+        id: patient.cin,
         patient: {
           initials,
           name,
-          id: (patient.id || 'N/A').substring(0, 8).toUpperCase(),
-          isEmergency: false,
+          patientCin: patient.cin,
         },
-        modality: `REF-${(patient.id?.substring(0, 6) || 'NA').toUpperCase()}`,
+        modality: `CIN-${patient.cin}`,
         uploadDate: {
           time: createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           date: createdAt.toLocaleDateString([], { month: 'short', day: 'numeric' }),
@@ -114,7 +113,7 @@ export class Doctor {
         action: {
           type: 'view',
           text: 'Open File',
-          link: ['/dashboard/patient-detail', patient.id],
+          link: ['/dashboard/patient-detail', patient.cin],
         },
       };
     });
@@ -160,11 +159,11 @@ export class Doctor {
     return age;
   }
 
-  private normalizeModality(raw: string | undefined): 'MRI' | 'CT Scan' | 'X-Ray' {
+  private normalizeModality(raw: string | undefined): 'MRI' | 'CT' | 'X-Ray' {
     if (!raw) return 'X-Ray';
     const m = raw.toUpperCase();
     if (m.includes('MRI')) return 'MRI';
-    if (m.includes('CT')) return 'CT Scan';
+    if (m.includes('CT')) return 'CT';
     return 'X-Ray';
   }
 

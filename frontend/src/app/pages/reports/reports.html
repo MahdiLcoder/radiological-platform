@@ -6,9 +6,9 @@
 
   <!-- Clinical Filter Console -->
   <app-filters-section
-    [searchPlaceholder]="'Subject Name/MRN...'"
+    [searchPlaceholder]="'Subject Name/CIN...'"
     [searchIcon]="'person_search'"
-    [(searchValue)]="patientIdFilter"
+    [(searchValue)]="searchCin"
     [selectFilters]="filterSelects"
     [selectValues]="{ modality: modalityFilter(), date: dateFilter() }"
     (filterChange)="
@@ -79,7 +79,7 @@
           actionText="Reset Filter Console"
           actionIcon="refresh"
           (actionClick)="
-            patientIdFilter.set('');
+            searchCin.set('');
             modalityFilter.set('All Modalities');
             dateFilter.set('All Time');
             onFilterChange()

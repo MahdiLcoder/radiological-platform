@@ -38,7 +38,7 @@ export class Reports {
     {
       key: 'modality',
       icon: 'radiology',
-      options: ['All Modalities', 'MRI', 'CT Scan', 'X-Ray'],
+      options: ['All Modalities', 'MRI', 'CT', 'X-Ray'],
     },
     {
       key: 'date',
@@ -55,7 +55,7 @@ export class Reports {
 
   modalityFilter = signal('All Modalities');
   dateFilter = signal('All Time');
-  patientIdFilter = signal('');
+  searchCin = signal('');
   currentPage = signal(1);
 
   reportsQuery = injectQuery(() => ({
@@ -63,13 +63,13 @@ export class Reports {
       'reports',
       this.modalityFilter(),
       this.dateFilter(),
-      this.patientIdFilter(),
+      this.searchCin(),
       this.currentPage(),
     ],
     queryFn: () =>
       lastValueFrom(
         this.reportService.getReports({
-          search: this.patientIdFilter(),
+          search: this.searchCin(),
           modality: this.modalityFilter() === 'All Modalities' ? '' : this.modalityFilter(),
           date_range: this.dateFilter() === 'All Time' ? '' : this.dateFilter(),
           page: this.currentPage(),
@@ -121,11 +121,11 @@ export class Reports {
     this.currentPage.set(1);
   }
 
-  private normalizeModality(raw: string | undefined): 'MRI' | 'CT Scan' | 'X-Ray' {
+  private normalizeModality(raw: string | undefined): 'MRI' | 'CT' | 'X-Ray' {
     if (!raw) return 'X-Ray';
     const m = raw.toUpperCase();
     if (m.includes('MRI')) return 'MRI';
-    if (m.includes('CT')) return 'CT Scan';
+    if (m.includes('CT')) return 'CT';
     return 'X-Ray';
   }
 

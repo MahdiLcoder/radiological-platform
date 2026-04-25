@@ -21,12 +21,12 @@ export class PatientDetail {
   private patientService = inject(PatientService);
   private reportService = inject(ReportService);
 
-  patientId = this.route.snapshot.paramMap.get('id');
+  patientCin = this.route.snapshot.paramMap.get('cin');
 
   patientQuery = injectQuery(() => ({
-    queryKey: ['patient', this.patientId, this.scanSortOrder()],
-    queryFn: () => lastValueFrom(this.patientService.getById(this.patientId!, this.scanSortOrder())),
-    enabled: !!this.patientId
+    queryKey: ['patient', this.patientCin, this.scanSortOrder()],
+    queryFn: () => lastValueFrom(this.patientService.getByCin(this.patientCin!, this.scanSortOrder())),
+    enabled: !!this.patientCin
   }));
 
   scanSortOrder = signal<'desc' | 'asc'>('desc');

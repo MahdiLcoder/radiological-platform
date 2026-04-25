@@ -6,7 +6,6 @@ PHONE_REGEX = r'^\+?[\d\s\-\(\)]{7,20}$'
 
 
 class PatientSerializer(serializers.Serializer):
-    id = serializers.CharField(read_only=True)
     first_name = serializers.CharField(required=True, error_messages={'blank': 'First name is required.'})
     last_name = serializers.CharField(required=True, error_messages={'blank': 'Last name is required.'})
     date_of_birth = serializers.DateField(required=True)
@@ -20,6 +19,14 @@ class PatientSerializer(serializers.Serializer):
             'blank': 'Phone number is required.',
             'invalid': 'Enter a valid phone number (digits, spaces, dashes, parentheses allowed).',
         },
+    )
+    cin = serializers.RegexField(
+        regex=r'^\d{8}$',
+        required=True,
+        error_messages={
+            'blank': 'CIN is required.',
+            'invalid': 'CIN must be exactly 8 digits.'
+        }
     )
     email = serializers.EmailField(required=False, allow_blank=True, error_messages={'invalid': 'Enter a valid email address.'})
 

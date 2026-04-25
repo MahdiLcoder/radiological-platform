@@ -11,6 +11,7 @@ class Patient(me.Document):
     gender = me.StringField(choices=['M', 'F', 'Other'], required=True)
 
     phone = me.StringField(required=True)
+    cin = me.StringField(required=True, unique=True)
     email = me.StringField()
 
     doctor_id = me.IntField()
