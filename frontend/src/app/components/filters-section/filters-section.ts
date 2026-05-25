@@ -28,31 +28,25 @@ export interface ActionButtonConfig {
   styleUrl: './filters-section.css'
 })
 export class FiltersSection {
-  // Search
   readonly showSearch = input<boolean>(true);
   readonly searchPlaceholder = input<string>('Search...');
   readonly searchIcon = input<string>('search');
   readonly searchValue = input<string>('');
   readonly searchValueChange = output<string>();
 
-  // Selects
   readonly selectFilters = input<SelectFilterConfig[]>([]);
   readonly selectValues = input<Record<string, string>>({});
   
-  // Tabs
   readonly tabs = input<TabConfig[]>([]);
   readonly activeTab = input<string>('');
   readonly activeTabChange = output<string>();
 
-  // Stats
-  readonly statsHtml = input<string>(''); // If you want to embed custom HTML
+  readonly statsHtml = input<string>(''); 
   
-  // Actions
   readonly showReset = input<boolean>(true);
   readonly resetTitle = input<string>('Reset Console');
   readonly actionButtons = input<ActionButtonConfig[]>([]);
   
-  // Custom outputs
   readonly filterChange = output<{ key: string; value: string }>(); 
   readonly actionClicked = output<string>();
   readonly resetClicked = output<void>();

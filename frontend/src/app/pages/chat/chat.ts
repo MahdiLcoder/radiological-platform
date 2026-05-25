@@ -149,7 +149,7 @@ export class Chat implements OnInit, OnDestroy {
     this.chatService.markConversationAsRead(userId).subscribe({
       next: () => {
         this.queryClient.setQueryData(['chatMessages', userId], (old: Message[] | undefined) =>
-          old ? old.map(msg => ({ ...msg, is_read: true })) : [],
+          old ? old.map((msg) => ({ ...msg, is_read: true })) : [],
         );
         this.queryClient.invalidateQueries({ queryKey: ['conversationsData'] });
       },

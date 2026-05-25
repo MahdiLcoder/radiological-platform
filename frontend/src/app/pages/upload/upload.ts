@@ -49,13 +49,11 @@ export class Upload {
     this.searchQuery.set(term);
     this.showResults.set(true);
     
-    // If user types, clear existing selection to allow new search results to appear
     if (this.selectedPatient()) {
       this.selectedPatient.set(null);
       this.uploadForm.patchValue({ patientCin: '' });
     }
     
-    // If user clears input, ensure form is also cleared
     if (!term) {
       this.uploadForm.patchValue({ patientCin: '' });
     }
@@ -69,11 +67,9 @@ export class Upload {
   }
 
   hideResults() {
-    // Delay hiding to allow click event on result list
     setTimeout(() => this.showResults.set(false), 200);
   }
 
-  // Unified Analysis Mutation (Upload -> Run Prediction)
   analysisMutation = injectMutation(() => ({
     mutationFn: async (data: { file: File; patientCin: string; modality: string }) => {
       const uploadRes = await lastValueFrom(

@@ -7,15 +7,19 @@
     buttonIcon="cloud_upload"
     buttonLink="/dashboard/upload"
   ></app-welcome-section>
-  
+
   @if (imagesQuery.isPending()) {
-    <!-- ... (loading state preserved) -->
+    <app-loading-state message="Retrieving clinical records..."></app-loading-state>
   } @else if (imagesQuery.isError()) {
-    <!-- ... (error state preserved) -->
+    <app-error-state
+      title="Data Retrieval Error"
+      message="An issue occurred while fetching the clinical worklist. Please check your connection and try again."
+      icon="error_outline"
+    ></app-error-state>
   } @else {
     <!-- Clinical Volume Metrics -->
     <section class="metrics-area">
-        <app-stats-summary [stats]="summaryStats()"></app-stats-summary>
+      <app-stats-summary [stats]="summaryStats()"></app-stats-summary>
     </section>
 
     <div class="dashboard-main-grid mt-10">
@@ -23,17 +27,23 @@
       <section class="worklist-container space-y-6 lg:col-span-8">
         <header class="section-toolbar">
           <div class="flex flex-col">
-            <h2 class="text-lg font-black text-slate-900 tracking-tight">Clinical Priority Worklist</h2>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Validated Diagnostics Awaiting Submission</p>
+            <h2 class="text-lg font-black text-slate-900 tracking-tight">
+              Clinical Priority Worklist
+            </h2>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+              Validated Diagnostics Awaiting Submission
+            </p>
           </div>
           <a routerLink="/dashboard/all-images" class="action-link-btn group">
             <span>Scan Archive</span>
-            <span class="material-symbols-outlined transition-transform group-hover:translate-x-1">folder_special</span>
+            <span class="material-symbols-outlined transition-transform group-hover:translate-x-1"
+              >folder_special</span
+            >
           </a>
         </header>
-        
-        <app-worklist-table 
-          [columns]="tableColumns" 
+
+        <app-worklist-table
+          [columns]="tableColumns"
           [data]="worklistData()"
           [hideFooter]="true"
         ></app-worklist-table>
@@ -41,20 +51,20 @@
 
       <!-- Specialist Sidebar -->
       <aside class="sidebar-container space-y-8 lg:col-span-4">
-
-
-         <!-- Diagnostic Volume Analytics -->
-         <section class="analytics-container space-y-6">
-            <header class="section-toolbar justify-start">
-               <div class="flex flex-col">
-                  <h2 class="text-lg font-black text-slate-900 tracking-tight">Modality Flow</h2>
-                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">30-Day Distribution</p>
-               </div>
-            </header>
-            <div class="mt-4">
-               <app-radiology-charts [data]="worklistData()"></app-radiology-charts>
+        <!-- Diagnostic Volume Analytics -->
+        <section class="analytics-container space-y-6">
+          <header class="section-toolbar justify-start">
+            <div class="flex flex-col">
+              <h2 class="text-lg font-black text-slate-900 tracking-tight">Modality Flow</h2>
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                30-Day Distribution
+              </p>
             </div>
-         </section>
+          </header>
+          <div class="mt-4">
+            <app-radiology-charts [data]="worklistData()"></app-radiology-charts>
+          </div>
+        </section>
       </aside>
     </div>
   }

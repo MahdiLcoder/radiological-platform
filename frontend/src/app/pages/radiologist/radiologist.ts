@@ -9,6 +9,8 @@ import { lastValueFrom } from 'rxjs';
 import { AnalysisService } from '../../services/analysisService';
 
 import { CommonModule } from '@angular/common';
+import { LoadingStateComponent } from '../../components/loading-state/loading-state';
+import { ErrorStateComponent } from '../../components/error-state/error-state';
 
 @Component({
   selector: 'app-radiologist',
@@ -19,6 +21,8 @@ import { CommonModule } from '@angular/common';
     WorklistTable,
     RouterModule,
     RadiologyCharts,
+    LoadingStateComponent,
+    ErrorStateComponent,
   ],
   templateUrl: './radiologist.html',
   styleUrl: './radiologist.css',
@@ -45,7 +49,7 @@ export class Radiologist {
         trendColorClass: 'text-slate-500',
         icon: 'hourglass_empty',
         iconColorClass: 'text-amber-600 dark:text-amber-500',
-        iconBgClass: 'bg-amber-100 dark:bg-amber-500/10'
+        iconBgClass: 'bg-amber-100 dark:bg-amber-500/10',
       },
       {
         title: 'Analyzed Scans',
@@ -54,7 +58,7 @@ export class Radiologist {
         trendColorClass: 'text-emerald-500',
         icon: 'smart_toy',
         iconColorClass: 'text-primary',
-        iconBgClass: 'bg-blue-100 dark:bg-primary/10'
+        iconBgClass: 'bg-blue-100 dark:bg-primary/10',
       },
       {
         title: 'Total Scans',
@@ -63,8 +67,8 @@ export class Radiologist {
         trendColorClass: 'text-slate-500',
         icon: 'folder_open',
         iconColorClass: 'text-indigo-600 dark:text-indigo-500',
-        iconBgClass: 'bg-indigo-100 dark:bg-indigo-500/10'
-      }
+        iconBgClass: 'bg-indigo-100 dark:bg-indigo-500/10',
+      },
     ];
   });
 
@@ -72,50 +76,60 @@ export class Radiologist {
     const rawData: any = this.imagesQuery.data();
     const images: any[] = rawData?.results || [];
 
-    return images.map(img => {
-      const p = img.patient;
-      const fName = p?.first_name || '';
-      const lName = p?.last_name || '';
-      const initials = ((fName[0] || '') + (lName[0] || '')).toUpperCase() || 'UK';
-      const name = `${fName} ${lName}`.trim() || 'Unknown Patient';
-      
-      let uploadDate = new Date(img.uploaded_at);
-      let timeStr = uploadDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-      let dateStr = uploadDate.toLocaleDateString([], {month: 'short', day: 'numeric', year: 'numeric'});
+    return images
+      .map((img) => {
+        const p = img.patient;
+        const fName = p?.first_name || '';
+        const lName = p?.last_name || '';
+        const initials = ((fName[0] || '') + (lName[0] || '')).toUpperCase() || 'UK';
+        const name = `${fName} ${lName}`.trim() || 'Unknown Patient';
 
-      let aiStatus = 'Pending';
-      let actionType: 'analyze' | 'view' | 'critical' = 'analyze';
-      let actionText = 'Analyze Study';
+        let uploadDate = new Date(img.uploaded_at);
+        let timeStr = uploadDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        let dateStr = uploadDate.toLocaleDateString([], {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+        });
 
-      if (img.status === 'analyzed') {
-        aiStatus = 'Analyzed';
-        actionType = 'view';
-        actionText = 'Validate Results';
-      } else if (img.status === 'validated') {
-        aiStatus = 'Validated';
-        actionType = 'view';
-        actionText = 'View Results';
-      }
+        let aiStatus = 'Pending';
+        let actionType: 'analyze' | 'view' | 'critical' = 'analyze';
+        let actionText = 'Analyze Study';
 
-      return {
-        id: img.id,
-        patient: {
-          initials,
-          name,
-          patientCin: p?.cin || 'Unknown',
-        },
-        modality: img.modality,
-        uploadDate: {
-          time: timeStr,
-          date: dateStr
-        },
-        aiStatus,
-        action: {
-          type: actionType,
-          text: actionText,
-          link: ['/dashboard/aivalidation', img.id]
+        if (img.status === 'analyzed') {
+          aiStatus = 'Analyzed';
+          actionType = 'view';
+          actionText = 'Validate Results';
+        } else if (img.status === 'validated') {
+          aiStatus = 'Validated';
+          actionType = 'view';
+          actionText = 'View Results';
         }
-      };
-    }).sort((a, b) => new Date(b.uploadDate.date + ' ' + b.uploadDate.time).getTime() - new Date(a.uploadDate.date + ' ' + a.uploadDate.time).getTime());
+
+        return {
+          id: img.id,
+          patient: {
+            initials,
+            name,
+            patientCin: p?.cin || 'Unknown',
+          },
+          modality: img.modality,
+          uploadDate: {
+            time: timeStr,
+            date: dateStr,
+          },
+          aiStatus,
+          action: {
+            type: actionType,
+            text: actionText,
+            link: ['/dashboard/aivalidation', img.id],
+          },
+        };
+      })
+      .sort(
+        (a, b) =>
+          new Date(b.uploadDate.date + ' ' + b.uploadDate.time).getTime() -
+          new Date(a.uploadDate.date + ' ' + a.uploadDate.time).getTime(),
+      );
   });
 }
